@@ -87,3 +87,25 @@ Banking +150% beats burning the last day trade on a weak signal.
              SPY/QQQ still drift lower. Watch item, not a trigger.
              Long trigger: >764.19 w/ QQQ confirm. Short: <763.23 w/ QQQ confirm.
              Both require volume expansion — a weak-volume break is a fake.
+- 09:44 ET — TICK. **NO TRADE. No break.** Opening range FINAL: H 764.38 / L 763.23.
+             SPY 763.70 = dead middle of range. QQQ 716.77. SOXL 124.34.
+             The 09:34-09:38 bullish catch-up attempt FAILED:
+               SOXL 125.58 -> 124.33, QQQ 717.41 -> 716.77.
+             09:36 bar: 116,856 vol with ZERO net move = two-sided absorption.
+             That is a balance signal, not a trend. Chop baseline 14-30k/min.
+             Triggers armed: LONG >764.38, SHORT <763.23, both needing QQQ
+             confirmation AND volume >~60k/min. Wick-through on <40k = fake.
+
+## Loop timing — correction (09:43)
+User flagged that tick times were slipping. Two distinct causes, both real:
+1. **My reporting error.** I told the user "next tick 09:41" while send_later had
+   returned fire_at=13:43:00Z (09:43 ET). I quoted my intended delay instead of
+   the scheduler's confirmed fire time. FIX: always quote the returned fire_at.
+2. **Delivery lag.** Tick armed for 13:32:00Z was delivered 13:33:21Z — 81s late.
+   The scheduler polls ~once/min, so every wake carries up to ~90s slop ON TOP OF
+   the 60s minimum interval.
+**Architectural consequence:** a scheduled-wake loop CANNOT do sub-minute trade
+management — between wakes this session is asleep. Acceptable while waiting for a
+setup; unacceptable while holding a 0DTE that can move 40% in 90 seconds.
+FIX: during entry/exit windows, stay in a live turn and poll back-to-back
+(1-3s per quote call). Use scheduled wakes only for the idle waiting phase.
