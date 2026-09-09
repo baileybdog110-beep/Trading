@@ -69,3 +69,11 @@ Banking +150% beats burning the last day trade on a weak signal.
 - 09:25 ET — Still $0.10. Verified 0 day trades used; full budget of 3 intact.
              Plan revised from single-shot to 3-leg compounding ladder after
              user (correctly) pointed out proceeds can be recycled.
+- 09:28 ET — **FUNDED: $25.10.** buying_power == unleveraged_buying_power again,
+             confirming no leverage. Max premium = $0.25/contract.
+             Cached near-money 0DTE instrument IDs in spy_0dte_ids.txt for
+             sub-second order placement (no chain re-pull mid-move).
+- 09:29 ET — SPY 764.24 (-0.22%), QQQ 716.10 (-0.31%), IWM 293.53 (-0.39%).
+             Gap-down being nibbled premarket (763.72 -> 764.24 over 9 min).
+             Mild bid into the open. NOT pre-committing direction.
+             Standing down until the 09:30-09:45 opening range completes.
