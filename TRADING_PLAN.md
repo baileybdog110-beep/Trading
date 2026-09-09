@@ -77,3 +77,13 @@ Banking +150% beats burning the last day trade on a weak signal.
              Gap-down being nibbled premarket (763.72 -> 764.24 over 9 min).
              Mild bid into the open. NOT pre-committing direction.
              Standing down until the 09:30-09:45 opening range completes.
+- 09:33 ET — TICK. No entry (pre-09:45 per rules). SPY 763.47 (-0.33%),
+             QQQ 716.25 (-0.29%), IWM 293.68 (-0.34%).
+             Opening range so far: H 764.19 / L 763.23 (only 0.96 wide).
+             Volume collapsing: 178k (09:30) -> 31k (09:31) -> 39k (09:32).
+             No conviction either direction = chop. Correct to stand aside.
+             **DIVERGENCE: SOXL 124.68 = +1.14% on the day**, reversed from
+             -2.54% premarket. Semis were the weak spot, now leading up, while
+             SPY/QQQ still drift lower. Watch item, not a trigger.
+             Long trigger: >764.19 w/ QQQ confirm. Short: <763.23 w/ QQQ confirm.
+             Both require volume expansion — a weak-volume break is a fake.
