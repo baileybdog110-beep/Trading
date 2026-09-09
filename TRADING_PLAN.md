@@ -127,3 +127,23 @@ FIX: during entry/exit windows, stay in a live turn and poll back-to-back
              exceed the $25.10 buying power. Backup vehicle: 768c @ $0.13.
              NOTE: 0DTE theta quoted as -0.22 = full premium decays by close.
              The move must be fast; a slow grind bleeds the position out.
+- 09:56 ET — TICK. Still NO trigger. SPY 763.95 (0.43 under 764.38).
+
+             **QQQ BROKE OUT; SPY DID NOT.** QQQ opening range high was 717.54;
+             it broke at 09:49 on 87k volume (vs ~45-55k baseline) and HELD,
+             making higher closes: 717.45 / 717.37 / 717.30 / 717.605 / 717.82 /
+             717.90 / 718.24. Textbook OR breakout with follow-through.
+             SOXL 126.64 (+2.73%) confirming, at day highs.
+
+             **Evaluated switching the vehicle to QQQ — REJECTED on the numbers.**
+             QQQ 0DTE calls: 719c $1.18 ($118), 720c $0.80 ($80), 721c $0.52 ($52).
+             All exceed $25.10 buying power. Cause: QQQ IV 19.3% vs SPY 14%, so
+             QQQ premium is far richer. Going OTM enough to fit $25 (~723 strike)
+             gives ~0.10 delta — strictly WORSE than SPY 767c at 0.146 delta for
+             the same $22. Correct call is to stay in SPY.
+
+             Also noted: 09:49 was a FAILED test — SPY wicked to 764.23 on 117k
+             volume and closed back at 763.87. Trigger tightened accordingly:
+             now require a CLOSE above 764.38, not merely a wick through it.
+
+             Rally is broadening into SPY (763.78 -> 763.95). Watching.
