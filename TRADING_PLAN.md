@@ -109,3 +109,21 @@ management — between wakes this session is asleep. Acceptable while waiting fo
 setup; unacceptable while holding a 0DTE that can move 40% in 90 seconds.
 FIX: during entry/exit windows, stay in a live turn and poll back-to-back
 (1-3s per quote call). Use scheduled wakes only for the idle waiting phase.
+- 09:50 ET — TICK. Setup BUILDING LONG, not triggered. SPY 763.89 (0.49 under
+             the 764.38 trigger). QQQ 717.46 — made a HIGHER HIGH than its 09:38
+             peak of 717.41. SOXL 125.12 (+1.50%). Semis/QQQ leading, SPY lagging.
+
+             **VEHICLE SELECTED: SPY 767C 0DTE @ $0.22**
+             id 5d15a70f-766a-4ea0-9ca9-684190f6f4d7
+             bid 0.21 / ask 0.22 = 1-cent spread (<5%) — far better than feared.
+             delta 0.146, gamma 0.078, OI 5898, vol 18741. Genuinely liquid.
+             Sizing math: +1.0 pt SPY => avg delta ~0.185 => ~$0.405 = +84%.
+                          ~0.7 pt SPY => ~+55-60%. Target $0.35 = +59%.
+             So the +60% leg-1 target needs SPY ~764.9-765.0 — i.e. exactly a
+             clean break of the 764.38 range high with follow-through. The
+             trigger and the target are consistent; no fudging required.
+
+             Ruled out on price: 765c $0.69 ($69) and 766c $0.40 ($40) both
+             exceed the $25.10 buying power. Backup vehicle: 768c @ $0.13.
+             NOTE: 0DTE theta quoted as -0.22 = full premium decays by close.
+             The move must be fast; a slow grind bleeds the position out.
