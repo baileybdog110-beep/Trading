@@ -147,3 +147,34 @@ FIX: during entry/exit windows, stay in a live turn and poll back-to-back
              now require a CLOSE above 764.38, not merely a wick through it.
 
              Rally is broadening into SPY (763.78 -> 763.95). Watching.
+
+## 10:13 ET CHECKPOINT — 43 minutes, no setup taken
+SPY chopped 763.23-764.38 for the entire first 43 min. Session high 764.38 is
+STILL the 09:34 print. Volume never once cleared the 60k trigger bar
+(10:00-10:11 bars: 36/36/37/33/16/25/28/14/44/36/17/33k). No break, no entry.
+
+**Theta cost of waiting, measured:**
+| Contract   | 09:50  | 10:13  | Decay |
+|------------|--------|--------|-------|
+| SPY 767C   | $0.22  | $0.17  | -23%  |
+| SPY 766C   | $0.40  | $0.31  | -23%  |
+| SPY 768C   | $0.13  | $0.10  | -23%  |
+SPY moved 763.89 -> 763.74 (basically flat) over the same window. That 23% is
+pure time decay.
+
+**Every alternative priced and ruled out — $25.10 buys almost nothing:**
+- QQQ 0DTE: 719c $118 / 720c $80 / 721c $52. All unaffordable (IV 19.3%).
+- SPY 1DTE (09-10): 766c $128 / 768c $65. Both unaffordable.
+- SOXL: no 0DTE chain (weeklies only, next 09-11).
+- ONLY affordable instrument on the board: SPY 0DTE far-OTM calls.
+
+**The structural finding:** the real move today is semis/Nasdaq (SOXL +3.55%,
+QQQ green while SPY is -0.29%). Participating in it costs $52-128 per contract.
+$25 cannot buy it. This is the capital constraint flagged at 09:20, now
+demonstrated with live quotes rather than predicted.
+
+**Counterintuitive silver lining — the trade is better priced now, not worse:**
+767C at $0.17, delta 0.125, gamma 0.075. A 1-point SPY move gives avg delta
+~0.16 => +$0.16 => $0.33 = **+94%** (vs +84% at the $0.22 entry). Cheaper basis
+means MORE leverage on the same move. What decayed is the time available, not
+the payoff. The constraint is probability, not reward.
