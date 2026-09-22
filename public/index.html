@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PropPath</title>
+  <meta name="description" content="Track your Apex / Tradovate evaluation and PA progress, analyze your trades and get coaching to pass or get paid." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232a78d6'/%3E%3Cpath d='M7 22l6-7 4 4 8-9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M7 22l6-7 4 4 8-9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>PropPath</span>
+    </div>
+    <div class="topbar-actions">
+      <label class="sr-only" for="accountSelect">Account</label>
+      <select id="accountSelect" hidden></select>
+      <button class="btn ghost" id="btnImport" type="button">Import CSV</button>
+      <button class="btn primary" id="btnConnect" type="button">Connect Tradovate</button>
+      <button class="btn icon" id="btnTheme" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <!-- Connect dialog -->
+  <dialog id="dlgConnect">
+    <form method="dialog" id="formConnect" class="dlg">
+      <h2>Connect Tradovate</h2>
+      <p class="muted small">Use the Tradovate login that holds your Apex accounts. This is read-only: PropPath never places or changes orders. Your password and token stay in memory and are never saved.</p>
+      <div class="seg" role="radiogroup" aria-label="Login method">
+        <label><input type="radio" name="method" value="creds" checked /> Username + API key</label>
+        <label><input type="radio" name="method" value="token" /> Access token</label>
+      </div>
+      <div data-method="creds">
+        <label>Username <input name="name" autocomplete="username" /></label>
+        <label>Password <input name="password" type="password" autocomplete="current-password" /></label>
+        <div class="row2">
+          <label>API client ID (cid) <input name="cid" inputmode="numeric" /></label>
+          <label>API secret (sec) <input name="sec" type="password" autocomplete="off" /></label>
+        </div>
+        <p class="muted small">API keys come from Tradovate → Application Settings → API Access. They need Tradovate's API add-on. No API access? Use <b>Import CSV</b>. It works for every account.</p>
+      </div>
+      <div data-method="token" hidden>
+        <label>Access token <textarea name="token" rows="3" spellcheck="false"></textarea></label>
+      </div>
+      <label>Environment
+        <select name="env">
+          <option value="demo">Demo / Sim (most Apex eval &amp; PA accounts)</option>
+          <option value="live">Live</option>
+        </select>
+      </label>
+      <p class="form-error" id="connectError" role="alert"></p>
+      <div class="dlg-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" id="btnDoConnect" value="default">Connect</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Choose accounts after connecting -->
+  <dialog id="dlgPick">
+    <form method="dialog" class="dlg" id="formPick">
+      <h2>Choose accounts</h2>
+      <p class="muted small">Check the phase and size. PropPath guesses them from the account name and balance.</p>
+      <div id="pickList"></div>
+      <p class="form-error" id="pickError" role="alert"></p>
+      <div class="dlg-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" value="default">Import selected</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- CSV import -->
+  <dialog id="dlgImport">
+    <form method="dialog" class="dlg" id="formImport">
+      <h2>Import trades</h2>
+      <ol class="small steps">
+        <li>In Tradovate, open <b>Account Reports</b> and pick the account.</li>
+        <li>Choose the <b>Performance</b> tab, set the date range to cover the whole account and click <b>Download</b>.</li>
+        <li>Drop the CSV here. NinjaTrader trade exports and most trade-journal CSVs work too.</li>
+      </ol>
+      <label>Into account
+        <select name="target" id="importTarget"></select>
+      </label>
+      <div id="newAcctFields" class="row3">
+        <label>Name <input name="name" placeholder="APEX-12345-01" /></label>
+        <label>Phase
+          <select name="phase"><option value="eval">Evaluation</option><option value="pa">PA (funded)</option></select>
+        </label>
+        <label>Size
+          <select name="size" class="size-select"></select>
+        </label>
+      </div>
+      <label class="drop" id="drop">
+        <input type="file" name="file" accept=".csv,text/csv" />
+        <span id="dropText">Drop a CSV here or <u>browse</u></span>
+      </label>
+      <div class="row2">
+        <label>Commission per contract, round-turn ($)
+          <input name="commission" type="number" step="0.01" min="0" value="0" />
+        </label>
+        <label>Current balance (optional)
+          <input name="balance" type="number" step="0.01" placeholder="From Tradovate" />
+        </label>
+      </div>
+      <p class="muted small">Tradovate's Performance P&amp;L doesn't include commissions. Add yours (often $3–4 per contract round-turn on Apex) or enter your current balance so every number matches.</p>
+      <p class="form-error" id="importError" role="alert"></p>
+      <div class="dlg-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" value="default">Import</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

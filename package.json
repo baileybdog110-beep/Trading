@@ -1,0 +1,14 @@
+{
+  "name": "prop-path",
+  "version": "1.0.0",
+  "description": "Progress tracker, trade analyzer and coach for Apex / Tradovate evaluation and PA accounts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
