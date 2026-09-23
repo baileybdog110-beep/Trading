@@ -141,7 +141,13 @@ app.addEventListener('click', (e) => {
   if (act?.dataset.action === 'demo') loadDemo();
   if (e.target.id === 'btnDelete') {
     const acct = activeAccount();
-    if (acct && confirm(`Delete "${acct.name}" and its trades from this browser?`)) {
+    // Two-step confirm in the page itself (no browser confirm dialog).
+    if (e.target.dataset.armed !== '1') {
+      e.target.dataset.armed = '1';
+      e.target.textContent = `Click again to delete "${acct.name}"`;
+      return;
+    }
+    if (acct) {
       state.accounts = state.accounts.filter((a) => a.id !== acct.id);
       state.activeId = state.accounts[0]?.id || null;
       state.tab = 'progress';
@@ -320,7 +326,7 @@ $('#formConnect').addEventListener('submit', async (e) => {
     openPicker(accounts.map((a, i) => ({ ...a, balance: balances[i] })));
   } catch (ex) {
     err.textContent = ex.message.includes('Failed to fetch')
-      ? 'Could not reach the PropPath server. Start it with "npm start" and open http://localhost:3000.'
+      ? 'Connecting to Tradovate needs the PropPath server running on your computer ("npm start", then open http://localhost:3000). On this hosted page, use Import CSV instead.'
       : ex.message;
   } finally {
     btn.disabled = false;
