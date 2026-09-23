@@ -58,7 +58,7 @@ export function progressEval(account, m) {
   <div class="tiles">
     ${tile('Balance', money(p.balance), `Started at ${money(r.startBalance)}`)}
     ${tile('Profit', money(p.profit, true), `Target ${money(r.profitTarget)}`, cls(p.profit))}
-    ${tile('Left to target', money(p.profitRemaining), p.profitRemaining ? `${pct(1 - p.targetPct)} to go` : 'Target reached')}
+    ${tile('Left to target', money(p.profitRemaining), p.profitRemaining ? `Reach ${money(p.targetBalance)}` : 'Target reached')}
     ${tile('Drawdown left', money(p.ddRemaining), `Threshold ${money(p.threshold)}${p.thresholdLocked ? ' (locked)' : ''}`, p.ddRemaining < r.maxDrawdown * 0.35 ? 'neg-text' : '')}
   </div>
   <div class="grid2">

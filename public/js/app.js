@@ -211,12 +211,12 @@ function loadDemo() {
   const evalAcct = {
     id: uid(), name: 'APEX-DEMO-01', source: 'demo',
     rules: apexRules(50000, 'eval'),
-    trades: sampleTrades({ seed: 11, days: 12, endDate: now }),
+    trades: sampleTrades({ seed: 20, days: 12, endDate: now }),
   };
   const paAcct = {
     id: uid(), name: 'PAAPEX-DEMO-02', source: 'demo',
     rules: apexRules(50000, 'pa'),
-    trades: sampleTrades({ seed: 5, days: 18, endDate: now }),
+    trades: sampleTrades({ seed: 45, days: 18, endDate: now }),
   };
   state.accounts.push(evalAcct, paAcct);
   state.activeId = evalAcct.id;

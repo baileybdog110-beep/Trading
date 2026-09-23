@@ -226,8 +226,9 @@ function paProgress(account, s, trades) {
     },
   ];
 
-  const safetyNetReached = s.balance >= safetyNet || s.thresholdLocked;
-  const contractLimit = r.halfContractsUntilSafetyNet && !safetyNetReached ? Math.floor(r.maxContracts / 2) : r.maxContracts;
+  const safetyNetReached = s.balance >= safetyNet;
+  // Full size unlocks once the threshold stops trailing (the peak cleared the safety net).
+  const contractLimit = r.halfContractsUntilSafetyNet && !safetyNetReached && !s.thresholdLocked ? Math.floor(r.maxContracts / 2) : r.maxContracts;
   const eligible = !s.busted && checks.every((c) => c.ok);
 
   return {
