@@ -56,7 +56,9 @@ iCloud Drive.
 On touch screens:
 
 - **Tap** a region to see its name and grade, then **Details** for the evidence. **Drag** with
-  one finger to rotate, and **pinch** to zoom.
+  one finger to rotate, and **pinch** to zoom. Angles, hemispheres and cutaways are under **View**.
+- Tap an area in the **Highlighted** list to open its details; **Show on the brain** scrolls back
+  up to the brain, already turned to show it.
 - On narrow screens the timeline shows segment times only, and dialogs open as bottom sheets.
 
 iPhone and iPad notes:
@@ -102,7 +104,10 @@ media ──► detected features ──(rules: data/evidence/rules.json)──�
    - Segments are cut at changes in audio class, cuts, sudden sounds, and transcript pauses, within length limits that scale with the media's duration.
 2. **Link.** Every rule in `rules.json` names a feature, a process, an applicability level, a minimum detection confidence, and the assumptions it makes about the person. Interpretive features only count once a person confirms them.
 3. **Look up.** `src/pipeline/mapping.ts` can only reach a region through an `Association` record, and every association must cite at least one supporting source (this is enforced by tests and at app start-up). A process with no association returns an explicit **insufficient evidence** record from `unsupported.json`.
-4. **Show.** The 3D view uses the CerebrA atlas. It has left and right labels, orientation labels, camera presets, hemisphere toggles, a see-through cortex mode, and sagittal, coronal, and axial cutaways for internal structures. A second layer shows the Yeo 7 networks. Clicking a region shows the detected feature, the proposed process, whether the research applies directly, the claim, a grade rationale (consistency, quality, directness, replication), each source's actual finding and design, and the limitations.
+4. **Show.** The 3D view uses the CerebrA atlas. It has left and right labels, orientation labels, and a **View** menu with camera presets, hemisphere toggles, a see-through cortex mode, and sagittal, coronal, and axial cutaways for internal structures. A second layer shows the Yeo 7 networks. A segment stepper above the brain moves through the media.
+   - The **Highlighted** tab (the default) explains, in plain language, what a coloured area means and lists each coloured area: a one-sentence summary of what that area is generally known for (`summary` in `regions.json` and `networks.json`, display only), its evidence grade, and *why it is coloured* (the research-linked process and the detected feature that led to it). Areas whose findings apply most directly come first; the list shows five and can be expanded. It also says which modalities the colours are based on.
+   - Choosing an area turns the brain to show it (medial areas are shown from the midline with the other hemisphere hidden; deep structures with a see-through cortex). Its details give the claim, a grade rationale (consistency, quality, directness, replication), each source's actual finding and design, and the limitations.
+   - The **Reasoning** tab shows the full feature → process → research chain, including rules that were not applied, and the optional listener questions. **Features** lets you confirm or reject detected features.
 
 ### Design choices that keep it from reading as a brain scan
 
@@ -189,8 +194,9 @@ npm run test:e2e  # headless browser + tool transports (see below)
 `npm run test:e2e` builds the app and the tool, then runs:
 
 - `e2e/smoke.mjs`: desktop demo, WebM + SRT, MP3, WAV, the MP4 error path, and tablet/phone overflow;
-- `e2e/mobile.mjs`: iPhone and iPad emulation over a plain-http LAN address. It taps the brain, Details and the timeline, opens dialogs, checks for horizontal overflow and small controls, and analyses a video on the phone;
+- `e2e/mobile.mjs`: iPhone and iPad emulation over a plain-http LAN address. It taps the brain, Details, the Highlighted list, Show on the brain and the timeline, opens dialogs, checks for horizontal overflow and small controls, and analyses a video on the phone;
 - `e2e/tool-smoke.mjs`: the MCP stdio server, the HTTP API (auth, OpenAPI, no local-file access) and MCP over HTTP, using the official MCP client;
+- `e2e/viewports.mjs`: design-review screenshots at desktop, tablet and phone sizes in light and dark themes (landing, demo, area details, View menu, Reasoning), failing on console errors or horizontal overflow;
 - `e2e/hosted.mjs`: the hosted build under a strict Content-Security-Policy (no eval, no outside requests): demo, atlas loading, copy export, and video analysis with face detection.
 
 The tests check that:
@@ -214,6 +220,7 @@ confidence and every feature can be corrected.
 - Networks: **Schaefer 2018** 7-network assignment (Yeo et al. 2011, MIT licence), on the ICBM 2009c asymmetric template. The overlay alignment is approximate.
 - Rebuild with `scripts/atlas/fetch_inputs.sh atlas_inputs && npm run atlas`. See [`public/atlas/ATTRIBUTION.md`](public/atlas/ATTRIBUTION.md).
 - Face detector weights: @vladmandic/face-api (MIT).
+- Typefaces: Source Sans 3 and Source Serif 4 (SIL Open Font License 1.1), bundled through `@fontsource-variable`, so no font requests leave the device.
 
 ## Known limitations and next steps
 

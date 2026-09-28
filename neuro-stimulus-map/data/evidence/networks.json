@@ -1,16 +1,23 @@
 [
   {"id": "yeo7_vis", "name": "Visual network", "meshes": {"L": "L_yeo7_vis", "R": "R_yeo7_vis"},
+   "summary": "Areas at the back of the brain that work together to process what you see.",
    "orientation": "Occipital and adjacent cortex whose resting activity fluctuates together; overlaps visual field maps."},
   {"id": "yeo7_sommot", "name": "Somatomotor network", "meshes": {"L": "L_yeo7_sommot", "R": "R_yeo7_sommot"},
+   "summary": "Areas around the central sulcus for movement and touch; in this layout it also includes auditory cortex.",
    "orientation": "Cortex around the central sulcus; in this parcellation it also includes auditory cortex on the superior temporal plane."},
   {"id": "yeo7_dorsattn", "name": "Dorsal attention network", "meshes": {"L": "L_yeo7_dorsattn", "R": "R_yeo7_dorsattn"},
+   "summary": "Areas that deliberately direct attention to places and objects, including motion-sensitive cortex.",
    "orientation": "Intraparietal sulcus, superior parietal cortex, frontal eye fields and motion-sensitive occipitotemporal cortex; associated with goal-directed attention."},
   {"id": "yeo7_salventattn", "name": "Salience / ventral attention network", "meshes": {"L": "L_yeo7_salventattn", "R": "R_yeo7_salventattn"},
+   "summary": "Areas that notice important or unexpected events and switch attention to them.",
    "orientation": "Anterior insula, anterior/mid cingulate, temporoparietal junction and inferior frontal regions; associated with detecting behaviourally relevant events."},
   {"id": "yeo7_limbic", "name": "Limbic network (cortical)", "meshes": {"L": "L_yeo7_limbic", "R": "R_yeo7_limbic"},
+   "summary": "Orbitofrontal and front temporal cortex, involved in value and meaning; less reliably mapped by fMRI.",
    "orientation": "Orbitofrontal cortex and anterior temporal lobe. These areas have weaker fMRI signal, so this network is less reliably defined. Subcortical limbic structures are not part of this cortical parcellation."},
   {"id": "yeo7_cont", "name": "Frontoparietal control network", "meshes": {"L": "L_yeo7_cont", "R": "R_yeo7_cont"},
+   "summary": "Areas for flexible, effortful control: keeping goals in mind and adapting when things change.",
    "orientation": "Lateral prefrontal and posterior parietal cortex; associated with flexible, effortful control."},
   {"id": "yeo7_default", "name": "Default network", "meshes": {"L": "L_yeo7_default", "R": "R_yeo7_default"},
+   "summary": "Areas that support memory, thinking about people and building up the meaning of a story over time.",
    "orientation": "Medial prefrontal cortex, posterior cingulate/precuneus, angular gyrus and lateral temporal cortex; associated with memory, social thought and integrating context - not with 'doing nothing'."}
 ]

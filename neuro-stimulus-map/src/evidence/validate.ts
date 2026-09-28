@@ -46,13 +46,19 @@ export function validateEvidenceDB(db: EvidenceDB, atlasMeshIds?: Set<string>): 
     else if (!v.via?.length || !v.checkedOn) errors.push(`source ${s.id}: verification must list where and when it was checked`);
   }
 
+  const checkSummary = (what: string, text: string | undefined) => {
+    if (!text?.trim()) errors.push(`${what}: missing plain-language summary`);
+    else if (text.length > 160) errors.push(`${what}: summary longer than 160 characters`);
+  };
   for (const r of db.regions) {
+    checkSummary(`region ${r.id}`, r.summary);
     if (!Object.keys(r.meshes).length) errors.push(`region ${r.id}: no meshes`);
     for (const mesh of Object.values(r.meshes)) {
       if (atlasMeshIds && mesh && !atlasMeshIds.has(mesh)) errors.push(`region ${r.id}: mesh ${mesh} not in atlas`);
     }
   }
   for (const n of db.networks) {
+    checkSummary(`network ${n.id}`, n.summary);
     for (const mesh of [n.meshes.L, n.meshes.R]) {
       if (atlasMeshIds && !atlasMeshIds.has(mesh)) errors.push(`network ${n.id}: mesh ${mesh} not in atlas`);
     }

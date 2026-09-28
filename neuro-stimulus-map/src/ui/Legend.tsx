@@ -1,23 +1,24 @@
 import type { ListenerContext } from '../pipeline/types';
-import { GRADE_LABEL } from './colors';
+import { GRADE_SHORT } from './colors';
 
 export function Legend() {
   return (
     <div className="legend" aria-label="Colour legend">
-      <div className="legend-title">Research evidence for an association</div>
+      <span className="legend-title">Research evidence linking the area to this content</span>
       <ul>
         {(['strong', 'moderate', 'limited', 'contested'] as const).map((g) => (
           <li key={g}>
             <span className={`swatch big grade-${g}`} aria-hidden="true" />
-            {GRADE_LABEL[g]}
+            {GRADE_SHORT[g]}
+            {g === 'contested' ? ' (conflicting)' : ''}
           </li>
         ))}
         <li>
           <span className="swatch big grade-none" aria-hidden="true" />
-          No verified association for this segment (not "inactive")
+          No verified link
         </li>
       </ul>
-      <p className="legend-note">Colours are evidence categories, not activity or intensity.</p>
+      <p className="legend-note">Colours show the strength of published research, not brain activity. Gray means no verified link for this segment, not "inactive".</p>
     </div>
   );
 }

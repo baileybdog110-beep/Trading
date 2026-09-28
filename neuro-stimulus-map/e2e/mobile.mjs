@@ -64,6 +64,15 @@ try {
       await page.screenshot({ path: `${OUT}/20-${label}-tap.png` });
       await page.tap('.tap-card >> text=Details');
       await page.waitForSelector('.region-panel');
+      await page.tap('text=All highlighted areas');
+      await page.tap('.hl-card .hl-title >> nth=0');
+      await page.waitForSelector('.region-panel');
+      if (label === 'iphone') {
+        await page.tap('text=Show on the brain');
+        await page.waitForTimeout(600);
+        const top = await page.locator('.col-center').evaluate((el) => el.getBoundingClientRect().top);
+        if (Math.abs(top) > 40) throw new Error(`"Show on the brain" did not bring the brain into view (top ${top})`);
+      }
       await page.tap('.seg-block >> nth=3');
       await page.waitForTimeout(200);
       await page.tap('text=Evidence database');

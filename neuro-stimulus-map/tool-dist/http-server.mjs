@@ -19734,6 +19734,7 @@ var regions_default = [
     meshes: { L: "L_transverse_temporal", R: "R_transverse_temporal" },
     lobe: "Temporal",
     kind: "cortical",
+    summary: "Home of primary auditory cortex, the first area of the cerebral cortex to receive sound signals from the ears.",
     orientation: "A small gyrus on the upper surface of the temporal lobe, hidden inside the lateral (Sylvian) fissure. It contains primary auditory cortex, one of the first cortical stages for sound.",
     multifunction: "Responds to almost any audible sound; responses depend on acoustic properties such as frequency and level, and are modulated by attention."
   },
@@ -19743,6 +19744,7 @@ var regions_default = [
     meshes: { L: "L_superior_temporal", R: "R_superior_temporal" },
     lobe: "Temporal",
     kind: "cortical",
+    summary: "Wraps around primary auditory cortex and helps make sense of complex sounds such as speech, voices and music.",
     orientation: "The top gyrus of the lateral temporal lobe. It includes non-primary auditory cortex (e.g., planum temporale and planum polare) and borders the superior temporal sulcus.",
     multifunction: "Involved in hearing complex sounds, speech, voices and music, and in audiovisual and social perception along the adjacent sulcus."
   },
@@ -19752,6 +19754,7 @@ var regions_default = [
     meshes: { L: "L_middle_temporal", R: "R_middle_temporal" },
     lobe: "Temporal",
     kind: "cortical",
+    summary: "Helps with word meanings and understanding language; its rear end, next to the visual areas, is involved in seeing motion.",
     orientation: "The gyrus below the superior temporal gyrus. In this atlas it includes the lower bank of the superior temporal sulcus.",
     multifunction: "Contributes to word meaning, language comprehension, social perception and, at its posterior end near occipital cortex, visual motion."
   },
@@ -19761,6 +19764,7 @@ var regions_default = [
     meshes: { L: "L_inferior_temporal", R: "R_inferior_temporal" },
     lobe: "Temporal",
     kind: "cortical",
+    summary: "Part of the visual pathway that recognises objects and links what you see to what you know.",
     orientation: "The lowest gyrus on the lateral temporal surface, part of the ventral visual stream.",
     multifunction: "Object recognition, visual memory and semantic knowledge."
   },
@@ -19770,6 +19774,7 @@ var regions_default = [
     meshes: { L: "L_fusiform", R: "R_fusiform" },
     lobe: "Temporal/Occipital",
     kind: "cortical",
+    summary: "On the underside of the brain; different parts are specialised for seeing faces, written words, bodies and objects.",
     orientation: "A long gyrus on the underside of the temporal and occipital lobes. Face-selective cortex (the 'fusiform face area') lies on its lateral part; other parts prefer words, bodies or objects.",
     multifunction: "High-level vision (faces, words, objects) and some semantic processing."
   },
@@ -19779,6 +19784,7 @@ var regions_default = [
     meshes: { L: "L_parahippocampal", R: "R_parahippocampal" },
     lobe: "Temporal (medial)",
     kind: "cortical",
+    summary: "Helps you take in scenes and places and remember the context in which things happened.",
     orientation: "On the medial underside of the temporal lobe, next to the hippocampus. Its posterior part overlaps the 'parahippocampal place area'.",
     multifunction: "Scene and spatial-layout perception, navigation, contextual associations and memory."
   },
@@ -19788,6 +19794,7 @@ var regions_default = [
     meshes: { L: "L_entorhinal", R: "R_entorhinal" },
     lobe: "Temporal (medial)",
     kind: "cortical",
+    summary: "The main gateway between the hippocampus and the rest of the cortex, important for memory and finding your way.",
     orientation: "Anterior medial temporal cortex that forms the main gateway between the hippocampus and the neocortex.",
     multifunction: "Memory formation, spatial navigation and time-in-experience coding."
   },
@@ -19797,6 +19804,7 @@ var regions_default = [
     meshes: { L: "L_lateral_occipital", R: "R_lateral_occipital" },
     lobe: "Occipital",
     kind: "cortical",
+    summary: "Recognises object shapes; the motion-sensitive area MT+ sits at its front edge.",
     orientation: "The outer surface of the occipital lobe. Motion-sensitive area hMT+/V5 lies near its anterior border with temporal cortex; object-selective cortex (LOC) lies here too.",
     multifunction: "Object shape, visual motion (near the occipitotemporal junction) and body perception."
   },
@@ -19806,6 +19814,7 @@ var regions_default = [
     meshes: { L: "L_pericalcarine", R: "R_pericalcarine" },
     lobe: "Occipital (medial)",
     kind: "cortical",
+    summary: "Primary visual cortex (V1), the first area of the cerebral cortex to receive visual signals from the eyes.",
     orientation: "Cortex lining the calcarine sulcus on the inner surface of the occipital lobe; it corresponds largely to primary visual cortex (V1).",
     multifunction: "Early processing of the visual image (contrast, orientation, position in the visual field)."
   },
@@ -19815,6 +19824,7 @@ var regions_default = [
     meshes: { L: "L_cuneus", R: "R_cuneus" },
     lobe: "Occipital (medial)",
     kind: "cortical",
+    summary: "Early visual cortex on the inner surface at the back of the brain, mapping the lower half of what you see.",
     orientation: "Wedge-shaped medial occipital cortex above the calcarine sulcus, containing early visual areas representing the lower visual field.",
     multifunction: "Early and intermediate visual processing."
   },
@@ -19824,6 +19834,7 @@ var regions_default = [
     meshes: { L: "L_lingual", R: "R_lingual" },
     lobe: "Occipital (medial)",
     kind: "cortical",
+    summary: "Early visual cortex mapping the upper half of what you see; its front part borders areas for scenes and words.",
     orientation: "Medial occipital cortex below the calcarine sulcus, containing early visual areas representing the upper visual field; its anterior part borders scene-selective cortex.",
     multifunction: "Early visual processing, and contributions to scene and word processing."
   },
@@ -19833,6 +19844,7 @@ var regions_default = [
     meshes: { L: "L_superior_parietal", R: "R_superior_parietal" },
     lobe: "Parietal",
     kind: "cortical",
+    summary: "Directs attention through space and guides eye and hand movements.",
     orientation: "Upper parietal cortex behind the postcentral gyrus, along the intraparietal sulcus.",
     multifunction: "Spatial attention, visually guided action and eye movements."
   },
@@ -19842,6 +19854,7 @@ var regions_default = [
     meshes: { L: "L_inferior_parietal", R: "R_inferior_parietal" },
     lobe: "Parietal",
     kind: "cortical",
+    summary: "Includes the angular gyrus; helps combine meaning across words and ideas, shift attention and think about other people.",
     orientation: "Posterior lower parietal cortex; in this atlas it mainly corresponds to the angular gyrus region and forms part of the temporoparietal junction.",
     multifunction: "Semantic integration, attention reorienting, thinking about others' mental states and memory for events."
   },
@@ -19851,6 +19864,7 @@ var regions_default = [
     meshes: { L: "L_supramarginal", R: "R_supramarginal" },
     lobe: "Parietal",
     kind: "cortical",
+    summary: "Holds speech sounds briefly in mind and contributes to attention, touch and understanding others.",
     orientation: "Anterior inferior parietal cortex curving around the end of the Sylvian fissure; part of the temporoparietal junction.",
     multifunction: "Phonological working memory, attention reorienting, touch/body processing and social cognition."
   },
@@ -19860,6 +19874,7 @@ var regions_default = [
     meshes: { L: "L_precuneus", R: "R_precuneus" },
     lobe: "Parietal (medial)",
     kind: "cortical",
+    summary: "Involved in memory, mental imagery, self-reflection and keeping track of the context of a story.",
     orientation: "Medial parietal cortex in front of the occipital lobe; a core part of the posterior medial cortex.",
     multifunction: "Episodic memory, imagery, self-referential thought, spatial processing and integration of narrative context."
   },
@@ -19869,6 +19884,7 @@ var regions_default = [
     meshes: { L: "L_posterior_cingulate", R: "R_posterior_cingulate" },
     lobe: "Limbic/medial",
     kind: "cortical",
+    summary: "A hub of the default network, involved in memory, self-related thought and keeping track of context.",
     orientation: "Middle-to-posterior part of the cingulate gyrus on the medial surface.",
     multifunction: "Default-network hub linked to memory, self-related thought and integration of context."
   },
@@ -19878,6 +19894,7 @@ var regions_default = [
     meshes: { L: "L_isthmus_cingulate", R: "R_isthmus_cingulate" },
     lobe: "Limbic/medial",
     kind: "cortical",
+    summary: "Includes retrosplenial cortex, which helps place scenes and events in space and supports navigation.",
     orientation: "The narrow posterior end of the cingulate gyrus, including retrosplenial cortex.",
     multifunction: "Spatial memory, scene context and navigation."
   },
@@ -19887,6 +19904,7 @@ var regions_default = [
     meshes: { L: "L_caudal_anterior_cingulate", R: "R_caudal_anterior_cingulate" },
     lobe: "Frontal/limbic (medial)",
     kind: "cortical",
+    summary: "Notices conflicts, errors and important events; part of the salience network.",
     orientation: "The dorsal/posterior part of the anterior cingulate cortex, above the corpus callosum.",
     multifunction: "Performance monitoring, conflict, pain and salience; part of the salience network."
   },
@@ -19896,6 +19914,7 @@ var regions_default = [
     meshes: { L: "L_rostral_anterior_cingulate", R: "R_rostral_anterior_cingulate" },
     lobe: "Frontal/limbic (medial)",
     kind: "cortical",
+    summary: "Involved in regulating emotions, weighing value and self-related thought.",
     orientation: "The front part of the anterior cingulate, wrapping around the front of the corpus callosum.",
     multifunction: "Emotion regulation, valuation and self-related processing."
   },
@@ -19905,6 +19924,7 @@ var regions_default = [
     meshes: { L: "L_superior_frontal", R: "R_superior_frontal" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Top of the frontal lobe. Its rear inner part (the SMA) helps time and sequence movements; its front inner part supports thinking about self and others.",
     orientation: "The top frontal gyrus, extending onto the medial surface. Its posterior medial part contains the supplementary motor area (SMA); its anterior medial part is part of medial prefrontal cortex.",
     multifunction: "Motor sequencing and timing (SMA), working memory, and social/self-related thought (medial prefrontal)."
   },
@@ -19914,6 +19934,7 @@ var regions_default = [
     meshes: { L: "L_caudal_middle_frontal", R: "R_caudal_middle_frontal" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Plans movements and eye movements, and helps control attention and working memory.",
     orientation: "Posterior part of the middle frontal gyrus, just in front of the precentral gyrus (dorsal premotor cortex and frontal eye fields lie nearby).",
     multifunction: "Motor planning, eye movements, attention control and working memory."
   },
@@ -19923,6 +19944,7 @@ var regions_default = [
     meshes: { L: "L_rostral_middle_frontal", R: "R_rostral_middle_frontal" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Dorsolateral prefrontal cortex: keeps information in mind, makes plans and keeps behaviour on track.",
     orientation: "Anterior middle frontal gyrus (dorsolateral prefrontal cortex).",
     multifunction: "Working memory, planning and cognitive control; part of the frontoparietal control network."
   },
@@ -19932,6 +19954,7 @@ var regions_default = [
     meshes: { L: "L_pars_opercularis", R: "R_pars_opercularis" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Rear part of Broca's area on the left side; involved in planning speech, language and watching actions.",
     orientation: "Posterior part of the inferior frontal gyrus; with pars triangularis it forms the classical 'Broca's area' in the left hemisphere.",
     multifunction: "Language (especially left), speech planning, action observation and cognitive control; different nearby subregions do different jobs."
   },
@@ -19941,6 +19964,7 @@ var regions_default = [
     meshes: { L: "L_pars_triangularis", R: "R_pars_triangularis" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Middle part of Broca's area on the left side; involved in understanding sentences and retrieving word meanings.",
     orientation: "Middle part of the inferior frontal gyrus; part of classical 'Broca's area' in the left hemisphere.",
     multifunction: "Sentence-level language, semantic retrieval and cognitive control."
   },
@@ -19950,6 +19974,7 @@ var regions_default = [
     meshes: { L: "L_pars_orbitalis", R: "R_pars_orbitalis" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Front, lower part of the inferior frontal gyrus; involved in meaning and evaluation.",
     orientation: "Anterior-inferior part of the inferior frontal gyrus, bordering orbitofrontal cortex.",
     multifunction: "Semantic processing and evaluation."
   },
@@ -19959,6 +19984,7 @@ var regions_default = [
     meshes: { L: "L_precentral", R: "R_precentral" },
     lobe: "Frontal",
     kind: "cortical",
+    summary: "Primary motor cortex, which sends movement commands; its front edge also responds to speech, rhythm and watching actions.",
     orientation: "The gyrus in front of the central sulcus, containing primary motor cortex and, at its front edge, premotor cortex.",
     multifunction: "Movement control; premotor parts also respond during speech perception, action observation and rhythm."
   },
@@ -19968,6 +19994,7 @@ var regions_default = [
     meshes: { L: "L_postcentral", R: "R_postcentral" },
     lobe: "Parietal",
     kind: "cortical",
+    summary: "Primary somatosensory cortex, which receives touch and body-position signals.",
     orientation: "The gyrus behind the central sulcus, containing primary somatosensory cortex.",
     multifunction: "Touch and body sensation."
   },
@@ -19977,6 +20004,7 @@ var regions_default = [
     meshes: { L: "L_paracentral", R: "R_paracentral" },
     lobe: "Frontal/Parietal (medial)",
     kind: "cortical",
+    summary: "On the inner surface of the brain; controls and senses the legs and feet.",
     orientation: "Medial continuation of the precentral and postcentral gyri.",
     multifunction: "Motor and sensory representation of the legs and feet."
   },
@@ -19986,6 +20014,7 @@ var regions_default = [
     meshes: { L: "L_lateral_orbitofrontal", R: "R_lateral_orbitofrontal" },
     lobe: "Frontal (orbital)",
     kind: "cortical",
+    summary: "Above the eyes, towards the sides; involved in weighing value, changing decisions and emotion.",
     orientation: "The outer part of the frontal lobe's underside, above the eyes.",
     multifunction: "Valuation, flexible decision-making and emotion."
   },
@@ -19995,6 +20024,7 @@ var regions_default = [
     meshes: { L: "L_medial_orbitofrontal", R: "R_medial_orbitofrontal" },
     lobe: "Frontal (orbital/medial)",
     kind: "cortical",
+    summary: "Above the eyes, near the midline; involved in value, reward, social judgement and linking memories.",
     orientation: "The inner part of the frontal lobe's underside, near the midline.",
     multifunction: "Valuation, reward, self-related and social judgement, and memory integration."
   },
@@ -20004,6 +20034,7 @@ var regions_default = [
     meshes: { L: "L_insula", R: "R_insula" },
     lobe: "Insular",
     kind: "cortical",
+    summary: "Folded deep inside the brain's side; tracks body signals and taste, flags important events, and contributes to emotion and speech.",
     orientation: "Cortex folded deep inside the lateral fissure, covered by the frontal, parietal and temporal opercula.",
     multifunction: "Bodily (interoceptive) awareness, taste, salience detection, emotion and speech motor control."
   },
@@ -20013,6 +20044,7 @@ var regions_default = [
     meshes: { L: "L_amygdala", R: "R_amygdala" },
     lobe: "Medial temporal (subcortical)",
     kind: "subcortical",
+    summary: "Deep in the temporal lobe; flags what is relevant or important, including social and threat-related signals, and supports emotional learning.",
     orientation: "An almond-shaped group of nuclei deep in the anterior medial temporal lobe, just in front of the hippocampus.",
     multifunction: "Relevance and salience detection, learning about value and threat, social perception. It is not a dedicated 'fear centre'."
   },
@@ -20022,6 +20054,7 @@ var regions_default = [
     meshes: { L: "L_hippocampus", R: "R_hippocampus" },
     lobe: "Medial temporal (subcortical in this atlas)",
     kind: "subcortical",
+    summary: "Forms and retrieves memories of events, supports spatial memory and marks the boundaries between events.",
     orientation: "A curved structure along the floor of the lateral ventricle's temporal horn, in the medial temporal lobe.",
     multifunction: "Forming and retrieving memories of events, spatial and relational memory, and marking boundaries between events."
   },
@@ -20031,6 +20064,7 @@ var regions_default = [
     meshes: { L: "L_accumbens_area", R: "R_accumbens_area" },
     lobe: "Basal ganglia",
     kind: "subcortical",
+    summary: "Part of the ventral striatum; involved in anticipating and learning about rewards, and in motivation.",
     orientation: "Ventral part of the striatum where the caudate and putamen meet, beneath the front of the lateral ventricle.",
     multifunction: "Reward anticipation and learning, motivation. Not a single 'pleasure centre': it responds to many kinds of reward and salience."
   },
@@ -20040,6 +20074,7 @@ var regions_default = [
     meshes: { L: "L_caudate", R: "R_caudate" },
     lobe: "Basal ganglia",
     kind: "subcortical",
+    summary: "Part of the striatum; involved in goal-directed learning, anticipation and control.",
     orientation: "A C-shaped nucleus of the dorsal striatum curving along the wall of the lateral ventricle.",
     multifunction: "Goal-directed learning, anticipation and cognitive control."
   },
@@ -20049,6 +20084,7 @@ var regions_default = [
     meshes: { L: "L_putamen", R: "R_putamen" },
     lobe: "Basal ganglia",
     kind: "subcortical",
+    summary: "Part of the striatum; involved in movement, habits, timing and keeping a beat.",
     orientation: "The outer part of the dorsal striatum, lateral to the globus pallidus.",
     multifunction: "Motor control, habits, timing and beat processing."
   },
@@ -20058,6 +20094,7 @@ var regions_default = [
     meshes: { L: "L_pallidum", R: "R_pallidum" },
     lobe: "Basal ganglia",
     kind: "subcortical",
+    summary: "An output stage of the basal ganglia that helps regulate movement and motivated behaviour.",
     orientation: "A basal ganglia nucleus medial to the putamen; a main output stage of the striatum.",
     multifunction: "Regulation of movement and motivated behaviour."
   },
@@ -20067,6 +20104,7 @@ var regions_default = [
     meshes: { L: "L_thalamus", R: "R_thalamus" },
     lobe: "Diencephalon",
     kind: "subcortical",
+    summary: "A relay at the centre of the brain that passes hearing, vision and other signals to the cortex, and helps regulate alertness and attention.",
     orientation: "Paired egg-shaped structures at the centre of the brain on either side of the third ventricle.",
     multifunction: "Relays and regulates signals to the cortex (including hearing via the medial geniculate and vision via the lateral geniculate), arousal and attention."
   },
@@ -20076,6 +20114,7 @@ var regions_default = [
     meshes: { L: "L_ventral_diencephalon", R: "R_ventral_diencephalon" },
     lobe: "Diencephalon",
     kind: "subcortical",
+    summary: "Includes the hypothalamus, which regulates body functions such as temperature and hormones. This app never infers hormone levels.",
     orientation: "An atlas label grouping structures below the thalamus, including the hypothalamus and nearby nuclei and tracts.",
     multifunction: "Autonomic and hormonal regulation, among many other functions. This app never infers hormone levels."
   },
@@ -20085,6 +20124,7 @@ var regions_default = [
     meshes: { L: "L_basal_forebrain", R: "R_basal_forebrain" },
     lobe: "Basal forebrain",
     kind: "subcortical",
+    summary: "A small area at the base of the forebrain that sends acetylcholine across the cortex, supporting alertness, attention and memory.",
     orientation: "A small region at the base of the forebrain containing cholinergic nuclei that project widely to the cortex.",
     multifunction: "Arousal, attention and memory modulation."
   },
@@ -20094,6 +20134,7 @@ var regions_default = [
     meshes: { L: "L_cerebellum", R: "R_cerebellum" },
     lobe: "Cerebellum",
     kind: "cerebellar",
+    summary: "Coordinates movement and timing, and contributes to language, working memory and prediction.",
     orientation: "The large structure under the occipital lobe; each hemisphere mainly connects with the opposite cerebral hemisphere.",
     multifunction: "Movement coordination and timing, and contributions to language, working memory and prediction."
   },
@@ -20103,6 +20144,7 @@ var regions_default = [
     meshes: { bilateral: "vermis" },
     lobe: "Cerebellum",
     kind: "cerebellar",
+    summary: "The midline strip of the cerebellum; involved in posture, walking and eye movements.",
     orientation: "The midline strip of the cerebellum between the two hemispheres.",
     multifunction: "Posture, gait, eye movements and some affective functions."
   },
@@ -20112,6 +20154,7 @@ var regions_default = [
     meshes: { bilateral: "brainstem" },
     lobe: "Brainstem",
     kind: "brainstem",
+    summary: "Connects the brain to the spinal cord; runs vital functions and arousal, and relays early sound signals.",
     orientation: "Midbrain, pons and medulla connecting the brain to the spinal cord; contains early auditory relay nuclei and arousal systems.",
     multifunction: "Vital functions, arousal, early sensory relays and reflexes."
   }
@@ -20123,42 +20166,49 @@ var networks_default = [
     id: "yeo7_vis",
     name: "Visual network",
     meshes: { L: "L_yeo7_vis", R: "R_yeo7_vis" },
+    summary: "Areas at the back of the brain that work together to process what you see.",
     orientation: "Occipital and adjacent cortex whose resting activity fluctuates together; overlaps visual field maps."
   },
   {
     id: "yeo7_sommot",
     name: "Somatomotor network",
     meshes: { L: "L_yeo7_sommot", R: "R_yeo7_sommot" },
+    summary: "Areas around the central sulcus for movement and touch; in this layout it also includes auditory cortex.",
     orientation: "Cortex around the central sulcus; in this parcellation it also includes auditory cortex on the superior temporal plane."
   },
   {
     id: "yeo7_dorsattn",
     name: "Dorsal attention network",
     meshes: { L: "L_yeo7_dorsattn", R: "R_yeo7_dorsattn" },
+    summary: "Areas that deliberately direct attention to places and objects, including motion-sensitive cortex.",
     orientation: "Intraparietal sulcus, superior parietal cortex, frontal eye fields and motion-sensitive occipitotemporal cortex; associated with goal-directed attention."
   },
   {
     id: "yeo7_salventattn",
     name: "Salience / ventral attention network",
     meshes: { L: "L_yeo7_salventattn", R: "R_yeo7_salventattn" },
+    summary: "Areas that notice important or unexpected events and switch attention to them.",
     orientation: "Anterior insula, anterior/mid cingulate, temporoparietal junction and inferior frontal regions; associated with detecting behaviourally relevant events."
   },
   {
     id: "yeo7_limbic",
     name: "Limbic network (cortical)",
     meshes: { L: "L_yeo7_limbic", R: "R_yeo7_limbic" },
+    summary: "Orbitofrontal and front temporal cortex, involved in value and meaning; less reliably mapped by fMRI.",
     orientation: "Orbitofrontal cortex and anterior temporal lobe. These areas have weaker fMRI signal, so this network is less reliably defined. Subcortical limbic structures are not part of this cortical parcellation."
   },
   {
     id: "yeo7_cont",
     name: "Frontoparietal control network",
     meshes: { L: "L_yeo7_cont", R: "R_yeo7_cont" },
+    summary: "Areas for flexible, effortful control: keeping goals in mind and adapting when things change.",
     orientation: "Lateral prefrontal and posterior parietal cortex; associated with flexible, effortful control."
   },
   {
     id: "yeo7_default",
     name: "Default network",
     meshes: { L: "L_yeo7_default", R: "R_yeo7_default" },
+    summary: "Areas that support memory, thinking about people and building up the meaning of a story over time.",
     orientation: "Medial prefrontal cortex, posterior cingulate/precuneus, angular gyrus and lateral temporal cortex; associated with memory, social thought and integrating context - not with 'doing nothing'."
   }
 ];
@@ -22439,6 +22489,7 @@ function summarizeMap(m) {
     meshId: r.meshId,
     name: meshName(r.meshId),
     kind: r.kind,
+    summary: (r.kind === "region" ? regionById.get(r.id)?.summary : networkById.get(r.id)?.summary) ?? "",
     hemisphere: r.hemi,
     bestEvidenceGrade: r.grade,
     approximate: r.hits.some((h) => h.target.precision === "approximate"),
@@ -22637,11 +22688,12 @@ function getRegion(input) {
       name: r.name,
       lobe: r.lobe,
       kind: r.kind,
+      summary: r.summary,
       orientation: r.orientation,
       multifunction: r.multifunction,
       associations: forTarget("region", r.id)
     })),
-    networks: networks.map((n) => ({ id: n.id, name: n.name, orientation: n.orientation, associations: forTarget("network", n.id) })),
+    networks: networks.map((n) => ({ id: n.id, name: n.name, summary: n.summary, orientation: n.orientation, associations: forTarget("network", n.id) })),
     note: "Regions are multifunctional and work in networks; an association here is a research finding about a process, not evidence that the region is active for any particular content."
   };
 }

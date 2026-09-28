@@ -58,7 +58,6 @@ export function ReasoningPanel({
   const present = Object.values(segment.features).filter((f): f is DetectedFeature => !!f && f.present);
   const fired = map.steps.filter((s) => s.outcome.kind === 'fired');
   const notFired = map.steps.filter((s) => s.outcome.kind !== 'fired');
-  const regions = [...map.meshes.values()].sort((a, b) => a.meshId.localeCompare(b.meshId));
 
   return (
     <div className="reasoning">
@@ -185,34 +184,6 @@ export function ReasoningPanel({
           )}
         </li>
       </ol>
-
-      <h4>Highlighted regions and networks ({regions.length})</h4>
-      <p className="small muted">Accessible list of everything coloured on the map. "≈" marks a functional area that the atlas region only approximates.</p>
-      <table className="region-table">
-        <thead>
-          <tr>
-            <th>Region / network</th>
-            <th>Best evidence</th>
-            <th>From</th>
-          </tr>
-        </thead>
-        <tbody>
-          {regions.map((r) => (
-            <tr key={r.meshId} className={selectedMesh === r.meshId ? 'is-selected' : ''}>
-              <td>
-                <button type="button" className="linklike" onClick={() => onSelectMesh(r.meshId)}>
-                  {meshLabel(r.meshId)}
-                  {r.kind === 'network' ? ' (network view)' : ''}
-                </button>
-              </td>
-              <td>
-                <GradeBadge grade={r.grade} />
-              </td>
-              <td className="small">{[...new Set(r.hits.map((h) => processById.get(h.association.process)?.name))].join('; ')}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

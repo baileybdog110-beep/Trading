@@ -69,6 +69,8 @@ export interface RegionRecord {
   meshes: Partial<Record<'L' | 'R' | 'bilateral', string>>;
   lobe: string;
   kind: 'cortical' | 'subcortical' | 'cerebellar' | 'brainstem';
+  /** One plain-language sentence saying what the area is generally known for. Display only. */
+  summary: string;
   /** Orientation text only. Never used to create a mapping. */
   orientation: string;
   /** Reminder that regions are multifunctional. */
@@ -79,6 +81,8 @@ export interface NetworkRecord {
   id: string;
   name: string;
   meshes: { L: string; R: string };
+  /** One plain-language sentence saying what the network is generally known for. Display only. */
+  summary: string;
   orientation: string;
 }
 

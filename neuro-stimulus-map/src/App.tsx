@@ -15,6 +15,8 @@ import { currentTheme } from './ui/colors';
 import { EvidenceBrowser } from './ui/EvidenceBrowser';
 import { AsrDialog, LlmDialog } from './ui/ExternalDialogs';
 import { FeaturePanel } from './ui/FeaturePanel';
+import { ColourMeaning, HighlightedPanel } from './ui/HighlightedPanel';
+import { formatTime } from './ui/format';
 import { Legend, ListenerContextCard } from './ui/Legend';
 import { MediaPanel, TranscriptPanel } from './ui/MediaPanel';
 import { ReasoningPanel } from './ui/ReasoningPanel';
@@ -23,7 +25,7 @@ import { Timeline } from './ui/Timeline';
 import { UploadPanel } from './ui/UploadPanel';
 import { HOSTED, HOSTED_NETWORK_NOTE } from './util/hosted';
 
-type RightTab = 'reasoning' | 'features' | 'region';
+type RightTab = 'highlighted' | 'reasoning' | 'features';
 
 export default function App() {
   const [session, setSession] = useState<AnalysisSession | null>(null);
@@ -35,7 +37,7 @@ export default function App() {
   const [segId, setSegId] = useState<string | null>(null);
   const [mesh, setMesh] = useState<string | null>(null);
   const [mode, setMode] = useState<ViewMode>('anatomy');
-  const [tab, setTab] = useState<RightTab>('reasoning');
+  const [tab, setTab] = useState<RightTab>('highlighted');
   const [time, setTime] = useState(0);
   const [follow, setFollow] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -47,6 +49,7 @@ export default function App() {
   const abort = useRef<AbortController | null>(null);
   const player = useRef<HTMLMediaElement>(null);
   const rightCol = useRef<HTMLElement>(null);
+  const brainCol = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -116,7 +119,7 @@ export default function App() {
     setTime(0);
     setProgress(null);
     setError(null);
-    setTab('reasoning');
+    setTab('highlighted');
   };
 
   const loadTranscript = async (f: File | null): Promise<{ cues: TranscriptCue[]; timed: boolean; untimed?: string }> => {
@@ -261,12 +264,34 @@ export default function App() {
   const selectMesh = (id: string | null) => {
     setMesh(id);
     if (id) {
-      setTab('region');
+      setTab('highlighted');
       if (id.includes('_yeo7_') && mode !== 'networks') setMode('networks');
       else if (!id.includes('_yeo7_') && mode === 'networks' && /^(L|R)_/.test(id)) {
         const cortical = db.regions.find((r) => Object.values(r.meshes).includes(id))?.kind === 'cortical';
         if (cortical) setMode('anatomy');
       }
+    }
+  };
+
+  // Opening details from the list: start at the top of the panel (it scrolls on its own on desktop,
+  // and sits below the brain on phones).
+  const [focusReq, setFocusReq] = useState<{ meshId: string; seq: number } | null>(null);
+  const openDetails = (id: string) => {
+    selectMesh(id);
+    setFocusReq((f) => ({ meshId: id, seq: (f?.seq ?? 0) + 1 }));
+    requestAnimationFrame(() => {
+      const el = rightCol.current;
+      if (!el) return;
+      el.scrollTop = 0;
+      if (el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start' });
+    });
+  };
+  const segIndex = segment ? segments.indexOf(segment) : -1;
+  const goSegment = (i: number) => {
+    const s = segments[i];
+    if (s) {
+      seek(s.start);
+      selectSegment(s);
     }
   };
 
@@ -277,23 +302,32 @@ export default function App() {
     <div className={`app ${session ? 'has-session' : 'landing'}`}>
       <header className="app-header">
         <div className="brand">
-          <h1>Stimulus Association Map</h1>
-          <p className="tagline">A research-based stimulus association map - not a brain scan</p>
+          <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="8" className="bm-bg" />
+            <rect x="7" y="16" width="4.5" height="9" rx="1.5" className="bm-limited" />
+            <rect x="13.75" y="11" width="4.5" height="14" rx="1.5" className="bm-moderate" />
+            <rect x="20.5" y="6" width="4.5" height="19" rx="1.5" className="bm-strong" />
+          </svg>
+          <div>
+            <h1>Stimulus Association Map</h1>
+            <p className="tagline">What published research links to the sounds and images in your media. A research-based association map, not a brain scan.</p>
+          </div>
         </div>
         <nav className="header-actions" aria-label="Help and evidence">
-          <button type="button" className="btn ghost" onClick={() => setDialog('about')}>
+          <button type="button" className="btn ghost small" onClick={() => setDialog('about')}>
             How to read this map
           </button>
-          <button type="button" className="btn ghost" onClick={() => setDialog('evidence')}>
+          <button type="button" className="btn ghost small" onClick={() => setDialog('evidence')}>
             Evidence database
           </button>
         </nav>
       </header>
 
-      <div className="banner" role="note">
-        Colours show how strongly <strong>published research</strong> links the <em>kinds of stimuli detected in this media</em> to brain regions. They do not show anyone's brain activity.
-        {session?.isDemo && <strong className="demo-flag"> DEMO DATA - hand-authored features, no media analysed.</strong>}
-      </div>
+      {session?.isDemo && (
+        <p className="demo-note" role="note">
+          <strong>Demo data.</strong> Hand-authored features for a fictional video essay; no media was analysed.
+        </p>
+      )}
       {notice && (
         <div className="notice" role="status">
           {notice}
@@ -312,7 +346,7 @@ export default function App() {
       )}
 
       <main className="layout">
-        <aside className="col-left">
+        <aside className="col-left card">
           {!session ? (
             <UploadPanel busy={busy} progress={progress} error={error} onAnalyze={analyze} onTranscriptOnly={transcriptOnly} onDemo={demo} onCancel={() => abort.current?.abort()} />
           ) : (
@@ -364,21 +398,39 @@ export default function App() {
           )}
         </aside>
 
-        <section className="col-center" aria-label="Brain map">
+        <section className="col-center card" aria-label="Brain map" ref={brainCol}>
           <div className="map-head">
-            <div className="seg-toggle" role="radiogroup" aria-label="Map layer">
-              <button type="button" role="radio" aria-checked={mode === 'anatomy'} className={`chip ${mode === 'anatomy' ? 'is-on' : ''}`} onClick={() => setMode('anatomy')}>
-                Anatomical regions
+            {segment ? (
+              <div className="stepper" aria-label="Segment">
+                <button type="button" className="icon-btn step-btn" aria-label="Previous segment" disabled={segIndex <= 0} onClick={() => goSegment(segIndex - 1)}>
+                  ‹
+                </button>
+                <div className="stepper-text">
+                  <strong>
+                    Segment {segIndex + 1} of {segments.length}
+                  </strong>
+                  <span className="muted small">
+                    {formatTime(segment.start)}–{formatTime(segment.end)} · {segment.label}
+                  </span>
+                </div>
+                <button type="button" className="icon-btn step-btn" aria-label="Next segment" disabled={segIndex >= segments.length - 1} onClick={() => goSegment(segIndex + 1)}>
+                  ›
+                </button>
+              </div>
+            ) : (
+              <div className="stepper-text">
+                <strong>Brain atlas</strong>
+                <span className="muted small">Load media or the demo to colour it</span>
+              </div>
+            )}
+            <div className="seg-control" role="radiogroup" aria-label="Map layer">
+              <button type="button" role="radio" aria-checked={mode === 'anatomy'} className={mode === 'anatomy' ? 'is-on' : ''} onClick={() => setMode('anatomy')}>
+                Regions
               </button>
-              <button type="button" role="radio" aria-checked={mode === 'networks'} className={`chip ${mode === 'networks' ? 'is-on' : ''}`} onClick={() => setMode('networks')}>
-                Distributed networks
+              <button type="button" role="radio" aria-checked={mode === 'networks'} className={mode === 'networks' ? 'is-on' : ''} onClick={() => setMode('networks')}>
+                Networks
               </button>
             </div>
-            {segment && (
-              <span className="muted small">
-                Showing segment {segment.index + 1} of {segments.length}
-              </span>
-            )}
           </div>
           {focus && (
             <div className="focus-bar small" role="status">
@@ -396,32 +448,36 @@ export default function App() {
             onDetails={session ? () => rightCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) : undefined}
             theme={theme}
             isDemo={!!session?.isDemo}
+            focusOn={focusReq}
+            resetKey={session?.id}
           />
           <Legend />
           {mode === 'networks' && (
             <p className="small muted">
-              Network layer: the 7 resting-state networks of Yeo et al. (2011) as parcellated by Schaefer et al. (2018). Only findings that the cited studies describe at network level are
-              coloured here; subcortical structures remain visible for context.
+              Networks view: the 7 resting-state networks of Yeo et al. (2011) as parcellated by Schaefer et al. (2018). Only findings that the cited studies describe at network level are
+              coloured here; deep structures stay visible for context.
             </p>
           )}
         </section>
 
-        <aside className="col-right" aria-label="Explanation" ref={rightCol}>
+        <aside className="col-right card" aria-label="Explanation" ref={rightCol}>
           {!session || !segment || !segMap ? (
             <div className="intro">
               <h2>How it works</h2>
-              <ol className="small">
+              <ol className="how">
                 <li>
-                  <strong>Detect</strong> measurable features in your media, locally: speech- and music-like sound, beat, loudness changes, sudden sounds, motion, cuts, faces, and
-                  (with a transcript) language cues.
+                  <strong>Detect.</strong> Measurable features are found in your media on this device: speech- and music-like sound, beat, loudness changes, sudden sounds, motion,
+                  cuts, faces and, with a transcript, language cues.
                 </li>
                 <li>
-                  <strong>Link</strong> each feature to candidate processes through reviewed rules that state how direct the link is.
+                  <strong>Link.</strong> Reviewed rules connect each feature to the mental processes it can involve, and say how direct that link is.
                 </li>
                 <li>
-                  <strong>Look up</strong> curated, cited research for those processes. Only verified records colour the brain; everything else stays gray as "insufficient evidence".
+                  <strong>Look up.</strong> Curated, cited research says which brain areas are associated with those processes. Only verified records colour the brain.
                 </li>
               </ol>
+              <h2>What the colours mean</h2>
+              <ColourMeaning />
               <p className="small muted">
                 The evidence base holds {db.sources.length} sources, {db.associations.length} graded associations and {db.unsupported.length} explicitly unsupported mappings.
               </p>
@@ -429,19 +485,35 @@ export default function App() {
           ) : (
             <>
               <div className="tabs" role="tablist">
-                <button type="button" role="tab" aria-selected={tab === 'reasoning'} className={`tab ${tab === 'reasoning' ? 'is-active' : ''}`} onClick={() => setTab('reasoning')}>
-                  Reasoning
-                </button>
-                <button type="button" role="tab" aria-selected={tab === 'features'} className={`tab ${tab === 'features' ? 'is-active' : ''}`} onClick={() => setTab('features')}>
-                  Features
-                </button>
-                <button type="button" role="tab" aria-selected={tab === 'region'} className={`tab ${tab === 'region' ? 'is-active' : ''}`} onClick={() => setTab('region')} disabled={!mesh}>
-                  Region
-                </button>
+                {(
+                  [
+                    ['highlighted', 'Highlighted'],
+                    ['reasoning', 'Reasoning'],
+                    ['features', 'Features'],
+                  ] as [RightTab, string][]
+                ).map(([k, label]) => (
+                  <button key={k} type="button" role="tab" aria-selected={tab === k} className={`tab ${tab === k ? 'is-active' : ''}`} onClick={() => setTab(k)}>
+                    {label}
+                  </button>
+                ))}
               </div>
-              <ListenerContextCard ctx={ctx} onChange={setCtx} />
+              {tab === 'highlighted' &&
+                (mesh ? (
+                  <RegionPanel
+                    meshId={mesh}
+                    results={shown}
+                    onSelect={openDetails}
+                    onBack={() => setMesh(null)}
+                    onShowBrain={() => brainCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  />
+                ) : (
+                  <HighlightedPanel key={segment.id} results={shown} mode={mode} onMode={setMode} onSelect={openDetails} segmentLabel={`segment ${segIndex + 1}`} modalities={session.modalities} isDemo={session.isDemo} />
+                ))}
               {tab === 'reasoning' && (
-                <ReasoningPanel segment={segment} map={segMap} modalities={session.modalities} onSelectMesh={selectMesh} selectedMesh={mesh} focus={focus} onFocus={setFocus} />
+                <>
+                  <ListenerContextCard ctx={ctx} onChange={setCtx} />
+                  <ReasoningPanel segment={segment} map={segMap} modalities={session.modalities} onSelectMesh={selectMesh} selectedMesh={mesh} focus={focus} onFocus={setFocus} />
+                </>
               )}
               {tab === 'features' && (
                 <FeaturePanel
@@ -451,16 +523,6 @@ export default function App() {
                   onConfirm={(id) => editFeature(id, 'confirm')}
                   onReject={(id) => editFeature(id, 'reject')}
                   onReset={(id) => editFeature(id, 'reset')}
-                />
-              )}
-              {tab === 'region' && mesh && (
-                <RegionPanel
-                  meshId={mesh}
-                  result={segMap.meshes.get(mesh)}
-                  onClose={() => {
-                    setMesh(null);
-                    setTab('reasoning');
-                  }}
                 />
               )}
             </>

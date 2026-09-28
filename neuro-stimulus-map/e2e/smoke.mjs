@@ -33,20 +33,39 @@ try {
     await page.click('.seg-block >> nth=1');
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/03-demo-seg2.png` });
-    await page.click('.region-table .linklike >> nth=0');
+    // "Highlighted" lists each coloured area with a plain-language summary and the reason
+    const cards = await page.evaluate(() =>
+      [...document.querySelectorAll('.hl-card')].map((c) => ({
+        name: c.querySelector('.hl-title')?.textContent,
+        summary: c.querySelector('.hl-summary')?.textContent?.trim(),
+        reasons: c.querySelectorAll('.reasons li').length,
+      })),
+    );
+    if (!cards.length || cards.some((c) => !c.summary || !c.reasons)) throw new Error(`highlighted list incomplete: ${JSON.stringify(cards)}`);
+    console.log(`  ${cards.length} highlighted areas shown, first: ${cards[0].name}`);
+    await page.click('.hl-card .hl-title >> nth=0');
     await page.waitForSelector('.region-panel');
+    await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/04-demo-region.png` });
+    await page.click('text=All highlighted areas');
+    await page.waitForSelector('.hl-card');
+    // segment stepper
+    const before = await page.textContent('.stepper-text strong');
+    await page.click('button[aria-label="Next segment"]');
+    const after = await page.textContent('.stepper-text strong');
+    if (before === after) throw new Error('segment stepper did not move');
     await page.click('.seg-block >> nth=5');
-    await page.click('text=Reasoning');
+    await page.getByRole('tab', { name: 'Reasoning' }).click();
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/05-demo-seg6.png`, fullPage: true });
-    await page.click('text=Distributed networks');
+    await page.getByRole('radio', { name: 'Networks' }).click();
     await page.click('.seg-block >> nth=4');
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/06-demo-networks.png` });
-    await page.click('text=Anatomical regions');
-    await page.selectOption('select[aria-label="Show internal structures"]', 'cutaway');
+    await page.getByRole('radio', { name: 'Regions' }).click();
     await page.click('.seg-block >> nth=5');
+    await page.click('.view-menu summary');
+    await page.selectOption('select[aria-label="Show internal structures"]', 'cutaway');
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/07-demo-cutaway.png` });
     await page.selectOption('select[aria-label="Cut orientation"]', 'x');
@@ -56,7 +75,8 @@ try {
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/07c-demo-glass.png` });
     await page.selectOption('select[aria-label="Show internal structures"]', 'none');
-    await page.click('text=Features');
+    await page.click('.view-menu summary');
+    await page.getByRole('tab', { name: 'Features' }).click();
     await page.screenshot({ path: `${OUT}/08-demo-features.png` });
     await page.click('text=Evidence database');
     await page.waitForSelector('.evidence-table');
@@ -83,7 +103,7 @@ try {
       await page.waitForTimeout(500);
       await page.screenshot({ path: `${OUT}/${shot}`, fullPage: true });
       const segs = await page.evaluate(() => [...document.querySelectorAll('.seg-block')].map((b) => b.getAttribute('title')));
-      const mods = await page.evaluate(() => [...document.querySelectorAll('.mod')].map((m) => m.textContent));
+      const mods = [await page.textContent('.hl-basis')];
       console.log(`  segments:\n    ${segs.join('\n    ')}\n  modalities: ${mods.join(' | ')}`);
       await page.click('text=Delete media & results');
       await page.waitForSelector('text=Drop a video, song or podcast here');

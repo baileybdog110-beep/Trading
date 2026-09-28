@@ -7,8 +7,8 @@ import type { EvidenceGrade } from '../evidence/types';
  * Deliberately NOT a red/yellow "heat" palette, which reads as activation intensity.
  */
 export const GRADE_COLORS: Record<'light' | 'dark', Record<EvidenceGrade | 'none', string>> = {
-  light: { strong: '#104281', moderate: '#2a78d6', limited: '#86b6ef', contested: '#d55181', none: '#c9c8c2' },
-  dark: { strong: '#9ec5f4', moderate: '#3987e5', limited: '#184f95', contested: '#e87ba4', none: '#5c5b56' },
+  light: { strong: '#104281', moderate: '#2a78d6', limited: '#86b6ef', contested: '#d55181', none: '#c8ccd2' },
+  dark: { strong: '#9ec5f4', moderate: '#3987e5', limited: '#184f95', contested: '#e87ba4', none: '#5a6069' },
 };
 
 export const GRADE_LABEL: Record<EvidenceGrade, string> = {
@@ -16,6 +16,13 @@ export const GRADE_LABEL: Record<EvidenceGrade, string> = {
   moderate: 'Moderate evidence',
   limited: 'Limited evidence',
   contested: 'Contested (conflicting findings)',
+};
+
+export const GRADE_SHORT: Record<EvidenceGrade, string> = {
+  strong: 'Strong',
+  moderate: 'Moderate',
+  limited: 'Limited',
+  contested: 'Contested',
 };
 
 export const APPLICABILITY_LABEL = {

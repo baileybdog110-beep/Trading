@@ -128,6 +128,7 @@ export function summarizeMap(m: SegmentMap) {
       meshId: r.meshId,
       name: meshName(r.meshId),
       kind: r.kind,
+      summary: (r.kind === 'region' ? regionById.get(r.id)?.summary : networkById.get(r.id)?.summary) ?? '',
       hemisphere: r.hemi,
       bestEvidenceGrade: r.grade,
       approximate: r.hits.some((h) => h.target.precision === 'approximate'),
@@ -345,11 +346,12 @@ export function getRegion(input: { query: string }) {
       name: r!.name,
       lobe: r!.lobe,
       kind: r!.kind,
+      summary: r!.summary,
       orientation: r!.orientation,
       multifunction: r!.multifunction,
       associations: forTarget('region', r!.id),
     })),
-    networks: networks.map((n) => ({ id: n.id, name: n.name, orientation: n.orientation, associations: forTarget('network', n.id) })),
+    networks: networks.map((n) => ({ id: n.id, name: n.name, summary: n.summary, orientation: n.orientation, associations: forTarget('network', n.id) })),
     note: 'Regions are multifunctional and work in networks; an association here is a research finding about a process, not evidence that the region is active for any particular content.',
   };
 }

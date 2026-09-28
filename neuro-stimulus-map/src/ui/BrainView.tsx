@@ -30,9 +30,9 @@ const VIEWS: Record<string, { pos: [number, number, number]; up: [number, number
 const ANCHORS: { key: string; label: string; mni: [number, number, number] }[] = [
   { key: 'L', label: 'L', mni: [-82, -20, 5] },
   { key: 'R', label: 'R', mni: [82, -20, 5] },
-  { key: 'A', label: 'Anterior', mni: [0, 82, 0] },
-  { key: 'P', label: 'Posterior', mni: [0, -118, 0] },
-  { key: 'S', label: 'Superior', mni: [0, -20, 88] },
+  { key: 'A', label: 'Front', mni: [0, 82, 0] },
+  { key: 'P', label: 'Back', mni: [0, -118, 0] },
+  { key: 'S', label: 'Top', mni: [0, -20, 88] },
 ];
 
 interface Props {
@@ -44,6 +44,10 @@ interface Props {
   onDetails?: () => void;
   theme: 'light' | 'dark';
   isDemo: boolean;
+  /** Turn the view to show this mesh (set when an area is chosen from the list). */
+  focusOn?: { meshId: string; seq: number } | null;
+  /** Changes when new media or the demo is loaded; the view then returns to its default. */
+  resetKey?: string;
 }
 
 function makeMaterial(): THREE.MeshStandardMaterial {
@@ -65,7 +69,7 @@ function makeMaterial(): THREE.MeshStandardMaterial {
   return m;
 }
 
-export function BrainView({ results, mode, selected, onSelect, onDetails, theme, isDemo }: Props) {
+export function BrainView({ results, mode, selected, onSelect, onDetails, theme, isDemo, focusOn, resetKey }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -76,6 +80,18 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
   const [deep, setDeep] = useState<Deep>('none');
   const [axis, setAxis] = useState<Axis>('y');
   const [cut, setCut] = useState(-5);
+  const menuRef = useRef<HTMLDetailsElement>(null);
+  // read by the render loop, which is set up once
+  const hiddenHemi = useRef({ L: false, R: false });
+  // close the View menu when tapping or clicking elsewhere
+  useEffect(() => {
+    const close = (e: PointerEvent) => {
+      const m = menuRef.current;
+      if (m?.open && !m.contains(e.target as Node)) m.open = false;
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, []);
   const three = useRef<{
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
@@ -94,13 +110,15 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     const mount = mountRef.current!;
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+      // transparent, so the stage's CSS background shows through
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     } catch {
       setStatus('error');
       setError('WebGL is not available in this browser, so the 3D view cannot be shown. The region list in the explanation panel still lists every association.');
       return;
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
     renderer.localClippingEnabled = true;
     mount.appendChild(renderer.domElement);
     renderer.domElement.setAttribute('aria-label', 'Rotatable 3D brain atlas. Drag to rotate, scroll to zoom, click a region for details.');
@@ -129,11 +147,20 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
       for (const a of ANCHORS) {
         const el = labelRefs.current[a.key];
         if (!el) continue;
+        if ((a.key === 'L' || a.key === 'R') && hiddenHemi.current[a.key]) {
+          el.style.opacity = '0';
+          continue;
+        }
         labelPos.set(...a.mni).applyMatrix4(root.matrixWorld);
         // hide labels on the far side of the brain (e.g. "R" when viewing the left hemisphere)
         const far = labelPos.distanceTo(camera.position) > camera.position.length() + 30;
         labelPos.project(camera);
-        el.style.transform = `translate(${((labelPos.x + 1) / 2) * w}px, ${((1 - labelPos.y) / 2) * h}px) translate(-50%, -50%)`;
+        // keep labels inside the stage (narrow screens put "Front"/"Back" at the very edge)
+        const hw = el.offsetWidth / 2 + 6;
+        const hh = el.offsetHeight / 2 + 6;
+        const x = Math.min(w - hw, Math.max(hw, ((labelPos.x + 1) / 2) * w));
+        const y = Math.min(h - hh, Math.max(hh, ((1 - labelPos.y) / 2) * h));
+        el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
         el.style.opacity = labelPos.z < 1 && !far ? '1' : '0';
       }
     };
@@ -231,6 +258,55 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     t.render();
   }
 
+  // Turn to an area chosen from the list: face outer areas; for areas on the inner (medial)
+  // surface hide the other hemisphere and look from the midline; make the cortex see-through
+  // for deep structures. The automatic changes are undone when the selection is cleared.
+  const autoView = useRef(false);
+  useEffect(() => {
+    const t = three.current;
+    if (!t || !focusOn || status !== 'ready') return;
+    const m = [...t.cerebra, ...t.yeo].find((x) => x.name === focusOn.meshId);
+    const info = meshIndex.get(focusOn.meshId);
+    if (!m || !info) return;
+    const g = m.geometry;
+    if (!g.boundingSphere) g.computeBoundingSphere();
+    const local = g.boundingSphere!.center; // MNI millimetres
+    const world = local.clone().applyMatrix4(m.matrixWorld);
+    const kind = info.kind === 'region' ? regionById.get(info.id)?.kind : 'cortical';
+    const medial = kind === 'cortical' && info.kind === 'region' && Math.abs(local.x) < 16 && info.hemi !== 'bilateral';
+    setShowL(!(medial && info.hemi === 'R'));
+    setShowR(!(medial && info.hemi === 'L'));
+    setDeep(kind === 'subcortical' ? 'glass' : 'none');
+    autoView.current = true;
+    if (medial) {
+      const side = info.hemi === 'L' ? 1 : -1; // look at the left hemisphere's inner face from the right
+      setCamera([side, 0.25, world.z / 150], [0, 1, 0]);
+    } else if (world.length() > 12) {
+      const d = world.clone().normalize();
+      d.y += 0.25;
+      d.normalize();
+      setCamera([d.x, d.y, d.z], Math.abs(d.y) > 0.9 ? [0, 0, -1] : [0, 1, 0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusOn?.seq, status]);
+  useEffect(() => {
+    if (selected || !autoView.current) return;
+    autoView.current = false;
+    setShowL(true);
+    setShowR(true);
+    setDeep('none');
+  }, [selected]);
+
+  useEffect(() => {
+    if (status !== 'ready') return;
+    autoView.current = false;
+    setShowL(true);
+    setShowR(true);
+    setDeep('none');
+    setView('Left');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey]);
+
   // When a cutaway is chosen, turn the camera towards the cut face so internal structures are visible.
   useEffect(() => {
     if (deep !== 'cutaway') return;
@@ -245,7 +321,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
   useEffect(() => {
     const t = three.current;
     if (!t) return;
-    t.scene.background = new THREE.Color(theme === 'dark' ? '#1a1a19' : '#fcfcfb');
+    hiddenHemi.current = { L: !showL, R: !showR };
     const clipOn = deep === 'cutaway';
     const [min, max] = AXIS_RANGE[axis];
     const c = Math.max(min, Math.min(max, cut));
@@ -324,52 +400,6 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
 
   return (
     <div className="brain">
-      <div className="brain-toolbar" role="toolbar" aria-label="Brain view controls">
-        <div className="seg-group" aria-label="Camera view">
-          {Object.keys(VIEWS).map((v) => (
-            <button key={v} type="button" className="chip" onClick={() => setView(v as keyof typeof VIEWS)}>
-              {v}
-            </button>
-          ))}
-        </div>
-        <div className="seg-group" aria-label="Hemispheres">
-          <label className="check">
-            <input type="checkbox" checked={showL} onChange={(e) => setShowL(e.target.checked)} /> Left hemisphere
-          </label>
-          <label className="check">
-            <input type="checkbox" checked={showR} onChange={(e) => setShowR(e.target.checked)} /> Right hemisphere
-          </label>
-        </div>
-        <div className="seg-group" aria-label="Internal structures">
-          <select value={deep} onChange={(e) => setDeep(e.target.value as Deep)} aria-label="Show internal structures">
-            <option value="none">Surface view</option>
-            <option value="glass">See-through cortex</option>
-            <option value="cutaway">Cutaway plane</option>
-          </select>
-          {deep === 'cutaway' && (
-            <>
-              <select value={axis} onChange={(e) => setAxis(e.target.value as Axis)} aria-label="Cut orientation">
-                {(Object.keys(AXIS_RANGE) as Axis[]).map((a) => (
-                  <option key={a} value={a}>
-                    {AXIS_RANGE[a][2]}
-                  </option>
-                ))}
-              </select>
-              <label className="range">
-                <input
-                  type="range"
-                  min={AXIS_RANGE[axis][0]}
-                  max={AXIS_RANGE[axis][1]}
-                  value={Math.max(AXIS_RANGE[axis][0], Math.min(AXIS_RANGE[axis][1], cut))}
-                  onChange={(e) => setCut(+e.target.value)}
-                  aria-label={`Cut position in millimetres (${AXIS_RANGE[axis][3]})`}
-                />
-                <span className="mono">{axis.toUpperCase()} = {cut} mm</span>
-              </label>
-            </>
-          )}
-        </div>
-      </div>
       <div
         className="brain-canvas"
         ref={mountRef}
@@ -389,6 +419,56 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
         }}
         onPointerLeave={() => setHover(null)}
       >
+        <details className="view-menu" ref={menuRef} onPointerDown={(e) => e.stopPropagation()} onPointerUp={(e) => e.stopPropagation()}>
+          <summary>View</summary>
+          <div className="view-panel" role="group" aria-label="Brain view controls">
+            <span className="view-label">Turn to</span>
+            <div className="view-grid" aria-label="Camera view">
+              {Object.keys(VIEWS).map((v) => (
+                <button key={v} type="button" className="chip" onClick={() => setView(v as keyof typeof VIEWS)}>
+                  {v}
+                </button>
+              ))}
+            </div>
+            <span className="view-label">Show</span>
+            <label className="check small">
+              <input type="checkbox" checked={showL} onChange={(e) => setShowL(e.target.checked)} /> Left hemisphere
+            </label>
+            <label className="check small">
+              <input type="checkbox" checked={showR} onChange={(e) => setShowR(e.target.checked)} /> Right hemisphere
+            </label>
+            <span className="view-label">Look inside</span>
+            <select value={deep} onChange={(e) => setDeep(e.target.value as Deep)} aria-label="Show internal structures">
+              <option value="none">Surface view</option>
+              <option value="glass">See-through cortex</option>
+              <option value="cutaway">Cutaway plane</option>
+            </select>
+            {deep === 'cutaway' && (
+              <>
+                <select value={axis} onChange={(e) => setAxis(e.target.value as Axis)} aria-label="Cut orientation">
+                  {(Object.keys(AXIS_RANGE) as Axis[]).map((a) => (
+                    <option key={a} value={a}>
+                      {AXIS_RANGE[a][2]}
+                    </option>
+                  ))}
+                </select>
+                <label className="range small">
+                  <input
+                    type="range"
+                    min={AXIS_RANGE[axis][0]}
+                    max={AXIS_RANGE[axis][1]}
+                    value={Math.max(AXIS_RANGE[axis][0], Math.min(AXIS_RANGE[axis][1], cut))}
+                    onChange={(e) => setCut(+e.target.value)}
+                    aria-label={`Cut position in millimetres (${AXIS_RANGE[axis][3]})`}
+                  />
+                  <span className="mono">
+                    {axis.toUpperCase()} = {cut} mm
+                  </span>
+                </label>
+              </>
+            )}
+          </div>
+        </details>
         {ANCHORS.map((a) => (
           <div key={a.key} className={`orient orient-${a.key}`} ref={(el) => void (labelRefs.current[a.key] = el)} aria-hidden="true">
             {a.label}
@@ -415,8 +495,16 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
         {status === 'loading' && <div className="brain-msg">Loading atlas meshes…</div>}
         {status === 'error' && <div className="brain-msg error">{error}</div>}
         <div className="brain-stamp" aria-hidden="true">
-          {isDemo ? 'DEMO DATA · ' : ''}Research-based association map · not a brain scan
+          {isDemo ? 'DEMO DATA · ' : ''}
+          <span className="stamp-long">Research-based association map · not a brain scan</span>
+          <span className="stamp-short">Not a brain scan</span>
         </div>
+        {status === 'ready' && !selected && (
+          <div className="brain-hint" aria-hidden="true">
+            <span className="hint-fine">Drag to rotate · scroll to zoom · click an area</span>
+            <span className="hint-coarse">Drag to rotate · pinch to zoom · tap an area</span>
+          </div>
+        )}
       </div>
     </div>
   );

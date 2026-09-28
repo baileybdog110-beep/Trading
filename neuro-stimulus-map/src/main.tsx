@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import { db } from './evidence/db';
 import { validateEvidenceDB } from './evidence/validate';
+import '@fontsource-variable/source-sans-3/wght.css';
+import '@fontsource-variable/source-serif-4/wght.css';
 import './styles.css';
 
 // Refuse to render mappings from an inconsistent evidence database.

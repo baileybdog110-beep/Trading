@@ -38,6 +38,11 @@ describe('evidence database', () => {
     for (const a of db.associations) for (const re of banned) expect(re.test(a.claim), `${a.id}: ${re}`).toBe(false);
   });
 
+  it('keeps plain-language region and network summaries free of single-function labels and activation language', () => {
+    const banned = [/fear cent(er|re)/i, /pleasure cent(er|re)/i, /\bfires?\b/i, /activat/i, /lights? up/i, /dopamine/i];
+    for (const r of [...db.regions, ...db.networks]) for (const re of banned) expect(re.test(r.summary), `${r.id}: ${re}`).toBe(false);
+  });
+
   it('keeps grades honest: strong requires a meta-analysis/large sample and >1 supporting source', () => {
     const src = new Map(db.sources.map((s) => [s.id, s]));
     for (const a of db.associations.filter((x) => x.grade === 'strong')) {
