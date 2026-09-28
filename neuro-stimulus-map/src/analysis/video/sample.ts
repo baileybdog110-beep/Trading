@@ -11,6 +11,84 @@ export function sampleStep(duration: number): number {
   return 2;
 }
 
+const OPEN_ERROR =
+  'This browser could not open the file. Its codecs may not be supported here (for example, some Chromium builds lack H.264/AAC for MP4/MOV). Try Chrome, Edge, Safari or Firefox, or convert to WebM, MP3 or WAV.';
+
+/**
+ * A muted, inline, off-screen <video> attached to the document. iOS Safari only decodes
+ * frames for inline, muted media that is in the DOM, and ignores preload hints until
+ * playback has started once.
+ */
+function hiddenVideo(url: string, preload: 'metadata' | 'auto'): HTMLVideoElement {
+  const v = document.createElement('video');
+  v.muted = true;
+  v.defaultMuted = true;
+  v.playsInline = true;
+  v.setAttribute('muted', '');
+  v.setAttribute('playsinline', '');
+  v.setAttribute('aria-hidden', 'true');
+  v.preload = preload;
+  Object.assign(v.style, { position: 'fixed', left: '-4px', top: '-4px', width: '2px', height: '2px', opacity: '0', pointerEvents: 'none' });
+  v.src = url;
+  document.body.appendChild(v);
+  return v;
+}
+
+function disposeVideo(v: HTMLVideoElement) {
+  v.pause();
+  v.removeAttribute('src');
+  v.load();
+  v.remove();
+}
+
+/** Resolve when any of the events fires (or the condition already holds); reject on error or timeout. */
+function waitFor(v: HTMLVideoElement, events: string[], ready: () => boolean, ms: number, what: string): Promise<void> {
+  if (ready()) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const done = () => {
+      cleanup();
+      resolve();
+    };
+    const fail = () => {
+      cleanup();
+      reject(new Error(OPEN_ERROR));
+    };
+    const timer = window.setTimeout(() => {
+      cleanup();
+      reject(new Error(`Timed out while ${what}.`));
+    }, ms);
+    const cleanup = () => {
+      window.clearTimeout(timer);
+      for (const e of events) v.removeEventListener(e, done);
+      v.removeEventListener('error', fail);
+    };
+    for (const e of events) v.addEventListener(e, done);
+    v.addEventListener('error', fail);
+  });
+}
+
+/** Some files (e.g. WebM from screen recorders) report an infinite duration until the end is sought. */
+async function resolveDuration(v: HTMLVideoElement): Promise<number> {
+  if (Number.isFinite(v.duration) && v.duration > 0) return v.duration;
+  v.currentTime = 1e101;
+  await waitFor(v, ['durationchange', 'seeked'], () => Number.isFinite(v.duration) && v.duration > 0, 10000, 'reading the media duration').catch(() => undefined);
+  const d = v.duration;
+  v.currentTime = 0;
+  return d;
+}
+
+/** Wait briefly for the seeked frame to be presented (bounded, so hidden tabs never hang). */
+function settleFrame(v: HTMLVideoElement): Promise<void> {
+  const rvfc = (v as HTMLVideoElement & { requestVideoFrameCallback?: (cb: () => void) => number }).requestVideoFrameCallback;
+  return new Promise((resolve) => {
+    const timer = window.setTimeout(resolve, 60);
+    if (rvfc) rvfc.call(v, () => {
+      window.clearTimeout(timer);
+      resolve();
+    });
+  });
+}
+
 function seek(video: HTMLVideoElement, t: number): Promise<void> {
   return new Promise((resolve, reject) => {
     const timer = window.setTimeout(() => {
@@ -44,23 +122,14 @@ export interface VideoProbe {
 }
 
 export async function probeVideo(url: string): Promise<VideoProbe> {
-  const v = document.createElement('video');
-  v.muted = true;
-  v.preload = 'metadata';
-  v.src = url;
-  await new Promise<void>((resolve, reject) => {
-    v.onloadedmetadata = () => resolve();
-    v.onerror = () =>
-      reject(
-        new Error(
-          "This browser could not open the file. Its codecs may not be supported here (for example, some Chromium builds lack H.264/AAC for MP4/MOV). Try Chrome, Edge, Safari or Firefox, or convert to WebM, MP3 or WAV.",
-        ),
-      );
-  });
-  const out = { hasVideo: v.videoWidth > 0 && v.videoHeight > 0, duration: v.duration, width: v.videoWidth, height: v.videoHeight };
-  v.removeAttribute('src');
-  v.load();
-  return out;
+  const v = hiddenVideo(url, 'metadata');
+  try {
+    await waitFor(v, ['loadedmetadata'], () => v.readyState >= 1, 20000, 'reading the file');
+    const duration = await resolveDuration(v);
+    return { hasVideo: v.videoWidth > 0 && v.videoHeight > 0, duration, width: v.videoWidth, height: v.videoHeight };
+  } finally {
+    disposeVideo(v);
+  }
 }
 
 /**
@@ -71,16 +140,25 @@ export async function analyzeVideo(
   url: string,
   opts: { faces: boolean; onProgress?: (fraction: number, note: string) => void; signal?: AbortSignal },
 ): Promise<VideoAnalysis> {
-  const video = document.createElement('video');
-  video.muted = true;
-  video.preload = 'auto';
-  video.playsInline = true;
-  video.src = url;
-  await new Promise<void>((resolve, reject) => {
-    video.onloadeddata = () => resolve();
-    video.onerror = () => reject(new Error('The browser could not decode the video track.'));
-  });
-  const duration = video.duration;
+  const video = hiddenVideo(url, 'auto');
+  try {
+    return await sampleFrames(video, opts);
+  } finally {
+    disposeVideo(video);
+  }
+}
+
+async function sampleFrames(
+  video: HTMLVideoElement,
+  opts: { faces: boolean; onProgress?: (fraction: number, note: string) => void; signal?: AbortSignal },
+): Promise<VideoAnalysis> {
+  await waitFor(video, ['loadedmetadata'], () => video.readyState >= 1, 20000, 'opening the video');
+  // Muted inline playback is allowed without a gesture; starting it once makes iOS decode frames.
+  await video.play().catch(() => undefined);
+  video.pause();
+  await waitFor(video, ['loadeddata', 'canplay'], () => video.readyState >= 2, 20000, 'decoding the first video frame');
+  const duration = await resolveDuration(video);
+  if (!Number.isFinite(duration) || duration <= 0) throw new Error('Could not determine the video duration.');
   const w = video.videoWidth;
   const h = video.videoHeight;
   const sw = SUMMARY_W;
@@ -115,6 +193,7 @@ export async function analyzeVideo(
   for (let t = 0.05, k = 0; t < duration; t += step, k++) {
     if (opts.signal?.aborted) throw new DOMException('Analysis cancelled', 'AbortError');
     await seek(video, t);
+    await settleFrame(video);
     sctx.drawImage(video, 0, 0, sw, sh);
     const cur = summarize(sctx.getImageData(0, 0, sw, sh));
     let histDist = 0;
@@ -146,8 +225,6 @@ export async function analyzeVideo(
     prev = cur;
     if (k % 4 === 0) opts.onProgress?.(t / duration, `Sampling frames ${Math.round(t)} / ${Math.round(duration)} s`);
   }
-  video.removeAttribute('src');
-  video.load();
   const candidates = detectCuts(
     times,
     samples.map((s) => s.histDist),

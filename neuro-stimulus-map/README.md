@@ -32,6 +32,57 @@ Click **Explore demo data** to try the interface without a file. The demo is han
 and labelled "DEMO DATA" everywhere. Or drop in a media file, optionally with a timed
 transcript (`.srt`, `.vtt`, Whisper-style `.json`).
 
+## Use it on iPhone or iPad
+
+The app is a static site that runs entirely in the browser, so there are three ways to open it
+on a phone or tablet:
+
+1. **Hosted copy.** Open the published link in Safari. Hosted pages may block the two optional
+   network features (speech recognition and interpretation suggestions). Everything else works.
+2. **From your computer over Wi-Fi.** Run `npm run preview:phone` (production build) or
+   `npm run dev:phone` (live reload). Vite prints a `Network:` address such as
+   `http://192.168.1.20:4173`. Open it in Safari on a device on the same Wi-Fi network.
+3. **Any static host.** `npm run build` writes `dist/`, which can be served from any static
+   host (GitHub Pages, Netlify, an S3 bucket and so on). Asset paths are relative.
+
+In Safari, tap **Share → Add to Home Screen** to open it full-screen like an app, with its own
+icon. Uploading uses the normal iOS file picker, so you can pick from Photos, Files or
+iCloud Drive.
+
+On touch screens:
+
+- **Tap** a region to see its name and grade, then **Details** for the evidence. **Drag** with
+  one finger to rotate, and **pinch** to zoom.
+- On narrow screens the timeline shows segment times only, and dialogs open as bottom sheets.
+
+iPhone and iPad notes:
+
+- Video from Photos is usually HEVC or H.264 in a `.mov`/`.mp4` file. Safari decodes these
+  itself, so the build environment's lack of those codecs does not apply on iOS.
+- Long non-WAV/MP3 files are decoded in one piece, and iOS gives a browser tab less memory than
+  a desktop. For podcasts over about 45 minutes, prefer MP3 or WAV.
+- The iOS and iPadOS layouts were tested with iPhone 13, iPad Pro 11 and iPad Pro 11 landscape
+  emulation in Chromium over a plain-http LAN address (`node e2e/mobile.mjs`), not on a
+  physical device with WebKit. The Safari-specific code paths (in-page muted `playsinline`
+  video, sample-rate fallbacks, callback-style audio decoding, non-secure-context IDs) follow
+  WebKit's documented behaviour but have not been run on real Safari.
+
+## Use it as a tool for other AI models
+
+The evidence database, mapping rules and audio/transcript analysis are also packaged as a
+tool other AI systems can call: an **MCP server** (for Claude, Meta Muse Code and other agents
+that support the Model Context Protocol), an **HTTP API with an OpenAPI 3.1 description and MCP
+over HTTP** (for cloud agents and API connectors), a **CLI**, and plain **JSON-Schema function
+definitions**. Every result carries the "not a brain scan" disclaimer, the evidence grades and
+citations. See [`tool/README.md`](tool/README.md) for setup.
+
+```bash
+npm run build:tool                    # bundles tool-dist/*.mjs (committed; needs only Node 20+)
+npm run mcp                           # MCP over stdio
+npm run api -- --port 8787            # HTTP API: /openapi.json, /tools/{name}, /mcp
+node tool-dist/cli.mjs features speech_present,faces_visible
+```
+
 ## How it works: an auditable pipeline
 
 ```
@@ -126,10 +177,16 @@ Each is off by default and shows a disclosure first:
 ## Validation
 
 ```bash
-npm test          # 29 unit tests
+npm test          # unit tests: evidence database, pipeline, analysis, AI tool
 npm run fixtures  # synthetic speech/music/video (needs: numpy soundfile espeakng-loader imageio-ffmpeg)
-npm run test:e2e  # headless browser: demo, WebM + SRT, MP3, WAV, MP4 error path, tablet/phone overflow
+npm run test:e2e  # headless browser + tool transports (see below)
 ```
+
+`npm run test:e2e` builds the app and the tool, then runs:
+
+- `e2e/smoke.mjs`: desktop demo, WebM + SRT, MP3, WAV, the MP4 error path, and tablet/phone overflow;
+- `e2e/mobile.mjs`: iPhone and iPad emulation over a plain-http LAN address. It taps the brain, Details and the timeline, opens dialogs, checks for horizontal overflow and small controls, and analyses a video on the phone;
+- `e2e/tool-smoke.mjs`: the MCP stdio server, the HTTP API (auth, OpenAPI, no local-file access) and MCP over HTTP, using the official MCP client.
 
 The tests check that:
 

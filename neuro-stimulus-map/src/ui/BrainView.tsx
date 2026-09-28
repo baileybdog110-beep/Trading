@@ -39,6 +39,8 @@ interface Props {
   mode: ViewMode;
   selected: string | null;
   onSelect: (meshId: string | null) => void;
+  /** Bring the explanation panel into view (useful when panels are stacked on phones). */
+  onDetails?: () => void;
   theme: 'light' | 'dark';
   isDemo: boolean;
 }
@@ -62,7 +64,7 @@ function makeMaterial(): THREE.MeshStandardMaterial {
   return m;
 }
 
-export function BrainView({ results, mode, selected, onSelect, theme, isDemo }: Props) {
+export function BrainView({ results, mode, selected, onSelect, onDetails, theme, isDemo }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -82,6 +84,7 @@ export function BrainView({ results, mode, selected, onSelect, theme, isDemo }: 
     cerebra: THREE.Mesh[];
     yeo: THREE.Mesh[];
     plane: THREE.Plane;
+    halo: THREE.Mesh;
     render: () => void;
   } | null>(null);
 
@@ -185,7 +188,12 @@ export function BrainView({ results, mode, selected, onSelect, theme, isDemo }: 
         const c = box.getCenter(new THREE.Vector3());
         root.position.sub(c);
         root.updateMatrixWorld(true);
-        three.current = { renderer, scene, camera, controls, root, cerebra, yeo, plane, render };
+        const halo = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ side: THREE.BackSide }));
+        halo.visible = false;
+        halo.renderOrder = 0;
+        halo.raycast = () => undefined; // never pickable
+        root.add(halo);
+        three.current = { renderer, scene, camera, controls, root, cerebra, yeo, plane, halo, render };
         setView('Left');
         setStatus('ready');
       })
@@ -255,8 +263,6 @@ export function BrainView({ results, mode, selected, onSelect, theme, isDemo }: 
       mat.opacity = glass ? (grade ? 0.35 : 0.12) : 1;
       mat.depthWrite = !glass;
       mat.clippingPlanes = clipOn ? [t.plane] : [];
-      mat.emissive.set(m.name === selected ? (theme === 'dark' ? '#ffffff' : '#ffffff') : '#000000');
-      mat.emissiveIntensity = m.name === selected ? 0.28 : 0;
       mat.needsUpdate = true;
       m.renderOrder = glass ? 2 : 1;
     };
@@ -266,6 +272,24 @@ export function BrainView({ results, mode, selected, onSelect, theme, isDemo }: 
       apply(m, mode === 'anatomy' || !cortical);
     }
     for (const m of t.yeo) apply(m, mode === 'networks');
+
+    // Selection: an outline ring ("inverted hull") keeps the region's evidence colour unchanged.
+    const target = [...t.cerebra, ...t.yeo].find((m) => m.name === selected && m.visible);
+    const halo = t.halo;
+    halo.visible = !!target;
+    if (target) {
+      const g = target.geometry;
+      if (!g.boundingSphere) g.computeBoundingSphere();
+      const centre = g.boundingSphere!.center;
+      const s = 1 + Math.min(0.08, 2.2 / Math.max(8, g.boundingSphere!.radius));
+      halo.geometry = g;
+      halo.scale.setScalar(s);
+      halo.position.copy(centre).multiplyScalar(1 - s);
+      const hm = halo.material as THREE.MeshBasicMaterial;
+      hm.color.set(theme === 'dark' ? '#ffffff' : '#0b0b0b');
+      hm.clippingPlanes = clipOn ? [t.plane] : [];
+      hm.needsUpdate = true;
+    }
     t.render();
   }, [results, mode, selected, theme, showL, showR, deep, axis, cut, status, palette]);
 
@@ -369,6 +393,19 @@ export function BrainView({ results, mode, selected, onSelect, theme, isDemo }: 
         {hover && (
           <div className="hover-tip" style={{ left: hover.x + 12, top: hover.y + 12 }}>
             {hover.name}
+          </div>
+        )}
+        {selected && status === 'ready' && (
+          <div className="tap-card" onPointerDown={(e) => e.stopPropagation()} onPointerUp={(e) => e.stopPropagation()}>
+            <strong>{nameFor(selected)}</strong>
+            {onDetails && (
+              <button type="button" className="btn small" onClick={onDetails}>
+                Details
+              </button>
+            )}
+            <button type="button" className="icon-btn" aria-label="Clear selection" onClick={() => onSelect(null)}>
+              ✕
+            </button>
           </div>
         )}
         {status === 'loading' && <div className="brain-msg">Loading atlas meshes…</div>}

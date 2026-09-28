@@ -13,9 +13,14 @@
     "validate:evidence": "vitest run tests/evidence.test.ts",
     "evidence:table": "node scripts/evidence/build_table.mjs",
     "verify:citations": "python3 scripts/evidence/verify_citations.py",
-    "test:e2e": "vite build && node e2e/smoke.mjs",
+    "test:e2e": "vite build && node scripts/tool/build.mjs && node e2e/smoke.mjs && node e2e/mobile.mjs && node e2e/tool-smoke.mjs",
     "fixtures": "python3 scripts/testdata/make_fixtures.py",
-    "atlas": "python3 scripts/atlas/build_atlas.py --inputs atlas_inputs --out public/atlas"
+    "atlas": "python3 scripts/atlas/build_atlas.py --inputs atlas_inputs --out public/atlas",
+    "dev:phone": "vite --host",
+    "preview:phone": "vite build && vite preview --host",
+    "build:tool": "node scripts/tool/build.mjs",
+    "mcp": "node tool-dist/mcp-stdio.mjs",
+    "api": "node tool-dist/http-server.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",
@@ -26,11 +31,13 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
     "@types/node": "^22.20.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "esbuild": "^0.28.2",
     "playwright": "^1.63.0",
     "typescript": "^5.9.3",
     "vite": "^8.3.1",

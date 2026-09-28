@@ -45,6 +45,7 @@ export default function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(currentTheme());
   const abort = useRef<AbortController | null>(null);
   const player = useRef<HTMLMediaElement>(null);
+  const rightCol = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -59,6 +60,8 @@ export default function App() {
     if (session) window.scrollTo({ top: 0 });
   }, [session?.id]);
   const segment: Segment | undefined = segments.find((s) => s.id === segId) ?? segments[0];
+  // cues that straddle a boundary appear in two segments; list each once
+  const allCues = useMemo(() => [...new Set(segments.flatMap((s) => s.cues))], [segments]);
   const segMap = useMemo(() => (segment ? mapSegment(db, segment, ctx) : null), [segment, ctx]);
   const empty = useMemo(() => new Map(), []);
   const [focus, setFocus] = useState<string | null>(null);
@@ -333,7 +336,7 @@ export default function App() {
                 }}
                 onExport={exportJson}
               />
-              <TranscriptPanel cues={segments.flatMap((s) => s.cues).filter((c, i, arr) => arr.indexOf(c) === i)} time={time} onSeek={seek} untimed={session.untimedTranscript}>
+              <TranscriptPanel cues={allCues} time={time} onSeek={seek} untimed={session.untimedTranscript}>
                 {!session.isDemo && (
                   <div className="row wrap">
                     {session.mediaKind !== 'none' && !hasTimedText && (
@@ -388,7 +391,15 @@ export default function App() {
               </button>
             </div>
           )}
-          <BrainView results={shown} mode={mode} selected={mesh} onSelect={selectMesh} theme={theme} isDemo={!!session?.isDemo} />
+          <BrainView
+            results={shown}
+            mode={mode}
+            selected={mesh}
+            onSelect={selectMesh}
+            onDetails={session ? () => rightCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) : undefined}
+            theme={theme}
+            isDemo={!!session?.isDemo}
+          />
           <Legend />
           {mode === 'networks' && (
             <p className="small muted">
@@ -398,7 +409,7 @@ export default function App() {
           )}
         </section>
 
-        <aside className="col-right" aria-label="Explanation">
+        <aside className="col-right" aria-label="Explanation" ref={rightCol}>
           {!session || !segment || !segMap ? (
             <div className="intro">
               <h2>How it works</h2>

@@ -1,0 +1,621 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Stimulus Association Map API",
+    "version": "0.2.0",
+    "description": "Research-based stimulus association map - NOT a brain scan. Results say which brain regions published research associates with the kinds of stimuli described; they do not measure, predict or simulate any person's brain activity, and they never indicate dopamine, hormones, emotions or activation levels. Evidence grades describe the research, not this media; applying a finding to specific content is often an extrapolation.\n\nThe same tools are available over MCP (Streamable HTTP) at POST /mcp.",
+    "license": {
+      "name": "See repository (atlas data CC BY 4.0 / MIT; evidence records cite their sources)"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8787"
+    }
+  ],
+  "paths": {
+    "/tools/describe_tool": {
+      "post": {
+        "operationId": "describe_tool",
+        "summary": "Describe the stimulus association map",
+        "description": "Returns what this tool is, its disclaimer, evidence grading rubric, citation-verification status and database counts. Call this first to understand how to interpret results. Research-based stimulus association map - NOT a brain scan. Results say which brain regions published research associates with the kinds of stimuli described; they do not measure, predict or simulate any person's brain activity, and they never indicate dopamine, hormones, emotions or activation levels. Evidence grades describe the research, not this media; applying a finding to specific content is often an extrapolation.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/list_vocabulary": {
+      "post": {
+        "operationId": "list_vocabulary",
+        "summary": "List feature, process, region and network ids",
+        "description": "Lists every media feature id that map_features accepts (with how it is detected and its limits), candidate cognitive processes, atlas regions and networks.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/map_features": {
+      "post": {
+        "operationId": "map_features",
+        "summary": "Map media features to research associations",
+        "description": "Given features that are present in some media (e.g. speech_present, regular_beat, faces_visible), returns the candidate cognitive processes, the curated research associations (claim, evidence grade, cited sources with findings, limitations) and the brain regions/networks those associations name. Also returns explicit \"insufficient evidence\" records for inputs that research does not support mapping (e.g. emotional_theme). Interpretive features (humor, suspense, surprise, emotional_theme, situation_change, places_layout) only count when confirmed: true. This does NOT describe any person's brain activity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "features": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Features observed in the media.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "enum": [
+                            "sound_present",
+                            "speech_present",
+                            "music_present",
+                            "singing_possible",
+                            "regular_beat",
+                            "loudness_change",
+                            "abrupt_onset",
+                            "transcribed_speech",
+                            "narrative_cues",
+                            "mental_state_language",
+                            "laughter_marker",
+                            "emotion_words",
+                            "visual_input",
+                            "visual_motion",
+                            "luminance_change",
+                            "scene_cut",
+                            "faces_visible",
+                            "places_layout",
+                            "situation_change",
+                            "humor",
+                            "suspense",
+                            "surprise",
+                            "emotional_theme"
+                          ],
+                          "description": "Feature id (see list_vocabulary)."
+                        },
+                        "present": {
+                          "type": "boolean",
+                          "default": true
+                        },
+                        "confidence": {
+                          "type": "string",
+                          "enum": [
+                            "low",
+                            "moderate",
+                            "high"
+                          ],
+                          "default": "moderate",
+                          "description": "How sure the caller is that the feature is present (detection confidence, not evidence strength)."
+                        },
+                        "confirmed": {
+                          "type": "boolean",
+                          "default": false,
+                          "description": "Set true when a person has confirmed the feature; required for interpretive features."
+                        },
+                        "note": {
+                          "type": "string",
+                          "description": "Optional description of how the feature was observed."
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "listenerContext": {
+                    "type": "object",
+                    "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+                    "properties": {
+                      "understands_language": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      },
+                      "enjoys_music": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      },
+                      "finds_funny": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "features"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/analyze_transcript": {
+      "post": {
+        "operationId": "analyze_transcript",
+        "summary": "Analyse a transcript",
+        "description": "Segments a transcript (SRT, WebVTT, Whisper-style JSON with timestamps, or plain text) and detects transparent lexical features per segment (spoken words and speaking rate, narrative cues, mental-state language, laughter annotations, emotion words), then maps them to research associations. Audio and video are reported as not analysed; nothing acoustic or visual is inferred.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "The transcript text."
+                  },
+                  "filename": {
+                    "type": "string",
+                    "description": "Optional file name (helps detect the format, e.g. talk.srt)."
+                  },
+                  "listenerContext": {
+                    "type": "object",
+                    "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+                    "properties": {
+                      "understands_language": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      },
+                      "enjoys_music": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      },
+                      "finds_funny": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/analyze_wav_audio": {
+      "post": {
+        "operationId": "analyze_wav_audio",
+        "summary": "Analyse WAV audio",
+        "description": "Analyses a PCM WAV recording (base64) with the app's transparent audio heuristics: sound, speech-like and music-like audio, regular beat and tempo, loudness changes and abrupt onsets, segmented over time, optionally with a timed transcript. Returns per-segment detected features (with detection confidence) and research associations. Detectors were validated only on synthetic signals. Other formats (MP3, MP4, MOV) need the web app or conversion to WAV.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "wavBase64": {
+                    "type": "string",
+                    "description": "Base64-encoded WAV file (data: URL prefix allowed)."
+                  },
+                  "transcript": {
+                    "type": "string",
+                    "description": "Optional timed transcript (SRT/VTT/JSON) for the same audio."
+                  },
+                  "transcriptFilename": {
+                    "type": "string"
+                  },
+                  "listenerContext": {
+                    "type": "object",
+                    "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+                    "properties": {
+                      "understands_language": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      },
+                      "enjoys_music": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      },
+                      "finds_funny": {
+                        "type": "string",
+                        "enum": [
+                          "unknown",
+                          "yes",
+                          "no"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "wavBase64"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/get_evidence": {
+      "post": {
+        "operationId": "get_evidence",
+        "summary": "Get an evidence record",
+        "description": "Returns the full record for an association id (claim, grade and rationale, targets, every cited source with its actual finding, limitations), a source id (study design, sample, stimuli, findings, limitations, verification level), a process id, or a region/network.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/get_region": {
+      "post": {
+        "operationId": "get_region",
+        "summary": "Look up a brain region or network",
+        "description": "Finds a region or network by id, mesh id (e.g. L_amygdala) or name fragment and returns plain-language orientation, a reminder that regions are multifunctional, and every curated association that names it.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    },
+    "/tools/search_evidence": {
+      "post": {
+        "operationId": "search_evidence",
+        "summary": "Search the evidence database",
+        "description": "Full-text search over associations (claims, processes, regions, cited studies), sources and deliberate non-mappings. Optionally filter associations by evidence grade.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Words that must all appear, e.g. \"music reward\" or \"faces fusiform\"."
+                  },
+                  "grade": {
+                    "type": "string",
+                    "enum": [
+                      "strong",
+                      "moderate",
+                      "limited",
+                      "contested"
+                    ]
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 50,
+                    "default": 10
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool result (JSON). Always includes or implies the disclaimer: not a brain scan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or wrong bearer token (only when the server was started with a token)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    },
+    {}
+  ]
+}

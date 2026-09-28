@@ -1190,3 +1190,122 @@ input[type='password'] {
   border-radius: 8px;
   padding: 0.3rem 0.6rem;
 }
+
+/* ---------- phones & tablets ---------- */
+.app {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.tap-card {
+  position: absolute;
+  left: 8px;
+  bottom: 26px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.82rem;
+  z-index: 3;
+}
+.tap-card strong {
+  flex: 1 1 auto;
+}
+@media (pointer: coarse) {
+  /* 16px form controls stop iOS Safari from zooming on focus; 44px touch targets */
+  select,
+  input[type='password'],
+  input[type='text'] {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  input[type='range'] {
+    min-height: 44px;
+  }
+  .btn,
+  .chip,
+  .tab,
+  .icon-btn {
+    min-height: 44px;
+  }
+  .btn.small {
+    min-height: 40px;
+  }
+  .icon-btn {
+    min-width: 44px;
+  }
+  .target {
+    min-height: 40px;
+  }
+  .cue {
+    padding: 0.55rem 0.3rem;
+  }
+  .seg-row,
+  .lane-label.seg-label {
+    height: 52px;
+  }
+  .check input {
+    width: 22px;
+    height: 22px;
+  }
+  .hover-tip {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .timeline-grid {
+    grid-template-columns: 64px 1fr;
+  }
+  .lane-label {
+    font-size: 0.68rem;
+  }
+  .timeline-axis {
+    margin-left: 72px;
+  }
+  .seg-text {
+    display: none;
+  }
+  .modalities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .brain-toolbar {
+    gap: 0.4rem;
+  }
+  .app-header {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  .modal-backdrop {
+    padding: 0;
+    place-items: end stretch;
+  }
+  .modal,
+  .modal.wide {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 14px 14px 0 0;
+  }
+  .kv {
+    grid-template-columns: 1fr;
+  }
+}
+/* keep dialogs within the viewport even when their content (tables) is wide */
+.modal-backdrop {
+  grid-template-columns: minmax(0, 1fr);
+}
+.modal {
+  min-width: 0;
+  justify-self: center;
+}
+@media (max-width: 760px) {
+  .modal {
+    justify-self: stretch;
+  }
+}
+.modal-body {
+  min-width: 0;
+}

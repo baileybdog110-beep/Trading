@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "stimulus-association-map": {
+      "command": "node",
+      "args": ["/absolute/path/to/neuro-stimulus-map/tool-dist/mcp-stdio.mjs"]
+    }
+  }
+}

@@ -313,7 +313,10 @@ function label(feats: Partial<Record<FeatureId, DetectedFeature>>): string {
   if (on('faces_visible')) parts.push('faces');
   if (on('scene_cut')) parts.push('cut');
   if (on('abrupt_onset')) parts.push('sudden sound');
-  return parts.join(' · ') || 'Visual only';
+  if (parts.length) return parts.join(' · ');
+  if (on('visual_input')) return 'Visual only';
+  if (feats.transcribed_speech) return 'No transcribed speech';
+  return 'No detected features';
 }
 
 export function assemble(input: AssembleInput): { segments: Segment[]; tracks: TimelineTracks } {

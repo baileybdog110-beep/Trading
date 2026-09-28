@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { sourceById } from '../evidence/db';
 import type { Applicability, EvidenceGrade, SourceRecord } from '../evidence/types';
 import type { DetectedFeature } from '../pipeline/types';
@@ -121,9 +121,23 @@ export function SourceCard({ id, role, finding }: { id: string; role?: 'supports
 }
 
 export function Modal({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // keep the latest onClose without re-running the focus effect (parents re-render often, e.g. during playback)
+  const close = useRef(onClose);
+  close.current = onClose;
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    ref.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close.current();
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      previous?.focus?.();
+    };
+  }, []);
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
-      <div className={`modal ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
+      <div ref={ref} tabIndex={-1} className={`modal ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <h2>{title}</h2>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Close">

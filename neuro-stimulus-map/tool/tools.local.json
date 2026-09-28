@@ -1,0 +1,350 @@
+[
+  {
+    "name": "describe_tool",
+    "description": "Returns what this tool is, its disclaimer, evidence grading rubric, citation-verification status and database counts. Call this first to understand how to interpret results. Research-based stimulus association map - NOT a brain scan. Results say which brain regions published research associates with the kinds of stimuli described; they do not measure, predict or simulate any person's brain activity, and they never indicate dopamine, hormones, emotions or activation levels. Evidence grades describe the research, not this media; applying a finding to specific content is often an extrapolation.",
+    "input_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "list_vocabulary",
+    "description": "Lists every media feature id that map_features accepts (with how it is detected and its limits), candidate cognitive processes, atlas regions and networks.",
+    "input_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "map_features",
+    "description": "Given features that are present in some media (e.g. speech_present, regular_beat, faces_visible), returns the candidate cognitive processes, the curated research associations (claim, evidence grade, cited sources with findings, limitations) and the brain regions/networks those associations name. Also returns explicit \"insufficient evidence\" records for inputs that research does not support mapping (e.g. emotional_theme). Interpretive features (humor, suspense, surprise, emotional_theme, situation_change, places_layout) only count when confirmed: true. This does NOT describe any person's brain activity.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Features observed in the media.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "sound_present",
+                  "speech_present",
+                  "music_present",
+                  "singing_possible",
+                  "regular_beat",
+                  "loudness_change",
+                  "abrupt_onset",
+                  "transcribed_speech",
+                  "narrative_cues",
+                  "mental_state_language",
+                  "laughter_marker",
+                  "emotion_words",
+                  "visual_input",
+                  "visual_motion",
+                  "luminance_change",
+                  "scene_cut",
+                  "faces_visible",
+                  "places_layout",
+                  "situation_change",
+                  "humor",
+                  "suspense",
+                  "surprise",
+                  "emotional_theme"
+                ],
+                "description": "Feature id (see list_vocabulary)."
+              },
+              "present": {
+                "type": "boolean",
+                "default": true
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "moderate",
+                  "high"
+                ],
+                "default": "moderate",
+                "description": "How sure the caller is that the feature is present (detection confidence, not evidence strength)."
+              },
+              "confirmed": {
+                "type": "boolean",
+                "default": false,
+                "description": "Set true when a person has confirmed the feature; required for interpretive features."
+              },
+              "note": {
+                "type": "string",
+                "description": "Optional description of how the feature was observed."
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "listenerContext": {
+          "type": "object",
+          "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+          "properties": {
+            "understands_language": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "enjoys_music": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "finds_funny": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "features"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "analyze_transcript",
+    "description": "Segments a transcript (SRT, WebVTT, Whisper-style JSON with timestamps, or plain text) and detects transparent lexical features per segment (spoken words and speaking rate, narrative cues, mental-state language, laughter annotations, emotion words), then maps them to research associations. Audio and video are reported as not analysed; nothing acoustic or visual is inferred.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "The transcript text."
+        },
+        "filename": {
+          "type": "string",
+          "description": "Optional file name (helps detect the format, e.g. talk.srt)."
+        },
+        "listenerContext": {
+          "type": "object",
+          "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+          "properties": {
+            "understands_language": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "enjoys_music": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "finds_funny": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "analyze_wav_audio",
+    "description": "Analyses a PCM WAV recording (base64) with the app's transparent audio heuristics: sound, speech-like and music-like audio, regular beat and tempo, loudness changes and abrupt onsets, segmented over time, optionally with a timed transcript. Returns per-segment detected features (with detection confidence) and research associations. Detectors were validated only on synthetic signals. Other formats (MP3, MP4, MOV) need the web app or conversion to WAV.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "wavBase64": {
+          "type": "string",
+          "description": "Base64-encoded WAV file (data: URL prefix allowed)."
+        },
+        "transcript": {
+          "type": "string",
+          "description": "Optional timed transcript (SRT/VTT/JSON) for the same audio."
+        },
+        "transcriptFilename": {
+          "type": "string"
+        },
+        "listenerContext": {
+          "type": "object",
+          "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+          "properties": {
+            "understands_language": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "enjoys_music": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "finds_funny": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "wavBase64"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "analyze_audio_file",
+    "description": "Same as analyze_wav_audio but reads a WAV file from a local path (local MCP/CLI use only), optionally with a local transcript file.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to a .wav file."
+        },
+        "transcriptPath": {
+          "type": "string",
+          "description": "Optional path to an .srt/.vtt/.json transcript."
+        },
+        "listenerContext": {
+          "type": "object",
+          "description": "Optional facts about the listener. Some findings only apply if the listener understands the language, enjoys the music, or finds the humor funny. \"unknown\" keeps those associations but marks them as dependent on the listener; \"no\" removes them.",
+          "properties": {
+            "understands_language": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "enjoys_music": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            },
+            "finds_funny": {
+              "type": "string",
+              "enum": [
+                "unknown",
+                "yes",
+                "no"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_evidence",
+    "description": "Returns the full record for an association id (claim, grade and rationale, targets, every cited source with its actual finding, limitations), a source id (study design, sample, stimuli, findings, limitations, verification level), a process id, or a region/network.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_region",
+    "description": "Finds a region or network by id, mesh id (e.g. L_amygdala) or name fragment and returns plain-language orientation, a reminder that regions are multifunctional, and every curated association that names it.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "search_evidence",
+    "description": "Full-text search over associations (claims, processes, regions, cited studies), sources and deliberate non-mappings. Optionally filter associations by evidence grade.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Words that must all appear, e.g. \"music reward\" or \"faces fusiform\"."
+        },
+        "grade": {
+          "type": "string",
+          "enum": [
+            "strong",
+            "moderate",
+            "limited",
+            "contested"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+]

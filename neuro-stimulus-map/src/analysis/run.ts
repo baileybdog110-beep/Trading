@@ -2,9 +2,10 @@
  * Browser orchestration of the local analysis. No media is uploaded anywhere:
  * decoding, frame sampling and face detection all run in this tab.
  */
+import { newId } from '../util/id';
 import type { AnalysisSession, Modalities, TranscriptCue } from '../pipeline/types';
 import { analyzeAudioStream, type AudioAnalysis } from './audio/analyze';
-import { WHOLE_FILE_WARN_BYTES, chooseStrategy, decodeChunks } from './audio/decode';
+import { WHOLE_FILE_WARN_BYTES, WHOLE_FILE_WARN_SECONDS, chooseStrategy, decodeChunks } from './audio/decode';
 import { assemble } from './assemble';
 import { analyzeVideo, probeVideo } from './video/sample';
 import type { VideoAnalysis } from './video/types';
@@ -50,8 +51,10 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
   // --- audio ---
   let audio: AudioAnalysis | null = null;
   const strategy = chooseStrategy(file);
-  if (strategy === 'whole-file' && file.size > WHOLE_FILE_WARN_BYTES) {
-    notes.push('Large non-WAV/MP3 file: the browser decodes its audio in one piece, which may exhaust memory. Converting to MP3 or WAV enables chunked processing.');
+  if (strategy === 'whole-file' && (file.size > WHOLE_FILE_WARN_BYTES || duration > WHOLE_FILE_WARN_SECONDS)) {
+    notes.push(
+      'Long or large non-WAV/MP3 file: the browser decodes its audio in one piece, which may run out of memory (especially on phones and tablets). Converting to MP3 or WAV enables chunked processing.',
+    );
   }
   try {
     audio = await analyzeAudioStream(
@@ -96,7 +99,7 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
   opts.onProgress({ stage: 'done', fraction: 1, note: 'Done' });
   return {
     session: {
-      id: crypto.randomUUID(),
+      id: newId(),
       isDemo: false,
       mediaName: file.name,
       mediaKind: probe.hasVideo ? 'video' : 'audio',
@@ -145,7 +148,7 @@ export function runTranscriptOnly(name: string, cues: TranscriptCue[]): Analysis
   const duration = Math.max(1, ...cues.map((c) => c.end)) + 1;
   const { segments, tracks } = assemble({ duration, audio: null, video: null, cues });
   return {
-    id: crypto.randomUUID(),
+    id: newId(),
     isDemo: false,
     mediaName: name,
     mediaKind: 'none',

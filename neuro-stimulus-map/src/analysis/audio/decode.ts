@@ -21,18 +21,55 @@ export function chooseStrategy(file: File): DecodeStrategy {
 
 /** Soft limit for whole-file decoding (bytes). Beyond this we warn the user. */
 export const WHOLE_FILE_WARN_BYTES = 800 * 1024 * 1024;
+/** Whole-file decoding of media longer than this may exhaust memory on phones and tablets. */
+export const WHOLE_FILE_WARN_SECONDS = 45 * 60;
 
-async function decodeWithBrowser(bytes: ArrayBuffer): Promise<AudioBuffer> {
-  const ctx = new OfflineAudioContext(1, 1, ANALYSIS_RATE);
-  return await ctx.decodeAudioData(bytes);
+/**
+ * Decoding-context sample rates to try. 16 kHz avoids a resampling step, but some browsers
+ * (older iOS Safari in particular) only accept common rates, so we fall back and resample.
+ */
+const DECODE_RATES = [ANALYSIS_RATE, 22050, 44100, 48000];
+let workingRate: number | null = null;
+
+type OfflineCtor = new (channels: number, length: number, rate: number) => OfflineAudioContext;
+
+function offlineContext(rate: number): OfflineAudioContext {
+  const w = window as unknown as { OfflineAudioContext?: OfflineCtor; webkitOfflineAudioContext?: OfflineCtor };
+  const Ctor = w.OfflineAudioContext ?? w.webkitOfflineAudioContext;
+  if (!Ctor) throw new Error('This browser has no Web Audio decoding support.');
+  return new Ctor(1, rate, rate);
 }
 
-function toMono(buf: AudioBuffer): Float32Array {
-  if (buf.numberOfChannels === 1) return buf.getChannelData(0).slice();
-  const out = new Float32Array(buf.length);
+/** decodeAudioData with both the promise form and the legacy callback form (older Safari). */
+function decodeCompat(ctx: OfflineAudioContext, bytes: ArrayBuffer): Promise<AudioBuffer> {
+  return new Promise((resolve, reject) => {
+    const p = ctx.decodeAudioData(bytes, resolve, (e) => reject(e ?? new Error('Audio decoding failed')));
+    if (p && typeof (p as Promise<AudioBuffer>).then === 'function') (p as Promise<AudioBuffer>).then(resolve, reject);
+  });
+}
+
+async function decodeWithBrowser(bytes: ArrayBuffer): Promise<AudioBuffer> {
+  let lastError: unknown = null;
+  for (const rate of workingRate ? [workingRate] : DECODE_RATES) {
+    let ctx: OfflineAudioContext;
+    try {
+      ctx = offlineContext(rate);
+    } catch (e) {
+      lastError = e; // this rate is not supported here; try the next one
+      continue;
+    }
+    workingRate = rate;
+    return await decodeCompat(ctx, bytes);
+  }
+  throw lastError ?? new Error('No supported audio decoding sample rate.');
+}
+
+/** Mono mix of frames [from, to) of an AudioBuffer. */
+function monoSlice(buf: AudioBuffer, from = 0, to = buf.length): Float32Array {
+  const out = new Float32Array(Math.max(0, to - from));
   for (let c = 0; c < buf.numberOfChannels; c++) {
     const d = buf.getChannelData(c);
-    for (let i = 0; i < d.length; i++) out[i] += d[i] / buf.numberOfChannels;
+    for (let i = from; i < to; i++) out[i - from] += d[i] / buf.numberOfChannels;
   }
   return out;
 }
@@ -97,6 +134,7 @@ async function* mp3Chunks(file: File): AsyncGenerator<Float32Array> {
   const SLICE = 4 * 1024 * 1024;
   const headBuf = await file.slice(0, Math.min(file.size, 1 << 20)).arrayBuffer();
   let pos = id3Size(new DataView(headBuf));
+  let resampler: Resampler | null = null;
   while (pos < file.size) {
     const buf = await file.slice(pos, Math.min(file.size, pos + SLICE + 4096)).arrayBuffer();
     const v = new DataView(buf);
@@ -118,25 +156,28 @@ async function* mp3Chunks(file: File): AsyncGenerator<Float32Array> {
       off += f.length;
     }
     if (off === start) break; // no more frames
-    const decoded = toMono(await decodeWithBrowser(buf.slice(start, off)));
+    const buffer = await decodeWithBrowser(buf.slice(start, off));
+    const decoded = monoSlice(buffer);
     // Force the decoded length to the exact frame-count duration so timing does not drift
     // across slices (decoders add priming delay to each independently decoded slice).
-    const expected = Math.round((samples / rate) * ANALYSIS_RATE);
+    const expected = Math.round((samples / rate) * buffer.sampleRate);
     let out = decoded;
     if (decoded.length > expected) out = decoded.subarray(decoded.length - expected);
     else if (decoded.length < expected) {
       out = new Float32Array(expected);
       out.set(decoded);
     }
-    yield out;
+    resampler ??= new Resampler(buffer.sampleRate, ANALYSIS_RATE);
+    yield resampler.push(out);
     pos += off;
   }
 }
 
 async function* wholeFileChunks(file: File): AsyncGenerator<Float32Array> {
-  const decoded = toMono(await decodeWithBrowser(await file.arrayBuffer()));
-  const step = ANALYSIS_RATE * 60;
-  for (let i = 0; i < decoded.length; i += step) yield decoded.subarray(i, i + step);
+  const buffer = await decodeWithBrowser(await file.arrayBuffer());
+  const rs = new Resampler(buffer.sampleRate, ANALYSIS_RATE);
+  const step = buffer.sampleRate * 60;
+  for (let i = 0; i < buffer.length; i += step) yield rs.push(monoSlice(buffer, i, Math.min(buffer.length, i + step)));
 }
 
 export function decodeChunks(file: File, strategy = chooseStrategy(file)): AsyncGenerator<Float32Array> {
