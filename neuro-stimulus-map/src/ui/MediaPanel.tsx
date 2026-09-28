@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useRef } from 'react';
 import type { AnalysisSession, TranscriptCue } from '../pipeline/types';
+import { JsonExportButton } from './bits';
 import { formatTime } from './format';
 
 interface Props {
@@ -10,10 +11,10 @@ interface Props {
   onFollow: (v: boolean) => void;
   onTime: (t: number) => void;
   onDelete: () => void;
-  onExport: () => void;
+  exportData: () => unknown;
 }
 
-export const MediaPanel = forwardRef<HTMLMediaElement, Props>(function MediaPanel({ session, url, time, follow, onFollow, onTime, onDelete, onExport }, ref) {
+export const MediaPanel = forwardRef<HTMLMediaElement, Props>(function MediaPanel({ session, url, time, follow, onFollow, onTime, onDelete, exportData }, ref) {
   const common = {
     controls: true,
     src: url ?? undefined,
@@ -44,9 +45,7 @@ export const MediaPanel = forwardRef<HTMLMediaElement, Props>(function MediaPane
         <label className="check small">
           <input type="checkbox" checked={follow} onChange={(e) => onFollow(e.target.checked)} /> Map follows playback
         </label>
-        <button type="button" className="btn small ghost" onClick={onExport}>
-          Export analysis (JSON)
-        </button>
+        <JsonExportButton label="analysis (JSON)" filename={`stimulus-association-map-${session.isDemo ? 'demo' : 'analysis'}.json`} data={exportData} />
         <button type="button" className="btn small danger" onClick={onDelete}>
           {session.isDemo ? 'Close demo' : 'Delete media & results'}
         </button>

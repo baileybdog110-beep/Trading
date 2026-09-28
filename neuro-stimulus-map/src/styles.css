@@ -1309,3 +1309,27 @@ input[type='password'] {
 .modal-body {
   min-width: 0;
 }
+
+/* Copy fallback when the hosted viewer refuses clipboard access */
+.copy-fallback {
+  flex-basis: 100%;
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+.copy-fallback textarea {
+  width: 100%;
+  min-height: 8rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  background: var(--surface);
+  color: inherit;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  padding: 0.4rem;
+}
+@media (pointer: coarse) {
+  .copy-fallback textarea {
+    font-size: 16px;
+  }
+}

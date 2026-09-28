@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { SUPPORTED_EXT, type Progress } from '../analysis/run';
+import { HOSTED, HOSTED_NETWORK_NOTE } from '../util/hosted';
 
 const TRANSCRIPT_EXT = ['srt', 'vtt', 'txt', 'json'];
 const ext = (n: string) => n.toLowerCase().split('.').pop() ?? '';
@@ -91,10 +92,14 @@ export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly
           <strong>Nowhere.</strong> Decoding, audio features, frame sampling and face detection run inside this browser tab. Nothing is uploaded, and nothing is saved to disk; closing the
           tab or pressing <em>Delete media & results</em> discards it.
         </p>
-        <p className="small muted">
-          Two optional tools contact outside services and are off until you turn them on later, each with its own explanation first: local speech recognition (downloads a model; audio
-          stays here) and interpretation suggestions (sends transcript text to Anthropic with your own API key).
-        </p>
+        {HOSTED ? (
+          <p className="small muted">{HOSTED_NETWORK_NOTE}</p>
+        ) : (
+          <p className="small muted">
+            Two optional tools contact outside services and are off until you turn them on later, each with its own explanation first: local speech recognition (downloads a model;
+            audio stays here) and interpretation suggestions (sends transcript text to Anthropic with your own API key).
+          </p>
+        )}
         <label className="check small">
           <input type="checkbox" checked={faces} onChange={(e) => setFaces(e.target.checked)} disabled={busy} /> Detect whether faces are visible (local model; no identity or expression
           analysis)

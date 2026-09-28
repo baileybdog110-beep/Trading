@@ -1,19 +1,11 @@
 import { useState } from 'react';
 import { db, featureById, networkById, processById, regionById } from '../evidence/db';
-import { ApplicabilityBadge, GradeBadge, Modal, SourceCard, SourceLinks, Verification } from './bits';
+import { ApplicabilityBadge, GradeBadge, JsonExportButton, Modal, SourceCard, SourceLinks, Verification } from './bits';
 
 type Tab = 'associations' | 'sources' | 'rules' | 'unsupported' | 'rubric';
 
 export function EvidenceBrowser({ onClose }: { onClose: () => void }) {
   const [tab, setTab] = useState<Tab>('associations');
-  const download = () => {
-    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `evidence-db-${db.meta.version}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
   return (
     <Modal title="Evidence database" onClose={onClose} wide>
       <p className="small">
@@ -35,9 +27,7 @@ export function EvidenceBrowser({ onClose }: { onClose: () => void }) {
             {l}
           </button>
         ))}
-        <button type="button" className="btn small ghost" onClick={download}>
-          Download JSON
-        </button>
+        <JsonExportButton label="JSON" filename={`evidence-db-${db.meta.version}.json`} data={() => db} />
       </div>
 
       {tab === 'associations' && (

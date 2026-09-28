@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { meshIndex, networkById, regionById } from '../evidence/db';
 import type { MeshResult } from '../pipeline/mapping';
+import { fetchBinary } from '../util/hosted';
 import { GRADE_COLORS, GRADE_LABEL } from './colors';
 
 export type ViewMode = 'anatomy' | 'networks';
@@ -153,31 +154,34 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
 
     const loader = new GLTFLoader();
     const load = (url: string) =>
-      new Promise<THREE.Mesh[]>((resolve, reject) =>
-        loader.load(
-          url,
-          (gltf) => {
-            const meshes: THREE.Mesh[] = [];
-            gltf.scene.traverse((o) => {
-              if ((o as THREE.Mesh).isMesh) {
-                const m = o as THREE.Mesh;
-                m.geometry.computeVertexNormals();
-                // glTF node names carry the region id; fall back to the parent node's name.
-                if (!meshIndex.has(m.name) && m.parent && meshIndex.has(m.parent.name)) m.name = m.parent.name;
-                m.material = makeMaterial();
-                meshes.push(m);
-              }
-            });
-            // flatten into root (keep world transforms identity: exporter wrote MNI coordinates)
-            for (const m of meshes) {
-              m.removeFromParent();
-              root.add(m);
-            }
-            resolve(meshes);
-          },
-          undefined,
-          (e) => reject(e),
-        ),
+      fetchBinary(url).then(
+        (buf) =>
+          new Promise<THREE.Mesh[]>((resolve, reject) =>
+            loader.parse(
+              buf,
+              '',
+              (gltf) => {
+                const meshes: THREE.Mesh[] = [];
+                gltf.scene.traverse((o) => {
+                  if ((o as THREE.Mesh).isMesh) {
+                    const m = o as THREE.Mesh;
+                    m.geometry.computeVertexNormals();
+                    // glTF node names carry the region id; fall back to the parent node's name.
+                    if (!meshIndex.has(m.name) && m.parent && meshIndex.has(m.parent.name)) m.name = m.parent.name;
+                    m.material = makeMaterial();
+                    meshes.push(m);
+                  }
+                });
+                // flatten into root (keep world transforms identity: exporter wrote MNI coordinates)
+                for (const m of meshes) {
+                  m.removeFromParent();
+                  root.add(m);
+                }
+                resolve(meshes);
+              },
+              (e) => reject(e),
+            ),
+          ),
       );
     let disposed = false;
     Promise.all([load('./atlas/cerebra.glb'), load('./atlas/yeo7.glb')])

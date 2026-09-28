@@ -37,16 +37,20 @@ transcript (`.srt`, `.vtt`, Whisper-style `.json`).
 The app is a static site that runs entirely in the browser, so there are three ways to open it
 on a phone or tablet:
 
-1. **Hosted copy.** Open the published link in Safari. Hosted pages may block the two optional
-   network features (speech recognition and interpretation suggestions). Everything else works.
+1. **Hosted copy.** `npm run build:hosted` writes `dist-hosted/`, a variant for sandboxed web
+   viewers such as a claude.ai artifact. There, binary files are published as base64 text,
+   exports copy to the clipboard instead of downloading, and the two optional network features
+   (speech recognition and interpretation suggestions) are switched off, because the viewer
+   blocks requests to other sites. `node e2e/hosted.mjs` checks this build under a strict
+   Content-Security-Policy.
 2. **From your computer over Wi-Fi.** Run `npm run preview:phone` (production build) or
    `npm run dev:phone` (live reload). Vite prints a `Network:` address such as
    `http://192.168.1.20:4173`. Open it in Safari on a device on the same Wi-Fi network.
 3. **Any static host.** `npm run build` writes `dist/`, which can be served from any static
    host (GitHub Pages, Netlify, an S3 bucket and so on). Asset paths are relative.
 
-In Safari, tap **Share → Add to Home Screen** to open it full-screen like an app, with its own
-icon. Uploading uses the normal iOS file picker, so you can pick from Photos, Files or
+With options 2 and 3, tap **Share → Add to Home Screen** in Safari to open it full-screen like
+an app, with its own icon. Uploading uses the normal iOS file picker, so you can pick from Photos, Files or
 iCloud Drive.
 
 On touch screens:
@@ -186,7 +190,8 @@ npm run test:e2e  # headless browser + tool transports (see below)
 
 - `e2e/smoke.mjs`: desktop demo, WebM + SRT, MP3, WAV, the MP4 error path, and tablet/phone overflow;
 - `e2e/mobile.mjs`: iPhone and iPad emulation over a plain-http LAN address. It taps the brain, Details and the timeline, opens dialogs, checks for horizontal overflow and small controls, and analyses a video on the phone;
-- `e2e/tool-smoke.mjs`: the MCP stdio server, the HTTP API (auth, OpenAPI, no local-file access) and MCP over HTTP, using the official MCP client.
+- `e2e/tool-smoke.mjs`: the MCP stdio server, the HTTP API (auth, OpenAPI, no local-file access) and MCP over HTTP, using the official MCP client;
+- `e2e/hosted.mjs`: the hosted build under a strict Content-Security-Policy (no eval, no outside requests): demo, atlas loading, copy export, and video analysis with face detection.
 
 The tests check that:
 

@@ -1,7 +1,8 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { sourceById } from '../evidence/db';
 import type { Applicability, EvidenceGrade, SourceRecord } from '../evidence/types';
 import type { DetectedFeature } from '../pipeline/types';
+import { HOSTED } from '../util/hosted';
 import { APPLICABILITY_LABEL, GRADE_LABEL } from './colors';
 
 export function GradeBadge({ grade }: { grade: EvidenceGrade | 'insufficient' }) {
@@ -147,5 +148,50 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
         <div className="modal-body">{children}</div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Downloads JSON, or in the hosted build (where downloads are blocked) copies it to the clipboard,
+ * falling back to a selectable text box if the clipboard is refused.
+ */
+export function JsonExportButton({ label, filename, data }: { label: string; filename: string; data: () => unknown }) {
+  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [text, setText] = useState('');
+  useEffect(() => {
+    if (state !== 'copied') return;
+    const t = setTimeout(() => setState('idle'), 2000);
+    return () => clearTimeout(t);
+  }, [state]);
+  const run = () => {
+    const json = JSON.stringify(data(), null, 2);
+    if (!HOSTED) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      return;
+    }
+    setText(json);
+    // writeText must be called inside the click handler.
+    const copy = navigator.clipboard?.writeText(json) ?? Promise.reject(new Error('no clipboard'));
+    copy.then(
+      () => setState('copied'),
+      () => setState('failed'),
+    );
+  };
+  return (
+    <>
+      <button type="button" className="btn small ghost" onClick={run}>
+        {HOSTED ? (state === 'copied' ? 'Copied' : `Copy ${label}`) : `Download ${label}`}
+      </button>
+      {HOSTED && state === 'failed' && (
+        <label className="copy-fallback small">
+          Copying was blocked. Select all of this text and copy it:
+          <textarea readOnly value={text} autoFocus onFocus={(e) => e.currentTarget.select()} />
+        </label>
+      )}
+    </>
   );
 }

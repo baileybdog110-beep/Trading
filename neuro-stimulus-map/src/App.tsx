@@ -21,6 +21,7 @@ import { ReasoningPanel } from './ui/ReasoningPanel';
 import { RegionPanel } from './ui/RegionPanel';
 import { Timeline } from './ui/Timeline';
 import { UploadPanel } from './ui/UploadPanel';
+import { HOSTED, HOSTED_NETWORK_NOTE } from './util/hosted';
 
 type RightTab = 'reasoning' | 'features' | 'region';
 
@@ -175,9 +176,9 @@ export default function App() {
     setNotice(null);
   };
 
-  const exportJson = () => {
-    if (!session) return;
-    const payload = {
+  const exportPayload = () => {
+    if (!session) return null;
+    return {
       note: 'Research-based stimulus association map export. Contains detected features, your corrections and the evidence mappings - not brain measurements. No media is included.',
       evidenceDbVersion: db.meta.version,
       exportedAt: new Date().toISOString(),
@@ -194,11 +195,6 @@ export default function App() {
         };
       }),
     };
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
-    a.download = `stimulus-association-map-${session.isDemo ? 'demo' : 'analysis'}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
   };
 
   const editFeature = (id: FeatureId, action: 'confirm' | 'reject' | 'reset') => {
@@ -334,10 +330,11 @@ export default function App() {
                   reset();
                   setNotice(wasDemo ? null : 'Media and all results were deleted from this tab. Nothing had been uploaded or saved.');
                 }}
-                onExport={exportJson}
+                exportData={exportPayload}
               />
               <TranscriptPanel cues={allCues} time={time} onSeek={seek} untimed={session.untimedTranscript}>
-                {!session.isDemo && (
+                {!session.isDemo && HOSTED && <p className="small muted">{HOSTED_NETWORK_NOTE}</p>}
+                {!session.isDemo && !HOSTED && (
                   <div className="row wrap">
                     {session.mediaKind !== 'none' && !hasTimedText && (
                       <button type="button" className="btn small ghost" disabled={busy} onClick={() => setDialog('asr')}>
