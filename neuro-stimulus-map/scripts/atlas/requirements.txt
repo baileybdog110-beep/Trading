@@ -1,0 +1,6 @@
+numpy
+scipy
+nibabel
+scikit-image
+trimesh
+fast-simplification

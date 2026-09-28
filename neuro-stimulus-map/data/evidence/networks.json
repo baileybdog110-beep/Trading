@@ -1,0 +1,16 @@
+[
+  {"id": "yeo7_vis", "name": "Visual network", "meshes": {"L": "L_yeo7_vis", "R": "R_yeo7_vis"},
+   "orientation": "Occipital and adjacent cortex whose resting activity fluctuates together; overlaps visual field maps."},
+  {"id": "yeo7_sommot", "name": "Somatomotor network", "meshes": {"L": "L_yeo7_sommot", "R": "R_yeo7_sommot"},
+   "orientation": "Cortex around the central sulcus; in this parcellation it also includes auditory cortex on the superior temporal plane."},
+  {"id": "yeo7_dorsattn", "name": "Dorsal attention network", "meshes": {"L": "L_yeo7_dorsattn", "R": "R_yeo7_dorsattn"},
+   "orientation": "Intraparietal sulcus, superior parietal cortex, frontal eye fields and motion-sensitive occipitotemporal cortex; associated with goal-directed attention."},
+  {"id": "yeo7_salventattn", "name": "Salience / ventral attention network", "meshes": {"L": "L_yeo7_salventattn", "R": "R_yeo7_salventattn"},
+   "orientation": "Anterior insula, anterior/mid cingulate, temporoparietal junction and inferior frontal regions; associated with detecting behaviourally relevant events."},
+  {"id": "yeo7_limbic", "name": "Limbic network (cortical)", "meshes": {"L": "L_yeo7_limbic", "R": "R_yeo7_limbic"},
+   "orientation": "Orbitofrontal cortex and anterior temporal lobe. These areas have weaker fMRI signal, so this network is less reliably defined. Subcortical limbic structures are not part of this cortical parcellation."},
+  {"id": "yeo7_cont", "name": "Frontoparietal control network", "meshes": {"L": "L_yeo7_cont", "R": "R_yeo7_cont"},
+   "orientation": "Lateral prefrontal and posterior parietal cortex; associated with flexible, effortful control."},
+  {"id": "yeo7_default", "name": "Default network", "meshes": {"L": "L_yeo7_default", "R": "R_yeo7_default"},
+   "orientation": "Medial prefrontal cortex, posterior cingulate/precuneus, angular gyrus and lateral temporal cortex; associated with memory, social thought and integrating context - not with 'doing nothing'."}
+]

@@ -1,0 +1,354 @@
+[
+  {
+    "id": "r_sound_auditory",
+    "feature": "sound_present",
+    "process": "auditory_processing",
+    "applicability": "direct",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Studies of auditory cortex used sounds of all kinds; audible sound is the defining condition.",
+    "conditions": [
+      "The listener can hear the audio (it is played at an audible level)."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_loudness",
+    "feature": "loudness_change",
+    "process": "loudness_coding",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Level-dependence of auditory cortex responses was shown with controlled sound levels; the file's relative level change is only a proxy for level at the ear.",
+    "conditions": [
+      "Playback volume is unknown; the change is relative to the recording."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_onset_stg",
+    "feature": "abrupt_onset",
+    "process": "acoustic_onset_detection",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Onset-responsive cortex was characterised with speech; abrupt onsets in media include non-speech sounds.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_onset_salience",
+    "feature": "abrupt_onset",
+    "process": "salient_change_orienting",
+    "applicability": "extrapolation",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Oddball and sensory-change studies used unexpected deviants in simple sequences. Whether a sudden sound in media captures attention depends on expectation, attention and context.",
+    "conditions": [
+      "The event is unexpected for the listener and not ignored."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_speech_voice",
+    "feature": "speech_present",
+    "process": "voice_perception",
+    "applicability": "direct",
+    "minConfidence": "low",
+    "requiresConfirmation": false,
+    "rationale": "Voice-area studies used speech and non-speech vocal sounds, which is what this feature detects.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_words_language",
+    "feature": "transcribed_speech",
+    "process": "language_comprehension",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Language-network studies used sentences the participants understood; transcribed words show that language is present, not that it is understood.",
+    "conditions": [
+      "The listener understands the language being spoken.",
+      "The listener is attending to the speech."
+    ],
+    "conditionKeys": [
+      "understands_language"
+    ]
+  },
+  {
+    "id": "r_words_semantic",
+    "feature": "transcribed_speech",
+    "process": "semantic_processing",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Meaningful words engage semantic processing in listeners who understand them; naturalistic podcast stories (Huth et al. 2016) are a close match for spoken content.",
+    "conditions": [
+      "The listener understands the language being spoken."
+    ],
+    "conditionKeys": [
+      "understands_language"
+    ]
+  },
+  {
+    "id": "r_narrative",
+    "feature": "narrative_cues",
+    "process": "narrative_integration",
+    "applicability": "extrapolation",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Naturalistic story studies show long-timescale integration in higher-order areas when a story is coherent and followed; lexical cues only suggest a story is being told.",
+    "conditions": [
+      "The listener follows the story over time.",
+      "Interpretation depends on the listener's beliefs (Yeshurun et al. 2017)."
+    ],
+    "conditionKeys": [
+      "understands_language"
+    ]
+  },
+  {
+    "id": "r_mental_state",
+    "feature": "mental_state_language",
+    "process": "mentalizing",
+    "applicability": "extrapolation",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Theory-of-mind studies asked participants to reason about beliefs and intentions; mental-state words are only a cue that such reasoning may be invited.",
+    "conditions": [
+      "The listener engages with what speakers or characters think or want."
+    ],
+    "conditionKeys": [
+      "understands_language"
+    ]
+  },
+  {
+    "id": "r_music_selective",
+    "feature": "music_present",
+    "process": "music_selective_processing",
+    "applicability": "direct",
+    "minConfidence": "low",
+    "requiresConfirmation": false,
+    "rationale": "Music-selective components were identified with natural music clips; detected music is the same stimulus class.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_music_reward",
+    "feature": "music_present",
+    "process": "music_evoked_reward",
+    "applicability": "extrapolation",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Meta-analyses pooled studies where listeners experienced, or were expected to experience, pleasure or emotion. The music alone cannot establish that a listener does.",
+    "conditions": [
+      "The listener finds this music pleasurable or emotionally moving.",
+      "Familiarity strongly changes responses (Pereira et al. 2011)."
+    ],
+    "conditionKeys": [
+      "enjoys_music"
+    ]
+  },
+  {
+    "id": "r_music_language_overlap",
+    "feature": "music_present",
+    "process": "music_structure_language_overlap",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Shown to illustrate a genuine scientific disagreement about whether music structure is processed in language regions.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_song",
+    "feature": "singing_possible",
+    "process": "song_perception",
+    "applicability": "partial",
+    "minConfidence": "low",
+    "requiresConfirmation": false,
+    "rationale": "Song-selective responses were identified for sung music; this detection is low-confidence and may reflect speech over music.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_beat",
+    "feature": "regular_beat",
+    "process": "beat_perception",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Beat studies mostly used controlled rhythms; a naturalistic replication found rhythm-feature responses less reliable than timbral ones (Burunat et al. 2016).",
+    "conditions": [
+      "The listener perceives the beat."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_visual",
+    "feature": "visual_input",
+    "process": "visual_processing",
+    "applicability": "direct",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Any viewed image engages occipital visual cortex; movie studies confirm this for film.",
+    "conditions": [
+      "The viewer is looking at the screen."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_luminance",
+    "feature": "luminance_change",
+    "process": "visual_change_early",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "In natural movies, early visual areas tracked non-motion image changes such as illumination (single study).",
+    "conditions": [
+      "The viewer is looking at the screen."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_motion",
+    "feature": "visual_motion",
+    "process": "visual_motion",
+    "applicability": "partial",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Motion-sensitive cortex responds to motion in natural movies; this app's motion estimate is a coarse proxy.",
+    "conditions": [
+      "The viewer is looking at the screen."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_faces",
+    "feature": "faces_visible",
+    "process": "face_perception",
+    "applicability": "direct",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Face-selective fusiform cortex responded to faces within an unconstrained feature film (Hasson et al. 2004) as well as to face photographs.",
+    "conditions": [
+      "The viewer is looking at the screen."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_places",
+    "feature": "places_layout",
+    "process": "scene_perception",
+    "applicability": "partial",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Scene-selective regions respond to spatial layout in scene images; the feature is user-marked.",
+    "conditions": [
+      "The viewer is looking at the screen."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_cut_events",
+    "feature": "scene_cut",
+    "process": "event_segmentation",
+    "applicability": "extrapolation",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Cuts often coincide with situation changes, but when those are controlled, cuts per se were not positively associated with perceived event boundaries (Magliano & Zacks 2011).",
+    "conditions": [
+      "The cut marks a change of situation or action for the viewer."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_situation_events",
+    "feature": "situation_change",
+    "process": "event_segmentation",
+    "applicability": "direct",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Event-boundary studies used moments that observers judged to be transitions between events, which is what this user annotation marks.",
+    "conditions": [
+      "Other viewers may place boundaries differently."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_humor_comprehension",
+    "feature": "humor",
+    "process": "humor_comprehension",
+    "applicability": "extrapolation",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Humor studies time-locked responses to moments participants found humorous; a marked joke may not be understood or found funny by a given listener.",
+    "conditions": [
+      "The listener understands the joke."
+    ],
+    "conditionKeys": [
+      "understands_language"
+    ]
+  },
+  {
+    "id": "r_humor_appreciation",
+    "feature": "humor",
+    "process": "humor_appreciation",
+    "applicability": "extrapolation",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Appreciation responses were tied to moments participants enjoyed.",
+    "conditions": [
+      "The listener finds it funny."
+    ],
+    "conditionKeys": [
+      "finds_funny"
+    ]
+  },
+  {
+    "id": "r_suspense",
+    "feature": "suspense",
+    "process": "suspense_attention",
+    "applicability": "extrapolation",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Two naturalistic film studies related suspense ratings (from other viewers) to frontal and parietal activity.",
+    "conditions": [
+      "The viewer is invested in the story and experiences suspense."
+    ],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_surprise",
+    "feature": "surprise",
+    "process": "narrative_surprise",
+    "applicability": "extrapolation",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Kept so that a marked surprise produces an explicit 'insufficient evidence' result.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_emotion_theme",
+    "feature": "emotional_theme",
+    "process": "emotion_category",
+    "applicability": "extrapolation",
+    "minConfidence": "high",
+    "requiresConfirmation": true,
+    "rationale": "Kept so that a marked emotional theme produces an explicit 'insufficient evidence' result.",
+    "conditions": [],
+    "conditionKeys": []
+  },
+  {
+    "id": "r_emotion_words",
+    "feature": "emotion_words",
+    "process": "emotion_category",
+    "applicability": "extrapolation",
+    "minConfidence": "moderate",
+    "requiresConfirmation": false,
+    "rationale": "Kept so that emotion words produce an explicit 'insufficient evidence' result.",
+    "conditions": [],
+    "conditionKeys": []
+  }
+]

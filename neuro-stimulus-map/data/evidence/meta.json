@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "curatedOn": "2026-09-28",
+  "gradingRubric": {
+    "strong": "Consistent findings summarised by at least one meta-analysis, a review of many studies, or a large-sample study (n of about 100 or more), AND at least one further independent supporting source; the studied process closely matches the process named here. A strong general association can still apply only weakly to a particular clip.",
+    "moderate": "Consistent findings from at least two human studies or one meta-analysis, but with small samples, a single research program, or notable indirectness.",
+    "limited": "A single study, few small studies, or indirect evidence. Plausible but not established.",
+    "contested": "Credible studies disagree about the association. Shown so the disagreement is visible, not as an established finding.",
+    "insufficient": "No verified record in this evidence base supports a mapping. Shown in gray. Gray never means 'inactive' - every region is active all the time."
+  },
+  "applicabilityRubric": {
+    "direct": "The detected feature is the same kind of stimulus the studies used (e.g., human voices for voice-area studies).",
+    "partial": "The feature is related but differs in important ways (laboratory stimuli vs. naturalistic media, a coarse proxy, or assumed comprehension).",
+    "extrapolation": "Applying the research requires assumptions about the person (what they notice, understand, enjoy or feel) that the media cannot show."
+  },
+  "verificationStatement": "Every source was checked on 2026-09-28 against search-engine records that point to PubMed or publisher pages (bibliographic details and abstract-level findings). PubMed, PMC, Crossref, Neurosynth and publisher sites could not be opened directly from the build environment because of its network policy, so no record has yet been verified against the full abstract page or full text. Details that could not be confirmed (some sample sizes, page ranges, author lists) are omitted or marked. Run scripts/evidence/verify_citations.py with network access to re-check every DOI/PMID against PubMed and Crossref."
+}

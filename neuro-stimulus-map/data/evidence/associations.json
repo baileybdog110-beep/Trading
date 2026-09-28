@@ -1,0 +1,1423 @@
+[
+  {
+    "id": "a_auditory_cortex",
+    "process": "auditory_processing",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "transverse_temporal",
+        "hemi": "both",
+        "precision": "atlas",
+        "functionalLabel": "primary auditory cortex (Heschl's gyrus)"
+      },
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "non-primary auditory cortex on the superior temporal plane"
+      }
+    ],
+    "claim": "Hearing sound engages auditory cortex on the upper surface of the temporal lobe: primary auditory cortex in Heschl's gyrus and surrounding non-primary areas of the superior temporal gyrus.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Reported across studies with tones, noise, natural sounds and films.",
+      "quality": "Review of auditory fMRI plus well-controlled natural-sound and naturalistic-film studies.",
+      "directness": "High: any audible sound is the studied condition.",
+      "replication": "Independent laboratories and paradigms (Uppenkamp & Röhl 2014; Norman-Haignere et al. 2015; Hasson et al. 2004)."
+    },
+    "citations": [
+      {
+        "source": "uppenkamp2014",
+        "role": "supports",
+        "finding": "Auditory fMRI studies commonly show responses in Heschl's gyrus and planum temporale that grow with sound level."
+      },
+      {
+        "source": "normanhaignere2015",
+        "role": "supports",
+        "finding": "Responses to 165 natural sounds throughout auditory cortex were explained by a small set of components, several reflecting basic acoustic features."
+      },
+      {
+        "source": "hasson2004",
+        "role": "supports",
+        "finding": "While watching a feature film, activity in auditory areas was synchronised across viewers."
+      }
+    ],
+    "limitations": [
+      "Nearly every sound engages these areas, so the highlight tells you little about what is special in this segment.",
+      "Says nothing about how strongly any individual's cortex responds."
+    ]
+  },
+  {
+    "id": "a_loudness",
+    "process": "loudness_coding",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "transverse_temporal",
+        "hemi": "both",
+        "precision": "atlas",
+        "functionalLabel": "Heschl's gyrus"
+      },
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "planum temporale"
+      }
+    ],
+    "claim": "Across auditory fMRI studies, louder sounds generally produce larger responses in Heschl's gyrus and the planum temporale, and these responses appear to track perceived loudness.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Described as a common finding across studies.",
+      "quality": "Narrative (not systematic) review of controlled experiments.",
+      "directness": "Moderate: studies set level at the ear; the app sees only relative level in the file.",
+      "replication": "Multiple studies summarised in one review; only the review is in this evidence base."
+    },
+    "citations": [
+      {
+        "source": "uppenkamp2014",
+        "role": "supports",
+        "finding": "Increasing sound intensity leads to greater activation in Heschl's gyrus and planum temporale; primary and secondary auditory cortex activity is thought to encode loudness rather than intensity."
+      }
+    ],
+    "limitations": [
+      "Playback volume is unknown, so the absolute level at anyone's ears is unknown.",
+      "Mostly tones and noise, not music or speech in media."
+    ]
+  },
+  {
+    "id": "a_onset_stg",
+    "process": "acoustic_onset_detection",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior (caudal) superior temporal gyrus onset zone"
+      }
+    ],
+    "claim": "Intracranial recordings show a posterior zone of the superior temporal gyrus that responds to acoustic onsets in speech, separate from surrounding areas with sustained responses.",
+    "grade": "limited",
+    "gradeRationale": {
+      "consistency": "Single study in this evidence base.",
+      "quality": "High spatial and temporal precision (intracranial recordings, 27 participants).",
+      "directness": "Partial: speech onsets; media onsets include music and effects.",
+      "replication": "Not independently replicated within this evidence base."
+    },
+    "citations": [
+      {
+        "source": "hamilton2018",
+        "role": "supports",
+        "finding": "A caudal STG zone detected acoustic onsets and could decode sentence and phrase onsets, while a rostral-surround zone showed sustained responses."
+      }
+    ],
+    "limitations": [
+      "Clinical population with partial electrode coverage.",
+      "The highlighted gyrus is much larger than the onset zone."
+    ]
+  },
+  {
+    "id": "a_salience_network",
+    "process": "salient_change_orienting",
+    "targets": [
+      {
+        "kind": "network",
+        "id": "yeo7_salventattn",
+        "hemi": "both",
+        "precision": "approximate",
+        "note": "The meta-analysis describes a 'ventral attention network'; this parcellation's salience/ventral attention network is the closest reference layout."
+      },
+      {
+        "kind": "region",
+        "id": "supramarginal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "temporoparietal junction (TPJ)",
+        "note": "Right-lateralised in Downar et al. 2000."
+      },
+      {
+        "kind": "region",
+        "id": "insula",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "pars_opercularis",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "inferior frontal gyrus / inferior frontal junction"
+      }
+    ],
+    "claim": "Unexpected changes in sensory input, in any modality, engage a ventral attention (salience) network including the temporoparietal junction, inferior frontal gyrus and insula, alongside the relevant sensory cortex.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Meta-analysis of 75 oddball studies found largely supramodal ventral-network effects; an independent fMRI study found a similar multimodal change-detection network.",
+      "quality": "Coordinate-based meta-analysis plus event-related fMRI.",
+      "directness": "Low for media: oddball deviants in repetitive sequences differ from sudden sounds in films or podcasts.",
+      "replication": "Consistent across many studies and laboratories."
+    },
+    "citations": [
+      {
+        "source": "kim2014",
+        "role": "supports",
+        "finding": "Across 75 studies, oddball effects were strongly associated with ventral attention network regions (common to auditory and visual oddballs) and with the bilateral inferior frontal junction."
+      },
+      {
+        "source": "downar2000",
+        "role": "supports",
+        "finding": "Changes in visual, auditory or tactile input engaged a right-lateralised network including temporoparietal junction, inferior frontal gyrus, insula, and cingulate/supplementary motor areas."
+      }
+    ],
+    "limitations": [
+      "Whether a sudden sound is surprising depends on the listener's expectations and attention; predictable or ignored events may not engage this network.",
+      "The general association is strong, but applying it to a particular sound in media is an extrapolation."
+    ]
+  },
+  {
+    "id": "a_voice_areas",
+    "process": "voice_perception",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "temporal voice areas along the superior temporal gyrus / upper bank of the STS"
+      },
+      {
+        "kind": "region",
+        "id": "middle_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "superior temporal sulcus (this atlas splits the sulcus between gyri)"
+      }
+    ],
+    "claim": "Human vocal sounds - speech and non-speech such as laughs - produce larger responses than non-vocal sounds along the superior temporal gyrus and sulcus in both hemispheres in most people, though the exact location varies between individuals.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Found in the original study, in 94% of 218 individuals, and as a speech-selective component in a hypothesis-free decomposition.",
+      "quality": "Large-sample study with individual-level analysis plus controlled comparisons.",
+      "directness": "High: vocal sounds are the detected feature.",
+      "replication": "Replicated across laboratories and methods."
+    },
+    "citations": [
+      {
+        "source": "belin2000",
+        "role": "supports",
+        "finding": "Bilateral regions along the upper bank of the STS responded more to vocal sounds than to non-vocal sounds and acoustic controls."
+      },
+      {
+        "source": "pernet2015",
+        "role": "supports",
+        "finding": "94% of 218 participants showed bilateral voice-sensitive patches along STS/STG; patch locations were reproducible within but variable between individuals."
+      },
+      {
+        "source": "normanhaignere2015",
+        "role": "supports",
+        "finding": "A speech-selective component, not explained by standard acoustic features, was concentrated in non-primary auditory cortex."
+      }
+    ],
+    "limitations": [
+      "Mostly short clips in block designs.",
+      "Group locations do not describe any single person's brain."
+    ]
+  },
+  {
+    "id": "a_language_network",
+    "process": "language_comprehension",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "pars_opercularis",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "language-responsive inferior frontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "pars_triangularis",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "language-responsive inferior frontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "language-responsive lateral temporal cortex / STS"
+      },
+      {
+        "kind": "region",
+        "id": "middle_temporal",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "language-responsive lateral temporal cortex"
+      }
+    ],
+    "claim": "Understanding spoken or written sentences engages a mostly left-lateralised fronto-temporal language network, including inferior frontal gyrus and the superior temporal sulcus region.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Consistent topography across 806 individuals and across modalities and speech rates.",
+      "quality": "Large-sample individual-level localiser data plus controlled experiments.",
+      "directness": "Partial: localiser and compressed sentences rather than conversational media; comprehension is assumed.",
+      "replication": "Replicated across studies, labs and individuals."
+    },
+    "citations": [
+      {
+        "source": "lipkin2022",
+        "role": "supports",
+        "finding": "A probabilistic atlas from 806 individuals gives, for each location, the probability of belonging to the language network, capturing both consistent topography and individual variability."
+      },
+      {
+        "source": "vagharchakian2012",
+        "role": "supports",
+        "finding": "A left-hemisphere language network including inferior frontal gyrus and STS responded to intelligible sentences regardless of modality."
+      },
+      {
+        "source": "vagharchakian2012",
+        "role": "qualifies",
+        "finding": "The network's response stayed remarkably stable across intelligible speech rates and collapsed only when sentences became unintelligible - faster speech does not simply mean 'more activity'."
+      },
+      {
+        "source": "lerner2011",
+        "role": "qualifies",
+        "finding": "Higher-order language areas responded reliably only when speech was coherent over sentences and paragraphs, unlike early auditory areas."
+      },
+      {
+        "source": "poldrack2006",
+        "role": "qualifies",
+        "finding": "Activity in Broca's area predicts language engagement only probabilistically (about 0.69 in BrainMap), because the region participates in other functions too."
+      }
+    ],
+    "limitations": [
+      "Only applies if the listener understands the language.",
+      "Lateralisation and exact locations vary between people; the right hemisphere contributes in many.",
+      "Highlighted gyri are broader than the language-selective cortex within them."
+    ]
+  },
+  {
+    "id": "a_semantic_left",
+    "process": "semantic_processing",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "inferior_parietal",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "posterior inferior parietal lobe (angular gyrus)"
+      },
+      {
+        "kind": "region",
+        "id": "middle_temporal",
+        "hemi": "L",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "fusiform",
+        "hemi": "L",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "parahippocampal",
+        "hemi": "L",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "superior_frontal",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "dorsomedial prefrontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "pars_triangularis",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "inferior frontal gyrus"
+      },
+      {
+        "kind": "region",
+        "id": "pars_orbitalis",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "inferior frontal gyrus"
+      },
+      {
+        "kind": "region",
+        "id": "medial_orbitofrontal",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "ventromedial prefrontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "posterior_cingulate",
+        "hemi": "L",
+        "precision": "atlas"
+      }
+    ],
+    "claim": "A meta-analysis of 120 task studies found that semantic processing reliably engages a left-lateralised network: angular gyrus/inferior parietal lobe, middle temporal gyrus, fusiform and parahippocampal gyri, dorsomedial and ventromedial prefrontal cortex, inferior frontal gyrus and posterior cingulate.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Seven regions converged across 120 studies, but the left lateralisation conflicts with naturalistic evidence (Huth et al. 2016).",
+      "quality": "Coordinate-based meta-analysis with critical study selection.",
+      "directness": "Partial: mostly word and sentence tasks, not continuous listening.",
+      "replication": "Pooled across many studies; lateralisation not replicated in naturalistic listening, so graded moderate for this left-lateralised claim."
+    },
+    "citations": [
+      {
+        "source": "binder2009",
+        "role": "supports",
+        "finding": "ALE across 120 studies identified a left-lateralised semantic network of 7 regions (posterior inferior parietal, middle temporal, fusiform/parahippocampal, dorsomedial PFC, IFG, ventromedial PFC, posterior cingulate)."
+      },
+      {
+        "source": "huth2016",
+        "role": "conflicts",
+        "finding": "With natural stories, semantic selectivity was spread across both hemispheres rather than left-lateralised."
+      }
+    ],
+    "limitations": [
+      "Lateralisation differs between task-based and naturalistic studies (see the bilateral association).",
+      "Requires that the listener understands the words."
+    ]
+  },
+  {
+    "id": "a_semantic_naturalistic",
+    "process": "semantic_processing",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "middle_temporal",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "lateral temporal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "inferior_parietal",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "supramarginal",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "precuneus",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "superior_frontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "prefrontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "rostral_middle_frontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "prefrontal cortex"
+      }
+    ],
+    "claim": "When people listened to hours of podcast stories, word meaning was represented in intricate maps across temporal, parietal and frontal cortex of both hemispheres, with patterns that appeared similar across individuals.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Maps looked consistent across the 7 participants.",
+      "quality": "Rigorous encoding models with extensive data per person, but very few people.",
+      "directness": "High: continuous spoken stories from a podcast closely match uploaded podcasts.",
+      "replication": "Lateralisation differs from task meta-analyses (Binder et al. 2009)."
+    },
+    "citations": [
+      {
+        "source": "huth2016",
+        "role": "supports",
+        "finding": "Voxel-wise models of fMRI during over two hours of Moth Radio Hour stories revealed semantic maps across temporal, parietal and frontal cortex that were consistent across individuals."
+      },
+      {
+        "source": "binder2009",
+        "role": "conflicts",
+        "finding": "Task-based meta-analysis emphasised a left-lateralised network."
+      }
+    ],
+    "limitations": [
+      "Seven participants.",
+      "Maps show which regions prefer which kinds of meaning, not overall activity levels.",
+      "The precise region list here is a broad simplification of distributed maps."
+    ]
+  },
+  {
+    "id": "a_narrative_dmn",
+    "process": "narrative_integration",
+    "targets": [
+      {
+        "kind": "network",
+        "id": "yeo7_default",
+        "hemi": "both",
+        "precision": "approximate",
+        "note": "Yeshurun et al. describe default-mode network involvement; angular gyrus and posterior medial cortex are default-network hubs."
+      },
+      {
+        "kind": "region",
+        "id": "inferior_parietal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "angular gyrus"
+      },
+      {
+        "kind": "region",
+        "id": "precuneus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior medial cortex"
+      },
+      {
+        "kind": "region",
+        "id": "posterior_cingulate",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior medial cortex"
+      }
+    ],
+    "claim": "Following a coherent story over minutes engages higher-order areas that integrate information over long timescales, including angular gyrus and posterior medial cortex (default network); how these areas respond depends on how the listener interprets the story.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Three naturalistic studies from overlapping research groups converge on long-timescale integration in higher-order areas.",
+      "quality": "Carefully controlled naturalistic designs; modest samples.",
+      "directness": "High for narrated stories and TV episodes; lexical story cues in a transcript are only a proxy.",
+      "replication": "Replicated across stimuli (spoken story, TV episode) but mostly within related laboratories."
+    },
+    "citations": [
+      {
+        "source": "lerner2011",
+        "role": "supports",
+        "finding": "Higher-order regions responded reliably only when the story was coherent over sentences and paragraphs."
+      },
+      {
+        "source": "baldassano2017",
+        "role": "supports",
+        "finding": "Angular gyrus and posterior medial cortex represented long events (abstract situation models) during a TV episode."
+      },
+      {
+        "source": "yeshurun2017",
+        "role": "qualifies",
+        "finding": "Identical audio produced different default-network responses in listeners given different interpretations of the story."
+      }
+    ],
+    "limitations": [
+      "Mostly one research community; sample sizes not verified here.",
+      "Responses depend on attention and interpretation, which the app cannot observe."
+    ]
+  },
+  {
+    "id": "a_mentalizing",
+    "process": "mentalizing",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "superior_frontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "medial prefrontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "supramarginal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior temporoparietal junction"
+      },
+      {
+        "kind": "region",
+        "id": "inferior_parietal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior temporoparietal junction"
+      },
+      {
+        "kind": "region",
+        "id": "precuneus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "precuneus / posterior cingulate"
+      },
+      {
+        "kind": "region",
+        "id": "posterior_cingulate",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "network",
+        "id": "yeo7_default",
+        "hemi": "both",
+        "precision": "approximate",
+        "note": "The regions reported overlap default-network hubs; the meta-analyses themselves report regions, not this parcellation."
+      }
+    ],
+    "claim": "Reasoning about others' beliefs and intentions consistently engages medial prefrontal cortex and the bilateral temporoparietal junction, with posterior cingulate/precuneus, including when the mental states are conveyed through stories.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Two independent meta-analyses agree on mPFC and bilateral TPJ.",
+      "quality": "Coordinate-based meta-analyses across many task types.",
+      "directness": "Low for this app: mental-state words in a transcript are a weak cue that such reasoning is invited.",
+      "replication": "Consistent across task families and story-based studies."
+    },
+    "citations": [
+      {
+        "source": "schurz2014",
+        "role": "supports",
+        "finding": "All groups of theory-of-mind tasks overlapped in medial prefrontal cortex and bilateral posterior TPJ."
+      },
+      {
+        "source": "mar2011",
+        "role": "supports",
+        "finding": "Story-based and non-story ToM studies shared a core mentalizing network (mPFC, posterior cingulate/precuneus, bilateral TPJ) that overlapped with story comprehension."
+      }
+    ],
+    "limitations": [
+      "Applying this to a segment rests on a lexical cue; the listener may not engage in mental-state reasoning."
+    ]
+  },
+  {
+    "id": "a_music_selective",
+    "process": "music_selective_processing",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "music-selective non-primary auditory cortex"
+      }
+    ],
+    "claim": "A music-selective neural population, not explained by standard acoustic features, is concentrated in non-primary auditory cortex, in locations distinct from speech-selective responses.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Found with fMRI and extended with intracranial recordings by the same group.",
+      "quality": "Hypothesis-free decomposition with acoustic controls.",
+      "directness": "High: natural music clips.",
+      "replication": "Same laboratory; small fMRI sample (10)."
+    },
+    "citations": [
+      {
+        "source": "normanhaignere2015",
+        "role": "supports",
+        "finding": "One of six response components showed pronounced music selectivity, concentrated in non-primary auditory cortex distinct from speech selectivity."
+      },
+      {
+        "source": "normanhaignere2022",
+        "role": "supports",
+        "finding": "Intracranial recordings confirmed music- and speech-selective responses and revealed an additional song-selective population nearby."
+      }
+    ],
+    "limitations": [
+      "Small samples; exact anatomical location within the superior temporal gyrus is not captured by this atlas."
+    ]
+  },
+  {
+    "id": "a_song",
+    "process": "song_perception",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "auditory cortex near speech- and music-selective responses"
+      }
+    ],
+    "claim": "Intracranial recordings revealed a neural population in auditory cortex that responds nearly exclusively to music with singing.",
+    "grade": "limited",
+    "gradeRationale": {
+      "consistency": "Single study.",
+      "quality": "High-quality intracranial data with fMRI mapping.",
+      "directness": "Partial: the app's singing detection is low confidence.",
+      "replication": "Not yet independently replicated in this evidence base."
+    },
+    "citations": [
+      {
+        "source": "normanhaignere2022",
+        "role": "supports",
+        "finding": "A component responded nearly exclusively to sung music, was not explained by acoustic features, and lay near speech- and music-selective responses."
+      }
+    ],
+    "limitations": [
+      "Patient population with partial coverage.",
+      "Detection of singing in this app is unreliable."
+    ]
+  },
+  {
+    "id": "a_beat_motor",
+    "process": "beat_perception",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "putamen",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "superior_frontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "supplementary motor area (medial posterior superior frontal gyrus)"
+      },
+      {
+        "kind": "region",
+        "id": "superior_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "superior temporal gyrus / temporoparietal junction"
+      },
+      {
+        "kind": "region",
+        "id": "pars_opercularis",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "inferior frontal gyrus"
+      },
+      {
+        "kind": "region",
+        "id": "insula",
+        "hemi": "both",
+        "precision": "atlas"
+      }
+    ],
+    "claim": "Perceiving a regular beat engages motor-system structures even without movement: beat-inducing rhythms increase activity in the basal ganglia (especially putamen) and supplementary motor area, within a wider rhythm network including superior temporal, inferior frontal and insular cortex.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Meta-analysis of 30 studies and an influential fMRI study agree on putamen/SMA.",
+      "quality": "Systematic review with meta-analysis plus controlled experiment.",
+      "directness": "Partial: mostly simplified rhythms; in continuous real music, rhythm-feature responses replicated less reliably.",
+      "replication": "Good for controlled rhythms; weaker for naturalistic music (Burunat et al. 2016)."
+    },
+    "citations": [
+      {
+        "source": "grahn2007",
+        "role": "supports",
+        "finding": "Rhythms inducing a regular beat elicited more basal ganglia and SMA activity than other rhythms, regardless of musical training."
+      },
+      {
+        "source": "kasdan2022",
+        "role": "supports",
+        "finding": "Across 30 fMRI studies, rhythm processing engaged a bilateral sensorimotor network (IFG, SMA, STG/TPJ, insula, intraparietal regions, putamen); beat-based rhythms localised to bilateral putamen."
+      },
+      {
+        "source": "alluri2012",
+        "role": "supports",
+        "finding": "With a real tango recording, pulse/rhythm features recruited cortical and subcortical motor and emotion-related circuits."
+      },
+      {
+        "source": "burunat2016",
+        "role": "qualifies",
+        "finding": "A replication found rhythmic and tonal feature responses more spatially variable and less consistent than timbral responses."
+      }
+    ],
+    "limitations": [
+      "Whether a listener perceives the beat is not observable.",
+      "No mapping is made for specific tempo values (see 'insufficient evidence')."
+    ]
+  },
+  {
+    "id": "a_music_reward",
+    "process": "music_evoked_reward",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "accumbens_area",
+        "hemi": "both",
+        "precision": "atlas",
+        "functionalLabel": "ventral striatum"
+      },
+      {
+        "kind": "region",
+        "id": "caudate",
+        "hemi": "both",
+        "precision": "atlas",
+        "functionalLabel": "dorsal striatum"
+      },
+      {
+        "kind": "region",
+        "id": "amygdala",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "hippocampus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "anterior hippocampus"
+      },
+      {
+        "kind": "region",
+        "id": "medial_orbitofrontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "orbitofrontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "lateral_orbitofrontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "orbitofrontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "insula",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "rostral_anterior_cingulate",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "anterior cingulate cortex"
+      }
+    ],
+    "claim": "In listeners who experience pleasure or strong emotion from music, meta-analyses find a reward network including the ventral striatum (nucleus accumbens), dorsal striatum, amygdala, anterior hippocampus, orbitofrontal cortex, insula and anterior cingulate cortex.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Two independent meta-analyses (47 and 38 studies) converge on reward circuitry.",
+      "quality": "Coordinate-based meta-analyses.",
+      "directness": "Low for uploaded media: the studies depend on what listeners felt; the file cannot show that anyone enjoys it.",
+      "replication": "Replicated across many studies and laboratories."
+    },
+    "citations": [
+      {
+        "source": "koelsch2020",
+        "role": "supports",
+        "finding": "Across 47 studies (944 participants), positively valenced music-evoked emotions involved ventral and dorsal striatum, amygdala, ACC, OFC, insula and mediodorsal thalamus; anterior hippocampus was also implicated."
+      },
+      {
+        "source": "masherrero2021",
+        "role": "supports",
+        "finding": "Across 38 studies (703 participants), music and food pleasure engaged overlapping reward circuitry with some reward-type-specific differences."
+      },
+      {
+        "source": "pereira2011",
+        "role": "qualifies",
+        "finding": "Familiar music engaged limbic and reward regions more than unfamiliar music; liking alone had smaller effects."
+      },
+      {
+        "source": "salimpoor2011",
+        "role": "qualifies",
+        "finding": "Dopamine release was measured with PET in listeners hearing music they found intensely pleasurable. This shows what happened in those listeners - it does not allow dopamine release to be inferred from any song."
+      }
+    ],
+    "limitations": [
+      "Conditional: only relevant if a listener finds the music pleasurable or moving; familiarity and personal history strongly change responses.",
+      "This app never estimates dopamine release, hormone levels or how much anyone enjoys the music."
+    ]
+  },
+  {
+    "id": "a_music_language_overlap",
+    "process": "music_structure_language_overlap",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "pars_opercularis",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "inferior frontal gyrus ('Broca's area')"
+      }
+    ],
+    "claim": "Whether music engages the language regions of the inferior frontal gyrus is disputed: group-average studies found overlap for unexpected chords, whereas studies that localise language regions in each individual found they do not respond to music.",
+    "grade": "contested",
+    "gradeRationale": {
+      "consistency": "Directly conflicting findings.",
+      "quality": "Both lines of work are well designed; they differ in method (group averages vs. individual localisation).",
+      "directness": "Partial: chord-sequence and structure manipulations rather than whole songs.",
+      "replication": "Each position has supporting studies; the conflict is unresolved in this evidence base."
+    },
+    "citations": [
+      {
+        "source": "koelsch2002",
+        "role": "supports",
+        "finding": "Unexpected chords activated Broca's and Wernicke's areas, the STS and other regions previously considered language-specific."
+      },
+      {
+        "source": "chen2023",
+        "role": "conflicts",
+        "finding": "Individually localised language regions, including those in Broca's area, did not support music perception; the authors conclude the systems are distinct."
+      }
+    ],
+    "limitations": [
+      "Shown to illustrate scientific disagreement, not as an established association."
+    ]
+  },
+  {
+    "id": "a_visual_cortex",
+    "process": "visual_processing",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "pericalcarine",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "V1"
+      },
+      {
+        "kind": "region",
+        "id": "cuneus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "V2/V3 (lower visual field)"
+      },
+      {
+        "kind": "region",
+        "id": "lingual",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "V2/V3 (upper visual field)"
+      },
+      {
+        "kind": "region",
+        "id": "lateral_occipital",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "lateral occipital visual field maps"
+      },
+      {
+        "kind": "network",
+        "id": "yeo7_vis",
+        "hemi": "both",
+        "precision": "approximate",
+        "note": "Occipital visual cortex corresponds broadly to this parcellation's visual network; the cited studies report regions and maps, not this network."
+      }
+    ],
+    "claim": "Viewing images engages occipital visual cortex, which is organised into visual field maps (V1-V3 on the medial surface, further maps on the lateral and ventral surfaces); during films this activity is shared across viewers.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Foundational and consistently replicated.",
+      "quality": "Review of many visual field mapping studies plus naturalistic film data.",
+      "directness": "High: any viewed video.",
+      "replication": "Extensively replicated."
+    },
+    "citations": [
+      {
+        "source": "wandell2007",
+        "role": "supports",
+        "finding": "fMRI identifies many visual field maps: V1-V3 medially, LO-1/LO-2/hMT+ laterally, and ventral and dorsal maps."
+      },
+      {
+        "source": "hasson2004",
+        "role": "supports",
+        "finding": "During a feature film, activity in visual areas was synchronised across viewers."
+      }
+    ],
+    "limitations": [
+      "Depends on the viewer looking at the screen; says nothing about where they look."
+    ]
+  },
+  {
+    "id": "a_visual_change_early",
+    "process": "visual_change_early",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "pericalcarine",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "early visual cortex"
+      },
+      {
+        "kind": "region",
+        "id": "cuneus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "early visual cortex"
+      },
+      {
+        "kind": "region",
+        "id": "lingual",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "early visual cortex"
+      }
+    ],
+    "claim": "In natural movies, early visual areas responded to image changes not explained by motion (such as illumination changes), but not to equally large motion-induced changes.",
+    "grade": "limited",
+    "gradeRationale": {
+      "consistency": "Single study in this evidence base.",
+      "quality": "Careful naturalistic decomposition of movie image changes.",
+      "directness": "Partial: the app's brightness-change measure is coarser.",
+      "replication": "Not replicated in this evidence base."
+    },
+    "citations": [
+      {
+        "source": "bartels2008",
+        "role": "supports",
+        "finding": "Early visual areas responded only to residual (non-motion) changes such as illumination, not to motion-induced changes."
+      }
+    ],
+    "limitations": [
+      "Single study.",
+      "Coarse frame sampling may miss brief flashes."
+    ]
+  },
+  {
+    "id": "a_visual_motion",
+    "process": "visual_motion",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "lateral_occipital",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "hMT+/V5 near the occipitotemporal junction",
+        "note": "hMT+ sits near the border of lateral occipital and posterior middle/inferior temporal cortex; the highlight is broader than the area."
+      },
+      {
+        "kind": "region",
+        "id": "precuneus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "medial posterior parietal cortex"
+      }
+    ],
+    "claim": "Visual motion engages motion-selective cortex V5/hMT+ in lateral occipitotemporal cortex; in natural movies, motion also engaged V3A and medial posterior parietal cortex.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Shown with PET, with fMRI visual field mapping, and in natural movies.",
+      "quality": "Controlled experiments plus a naturalistic study.",
+      "directness": "Partial: the app's motion measure is a coarse proxy.",
+      "replication": "Replicated across decades and methods."
+    },
+    "citations": [
+      {
+        "source": "zeki1991",
+        "role": "supports",
+        "finding": "PET demonstrated a distinct prestriate region specialised for visual motion (V5)."
+      },
+      {
+        "source": "wandell2007",
+        "role": "supports",
+        "finding": "hMT+ is among the lateral occipital visual field maps identified with fMRI."
+      },
+      {
+        "source": "bartels2008",
+        "role": "supports",
+        "finding": "In feature films, motion activated V5+/MT+, V3A, medial posterior parietal cortex and weakly lateral occipital cortex."
+      }
+    ],
+    "limitations": [
+      "The app cannot cleanly separate camera motion from object motion, which Bartels et al. found are processed partly differently."
+    ]
+  },
+  {
+    "id": "a_faces",
+    "process": "face_perception",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "fusiform",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "fusiform face area (lateral fusiform gyrus)",
+        "note": "Face-selective regions are typically larger and more selective in the right hemisphere."
+      },
+      {
+        "kind": "region",
+        "id": "lateral_occipital",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "occipital face-selective cortex"
+      }
+    ],
+    "claim": "Faces - including faces within an unconstrained feature film - engage face-selective regions of occipitotemporal cortex, most famously on the lateral fusiform gyrus, with rightward asymmetry and substantial differences between individuals.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Found in the original study, in 202 individuals, and in natural movie viewing.",
+      "quality": "Controlled experiments and a large-sample probabilistic atlas.",
+      "directness": "High: faces detected in video; supported by naturalistic film evidence.",
+      "replication": "Extensively replicated."
+    },
+    "citations": [
+      {
+        "source": "kanwisher1997",
+        "role": "supports",
+        "finding": "A fusiform region in 12 of 15 participants responded more to faces than objects."
+      },
+      {
+        "source": "zhen2015",
+        "role": "supports",
+        "finding": "In 202 adults, six face-selective occipitotemporal regions showed considerable interindividual variability and rightward asymmetry."
+      },
+      {
+        "source": "hasson2004",
+        "role": "supports",
+        "finding": "Face-selective fusiform cortex responded to faces during free viewing of a feature film."
+      }
+    ],
+    "limitations": [
+      "Face detection in this app may miss or falsely detect faces.",
+      "Only whether faces are present is used - never identity or expression."
+    ]
+  },
+  {
+    "id": "a_scenes",
+    "process": "scene_perception",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "parahippocampal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "parahippocampal place area"
+      },
+      {
+        "kind": "region",
+        "id": "isthmus_cingulate",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "retrosplenial complex / medial place area"
+      },
+      {
+        "kind": "region",
+        "id": "lateral_occipital",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "occipital place area"
+      }
+    ],
+    "claim": "Viewing places engages scene-selective cortex: the parahippocampal place area, the retrosplenial complex/medial place area and the occipital place area; spatial layout is a key factor.",
+    "grade": "strong",
+    "gradeRationale": {
+      "consistency": "Original discovery plus a review of subsequent work identifying three scene-selective regions.",
+      "quality": "Controlled fMRI and a comprehensive review.",
+      "directness": "Partial: scene photographs; the feature is user-marked.",
+      "replication": "Widely replicated according to the review."
+    },
+    "citations": [
+      {
+        "source": "epstein1998",
+        "role": "supports",
+        "finding": "The parahippocampal place area responded selectively to scenes, especially their spatial layout, weakly to objects and not to faces."
+      },
+      {
+        "source": "epstein2019",
+        "role": "supports",
+        "finding": "Three cortical regions respond selectively to scenes: PPA, retrosplenial complex/medial place area and occipital place area."
+      }
+    ],
+    "limitations": [
+      "Relies on a user annotation; no automatic scene classifier is included."
+    ]
+  },
+  {
+    "id": "a_events_hippocampus",
+    "process": "event_segmentation",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "hippocampus",
+        "hemi": "both",
+        "precision": "atlas"
+      }
+    ],
+    "claim": "During continuous films, hippocampal activity increases at event boundaries identified by observers, and in one study these boundary responses predicted later memory reinstatement.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Two independent laboratories report boundary-locked hippocampal responses.",
+      "quality": "Naturalistic fMRI; one study required an erratum correcting boundary aggregation.",
+      "directness": "High for observer-marked situation changes; low for automatically detected cuts.",
+      "replication": "Independent replication across two groups and stimuli."
+    },
+    "citations": [
+      {
+        "source": "baldassano2017",
+        "role": "supports",
+        "finding": "High-order event boundaries were coupled to increases in hippocampal activity that predicted pattern reinstatement during recall."
+      },
+      {
+        "source": "benyakov2018",
+        "role": "supports",
+        "finding": "The hippocampus was sensitive to observer-identified event boundaries in a continuous film (an erratum later corrected the boundary aggregation code)."
+      },
+      {
+        "source": "magliano2011",
+        "role": "qualifies",
+        "finding": "Cuts per se were not positively associated with perceived event boundaries once situational changes were controlled."
+      }
+    ],
+    "limitations": [
+      "A detected cut is not necessarily an event boundary for a viewer.",
+      "Sample sizes not verified here."
+    ]
+  },
+  {
+    "id": "a_events_cortex",
+    "process": "event_segmentation",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "precuneus",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior medial cortex"
+      },
+      {
+        "kind": "region",
+        "id": "inferior_parietal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "angular gyrus / lateral posterior cortex"
+      },
+      {
+        "kind": "region",
+        "id": "pericalcarine",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "early visual cortex (at edits)"
+      }
+    ],
+    "claim": "Event boundaries in films are accompanied by transient responses in a network of regions; posterior areas that respond at edits (early visual cortex, precuneus, lateral posterior regions) overlap those responding at event boundaries.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Several naturalistic studies report boundary-related responses, though regions vary.",
+      "quality": "Naturalistic fMRI with behavioural segmentation.",
+      "directness": "Partial: studies used human-judged boundaries.",
+      "replication": "Across stimuli within related research programs."
+    },
+    "citations": [
+      {
+        "source": "zacks2001",
+        "role": "supports",
+        "finding": "A network of brain regions responded at perceptually salient event boundaries, even during passive viewing."
+      },
+      {
+        "source": "magliano2011",
+        "role": "supports",
+        "finding": "Posterior regions increasing at continuity edits (early visual cortex, precuneus, lateral regions) overlapped regions increasing at event boundaries."
+      },
+      {
+        "source": "baldassano2017",
+        "role": "supports",
+        "finding": "Angular gyrus and posterior medial cortex represented long events whose boundaries matched human annotations."
+      }
+    ],
+    "limitations": [
+      "Region lists differ across studies; the highlight is a simplification."
+    ]
+  },
+  {
+    "id": "a_humor_comprehension",
+    "process": "humor_comprehension",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "pars_triangularis",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "left inferior frontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "pars_opercularis",
+        "hemi": "L",
+        "precision": "approximate",
+        "functionalLabel": "left inferior frontal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "middle_temporal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "posterior temporal cortex"
+      },
+      {
+        "kind": "region",
+        "id": "inferior_parietal",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "superior_frontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "medial/superior frontal gyrus"
+      }
+    ],
+    "claim": "Getting a joke (detecting and resolving an incongruity) is associated with inferior frontal, posterior temporal and inferior parietal cortex and medial/superior frontal gyrus - shown in a meta-analysis and during naturalistic sitcom viewing.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Meta-analysis and a naturalistic sitcom study agree on inferior frontal and posterior temporal involvement.",
+      "quality": "Meta-analysis (study count from secondary summary) plus one naturalistic study.",
+      "directness": "Low for this app: whether a given listener gets the joke is unknown.",
+      "replication": "Across studies pooled in the meta-analysis."
+    },
+    "citations": [
+      {
+        "source": "farkas2021",
+        "role": "supports",
+        "finding": "Humor comprehension was associated with IFG, medial and superior frontal gyrus, middle temporal gyrus and inferior parietal lobule."
+      },
+      {
+        "source": "moran2004",
+        "role": "supports",
+        "finding": "During Seinfeld/The Simpsons, humor detection moments increased activity in left inferior frontal and posterior temporal cortex."
+      },
+      {
+        "source": "vrticka2013",
+        "role": "supports",
+        "finding": "Review: temporo-occipito-parietal areas are involved in detecting and resolving incongruity."
+      }
+    ],
+    "limitations": [
+      "Requires a person to mark or confirm humor; the app does not detect humor itself."
+    ]
+  },
+  {
+    "id": "a_humor_appreciation",
+    "process": "humor_appreciation",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "amygdala",
+        "hemi": "both",
+        "precision": "atlas"
+      },
+      {
+        "kind": "region",
+        "id": "insula",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "(anterior) insula"
+      },
+      {
+        "kind": "region",
+        "id": "medial_orbitofrontal",
+        "hemi": "both",
+        "precision": "approximate",
+        "functionalLabel": "ventromedial prefrontal cortex"
+      }
+    ],
+    "claim": "Enjoying humor (mirth) is associated with the amygdala, insula and ventromedial prefrontal cortex.",
+    "grade": "moderate",
+    "gradeRationale": {
+      "consistency": "Meta-analysis and naturalistic study agree on amygdala and insula.",
+      "quality": "Meta-analysis plus one naturalistic study.",
+      "directness": "Low: depends on whether the person finds it funny.",
+      "replication": "Across pooled studies."
+    },
+    "citations": [
+      {
+        "source": "farkas2021",
+        "role": "supports",
+        "finding": "Humor appreciation was associated with vmPFC, amygdala, anterior insula and midbrain."
+      },
+      {
+        "source": "moran2004",
+        "role": "supports",
+        "finding": "Humor appreciation moments increased activity in bilateral insula and amygdala."
+      }
+    ],
+    "limitations": [
+      "Whether someone enjoys a joke is not observable from the media."
+    ]
+  },
+  {
+    "id": "a_humor_accumbens",
+    "process": "humor_appreciation",
+    "targets": [
+      {
+        "kind": "region",
+        "id": "accumbens_area",
+        "hemi": "both",
+        "precision": "atlas"
+      }
+    ],
+    "claim": "Whether humor engages the nucleus accumbens is disputed: a review emphasises mesocorticolimbic reward structures, but a quantitative meta-analysis did not find clear nucleus accumbens activity.",
+    "grade": "contested",
+    "gradeRationale": {
+      "consistency": "Conflicting.",
+      "quality": "Narrative review vs. quantitative meta-analysis.",
+      "directness": "Low.",
+      "replication": "Unresolved."
+    },
+    "citations": [
+      {
+        "source": "vrticka2013",
+        "role": "supports",
+        "finding": "Review: humor engages the mesocorticolimbic dopaminergic system and amygdala."
+      },
+      {
+        "source": "farkas2021",
+        "role": "conflicts",
+        "finding": "The fMRI meta-analysis did not identify clear nucleus accumbens activity despite common assumptions."
+      }
+    ],
+    "limitations": [
+      "Shown to illustrate disagreement."
+    ]
+  },
+  {
+    "id": "a_suspense",
+    "process": "suspense_attention",
+    "targets": [
+      {
+        "kind": "network",
+        "id": "yeo7_cont",
+        "hemi": "both",
+        "precision": "approximate",
+        "note": "Naci et al. report frontal and parietal regions related to executive processing; mapping them onto this parcellation is approximate."
+      },
+      {
+        "kind": "network",
+        "id": "yeo7_dorsattn",
+        "hemi": "both",
+        "precision": "approximate",
+        "note": "Bezdek et al. report frontal and parietal attention regions."
+      }
+    ],
+    "claim": "In two film studies, moments rated as more suspenseful were associated with more activity in frontal and parietal regions linked to executive control and attention; one also found reduced activity for peripheral vision, consistent with narrowed attention.",
+    "grade": "limited",
+    "gradeRationale": {
+      "consistency": "Two studies agree on frontoparietal involvement with different measures.",
+      "quality": "Naturalistic designs; suspense ratings came from separate viewer groups.",
+      "directness": "Low: suspense must be marked by a person and depends on each viewer.",
+      "replication": "Limited."
+    },
+    "citations": [
+      {
+        "source": "naci2014",
+        "role": "supports",
+        "finding": "Group suspense ratings of a Hitchcock episode predicted activity in frontal and parietal regions, attributed to executive processing."
+      },
+      {
+        "source": "bezdek2015",
+        "role": "supports",
+        "finding": "As suspense increased, activity rose in central visual and frontal/parietal attention regions and fell in peripheral visual regions."
+      }
+    ],
+    "limitations": [
+      "Network-level only; shown in the Networks view.",
+      "Few studies with small samples."
+    ]
+  }
+]

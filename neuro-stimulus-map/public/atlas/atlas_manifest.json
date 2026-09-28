@@ -1,0 +1,1792 @@
+{
+ "generated": "2026-09-28",
+ "coordinateSystem": "MNI millimetres, RAS+ (x: left->right, y: posterior->anterior, z: inferior->superior)",
+ "note": "Meshes are anatomical/parcellation boundaries derived from the atlas volumes below. They are not statistical maps and carry no activation values.",
+ "anatomy": {
+  "atlas": "CerebrA (Mindboggle-101 DKT labels registered and manually corrected for MNI-ICBM152 2009c)",
+  "citation": "Manera AL, Dadar M, Fonov V, Collins DL. CerebrA, registration and manual label correction of Mindboggle-101 atlas for MNI-ICBM152 template. Sci Data. 2020;7:237. doi:10.1038/s41597-020-0557-9",
+  "license": "CC BY 4.0 (article and data); template: MNI ICBM 2009c licence (permissive, attribution required)",
+  "template": "MNI152NLin2009cSym (ICBM 2009c nonlinear symmetric), 1 mm",
+  "source": "TemplateFlow: https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cSym/",
+  "files": {
+   "tpl-MNI152NLin2009cSym_res-1_atlas-CerebrA_dseg.nii.gz": "c05df93e85b8f1c1446e56f45f0b6a28fdf6e5c8263ea8f365617254bf79ecbf",
+   "tpl-MNI152NLin2009cSym_atlas-CerebA_dseg.tsv": "cf0332a1c2601b5dd97b2f70423b064c762630d02052629f7112789f2fb6d2f7"
+  },
+  "known_gaps": "DKT-protocol labels omit the temporal pole, frontal pole and banks of the superior temporal sulcus; functional areas such as FFA, PPA, MT+/V5, SMA and TPJ have no dedicated label and are represented by the gyral region(s) that contain them (flagged as approximate)."
+ },
+ "networks": {
+  "atlas": "Schaefer 2018 400-parcel parcellation, 7-network assignment (Yeo et al. 2011 networks)",
+  "citation": "Schaefer A, Kong R, Gordon EM, et al. Local-Global Parcellation of the Human Cerebral Cortex from Intrinsic Functional Connectivity MRI. Cereb Cortex. 2018:3095-3114 (https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal); Yeo BTT, Krienen FM, Sepulcre J, et al. J Neurophysiol. 2011;106(3):1125-1165. doi:10.1152/jn.00338.2011",
+  "license": "MIT (ThomasYeoLab/CBIG)",
+  "template": "MNI152NLin2009cAsym (ICBM 2009c nonlinear asymmetric), 1 mm",
+  "source": "TemplateFlow: https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/",
+  "files": {
+   "tpl-MNI152NLin2009cAsym_res-01_atlas-Schaefer2018_desc-400Parcels7Networks_dseg.nii.gz": "ae402a191ed5e8a37546f6fc25a30affd6813dbd01f2797c8db095f5d45d6795",
+   "tpl-MNI152NLin2009cAsym_atlas-Schaefer2018_desc-400Parcels7Networks_dseg.tsv": "91fe503df22267bb6c9ab3b9e9e82eec0e08f496d4f9dcb9661e67d1abb14f07"
+  },
+  "caveat": "Networks come from resting-state functional connectivity in a different (asymmetric) version of the same template family; overlay alignment with the anatomical meshes is approximate (millimetre scale)."
+ },
+ "build": {
+  "smoothingSigmaVoxels": 0.9,
+  "isoLevel": 0.5,
+  "taubinIterations": 8,
+  "decimation": "fast-simplification (quadric)",
+  "script": "scripts/atlas/build_atlas.py"
+ },
+ "regions": [
+  {
+   "id": "L_accumbens_area",
+   "name": "Accumbens Area",
+   "hemi": "L",
+   "atlasLabels": [
+    55
+   ],
+   "atlasNames": [
+    "Accumbens Area (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 553,
+   "centroidMNI": [
+    -9.0,
+    11.8,
+    -7.3
+   ],
+   "faces": 350
+  },
+  {
+   "id": "L_amygdala",
+   "name": "Amygdala",
+   "hemi": "L",
+   "atlasLabels": [
+    70
+   ],
+   "atlasNames": [
+    "Amygdala (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 1650,
+   "centroidMNI": [
+    -23.4,
+    -4.4,
+    -20.7
+   ],
+   "faces": 348
+  },
+  {
+   "id": "L_basal_forebrain",
+   "name": "Basal Forebrain",
+   "hemi": "L",
+   "atlasLabels": [
+    76
+   ],
+   "atlasNames": [
+    "Basal Forebrain (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 192,
+   "centroidMNI": [
+    -7.1,
+    4.0,
+    -11.9
+   ],
+   "faces": 350
+  },
+  {
+   "id": "L_caudal_anterior_cingulate",
+   "name": "Caudal Anterior Cingulate",
+   "hemi": "L",
+   "atlasLabels": [
+    81
+   ],
+   "atlasNames": [
+    "Caudal Anterior Cingulate (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3652,
+   "centroidMNI": [
+    -5.1,
+    20.7,
+    27.4
+   ],
+   "faces": 436
+  },
+  {
+   "id": "L_caudal_middle_frontal",
+   "name": "Caudal Middle Frontal",
+   "hemi": "L",
+   "atlasLabels": [
+    93
+   ],
+   "atlasNames": [
+    "Caudal Middle Frontal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 13220,
+   "centroidMNI": [
+    -36.9,
+    12.3,
+    47.7
+   ],
+   "faces": 1584
+  },
+  {
+   "id": "L_caudate",
+   "name": "Caudate",
+   "hemi": "L",
+   "atlasLabels": [
+    100
+   ],
+   "atlasNames": [
+    "Caudate (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 5643,
+   "centroidMNI": [
+    -13.9,
+    9.6,
+    10.4
+   ],
+   "faces": 676
+  },
+  {
+   "id": "L_cerebellum",
+   "name": "Cerebellar hemisphere",
+   "hemi": "L",
+   "atlasLabels": [
+    97,
+    90
+   ],
+   "atlasNames": [
+    "Cerebellum Gray Matter (L)",
+    "Cerebellum White Matter (L)"
+   ],
+   "kind": "cerebellar",
+   "volumeMm3": 84227,
+   "centroidMNI": [
+    -25.6,
+    -61.5,
+    -38.4
+   ],
+   "faces": 3600
+  },
+  {
+   "id": "L_cuneus",
+   "name": "Cuneus",
+   "hemi": "L",
+   "atlasLabels": [
+    94
+   ],
+   "atlasNames": [
+    "Cuneus (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8066,
+   "centroidMNI": [
+    -8.6,
+    -81.3,
+    24.6
+   ],
+   "faces": 966
+  },
+  {
+   "id": "L_entorhinal",
+   "name": "Entorhinal",
+   "hemi": "L",
+   "atlasLabels": [
+    87
+   ],
+   "atlasNames": [
+    "Entorhinal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3205,
+   "centroidMNI": [
+    -22.2,
+    -4.5,
+    -31.9
+   ],
+   "faces": 384
+  },
+  {
+   "id": "L_fusiform",
+   "name": "Fusiform",
+   "hemi": "L",
+   "atlasLabels": [
+    75
+   ],
+   "atlasNames": [
+    "Fusiform (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 13472,
+   "centroidMNI": [
+    -35.7,
+    -42.1,
+    -21.4
+   ],
+   "faces": 1614
+  },
+  {
+   "id": "L_hippocampus",
+   "name": "Hippocampus",
+   "hemi": "L",
+   "atlasLabels": [
+    99
+   ],
+   "atlasNames": [
+    "Hippocampus (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 4694,
+   "centroidMNI": [
+    -25.9,
+    -22.5,
+    -14.5
+   ],
+   "faces": 562
+  },
+  {
+   "id": "L_inferior_parietal",
+   "name": "Inferior Parietal",
+   "hemi": "L",
+   "atlasLabels": [
+    61
+   ],
+   "atlasNames": [
+    "Inferior Parietal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 26186,
+   "centroidMNI": [
+    -45.8,
+    -64.4,
+    31.7
+   ],
+   "faces": 3142
+  },
+  {
+   "id": "L_inferior_temporal",
+   "name": "Inferior temporal",
+   "hemi": "L",
+   "atlasLabels": [
+    54
+   ],
+   "atlasNames": [
+    "Inferior temporal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 16224,
+   "centroidMNI": [
+    -49.2,
+    -24.8,
+    -30.0
+   ],
+   "faces": 1944
+  },
+  {
+   "id": "L_insula",
+   "name": "Insula",
+   "hemi": "L",
+   "atlasLabels": [
+    74
+   ],
+   "atlasNames": [
+    "Insula (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 9521,
+   "centroidMNI": [
+    -37.1,
+    1.8,
+    0.4
+   ],
+   "faces": 1142
+  },
+  {
+   "id": "L_isthmus_cingulate",
+   "name": "Isthmus Cingulate",
+   "hemi": "L",
+   "atlasLabels": [
+    84
+   ],
+   "atlasNames": [
+    "Isthmus Cingulate (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 4427,
+   "centroidMNI": [
+    -8.0,
+    -45.8,
+    18.9
+   ],
+   "faces": 530
+  },
+  {
+   "id": "L_lateral_occipital",
+   "name": "Lateral Occipital",
+   "hemi": "L",
+   "atlasLabels": [
+    85
+   ],
+   "atlasNames": [
+    "Lateral Occipital (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 22807,
+   "centroidMNI": [
+    -31.9,
+    -87.2,
+    1.5
+   ],
+   "faces": 2736
+  },
+  {
+   "id": "L_lateral_orbitofrontal",
+   "name": "Lateral Orbitofrontal",
+   "hemi": "L",
+   "atlasLabels": [
+    58
+   ],
+   "atlasNames": [
+    "Lateral Orbitofrontal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 15042,
+   "centroidMNI": [
+    -22.6,
+    36.0,
+    -19.1
+   ],
+   "faces": 1804
+  },
+  {
+   "id": "L_lingual",
+   "name": "Lingual",
+   "hemi": "L",
+   "atlasLabels": [
+    63
+   ],
+   "atlasNames": [
+    "Lingual (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 12359,
+   "centroidMNI": [
+    -13.5,
+    -69.3,
+    -5.1
+   ],
+   "faces": 1482
+  },
+  {
+   "id": "L_medial_orbitofrontal",
+   "name": "Medial Orbitofrontal",
+   "hemi": "L",
+   "atlasLabels": [
+    66
+   ],
+   "atlasNames": [
+    "Medial Orbitofrontal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8764,
+   "centroidMNI": [
+    -5.4,
+    37.8,
+    -18.0
+   ],
+   "faces": 1050
+  },
+  {
+   "id": "L_middle_temporal",
+   "name": "Middle Temporal",
+   "hemi": "L",
+   "atlasLabels": [
+    79
+   ],
+   "atlasNames": [
+    "Middle Temporal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 28291,
+   "centroidMNI": [
+    -57.3,
+    -31.6,
+    -11.3
+   ],
+   "faces": 3392
+  },
+  {
+   "id": "L_pallidum",
+   "name": "Pallidum",
+   "hemi": "L",
+   "atlasLabels": [
+    78
+   ],
+   "atlasNames": [
+    "Pallidum (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 1701,
+   "centroidMNI": [
+    -18.7,
+    -2.3,
+    -1.9
+   ],
+   "faces": 348
+  },
+  {
+   "id": "L_paracentral",
+   "name": "Paracentral",
+   "hemi": "L",
+   "atlasLabels": [
+    67
+   ],
+   "atlasNames": [
+    "Paracentral (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8238,
+   "centroidMNI": [
+    -7.7,
+    -26.5,
+    59.7
+   ],
+   "faces": 986
+  },
+  {
+   "id": "L_parahippocampal",
+   "name": "Parahippocampal",
+   "hemi": "L",
+   "atlasLabels": [
+    69
+   ],
+   "atlasNames": [
+    "Parahippocampal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 2708,
+   "centroidMNI": [
+    -23.7,
+    -31.1,
+    -17.4
+   ],
+   "faces": 348
+  },
+  {
+   "id": "L_pars_opercularis",
+   "name": "Pars Opercularis",
+   "hemi": "L",
+   "atlasLabels": [
+    83
+   ],
+   "atlasNames": [
+    "Pars Opercularis (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 7673,
+   "centroidMNI": [
+    -47.8,
+    14.9,
+    13.1
+   ],
+   "faces": 918
+  },
+  {
+   "id": "L_pars_orbitalis",
+   "name": "Pars Orbitalis",
+   "hemi": "L",
+   "atlasLabels": [
+    95
+   ],
+   "atlasNames": [
+    "Pars Orbitalis (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3639,
+   "centroidMNI": [
+    -43.1,
+    34.0,
+    -12.8
+   ],
+   "faces": 436
+  },
+  {
+   "id": "L_pars_triangularis",
+   "name": "Pars Triangularis",
+   "hemi": "L",
+   "atlasLabels": [
+    73
+   ],
+   "atlasNames": [
+    "Pars Triangularis (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8196,
+   "centroidMNI": [
+    -48.6,
+    31.8,
+    4.7
+   ],
+   "faces": 982
+  },
+  {
+   "id": "L_pericalcarine",
+   "name": "Pericalcarine",
+   "hemi": "L",
+   "atlasLabels": [
+    57
+   ],
+   "atlasNames": [
+    "Pericalcarine (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 5030,
+   "centroidMNI": [
+    -11.4,
+    -82.3,
+    6.2
+   ],
+   "faces": 602
+  },
+  {
+   "id": "L_postcentral",
+   "name": "Postcentral",
+   "hemi": "L",
+   "atlasLabels": [
+    64
+   ],
+   "atlasNames": [
+    "Postcentral (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 18194,
+   "centroidMNI": [
+    -43.0,
+    -25.0,
+    46.7
+   ],
+   "faces": 2182
+  },
+  {
+   "id": "L_posterior_cingulate",
+   "name": "Posterior Cingulate",
+   "hemi": "L",
+   "atlasLabels": [
+    98
+   ],
+   "atlasNames": [
+    "Posterior Cingulate (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 5302,
+   "centroidMNI": [
+    -5.5,
+    -19.9,
+    38.6
+   ],
+   "faces": 636
+  },
+  {
+   "id": "L_precentral",
+   "name": "Precentral",
+   "hemi": "L",
+   "atlasLabels": [
+    86
+   ],
+   "atlasNames": [
+    "Precentral (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 21393,
+   "centroidMNI": [
+    -42.8,
+    -7.3,
+    41.7
+   ],
+   "faces": 2566
+  },
+  {
+   "id": "L_precuneus",
+   "name": "Precuneus",
+   "hemi": "L",
+   "atlasLabels": [
+    82
+   ],
+   "atlasNames": [
+    "Precuneus (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 18771,
+   "centroidMNI": [
+    -9.1,
+    -59.0,
+    39.7
+   ],
+   "faces": 2250
+  },
+  {
+   "id": "L_putamen",
+   "name": "Putamen",
+   "hemi": "L",
+   "atlasLabels": [
+    72
+   ],
+   "atlasNames": [
+    "Putamen (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 6626,
+   "centroidMNI": [
+    -25.5,
+    2.6,
+    0.2
+   ],
+   "faces": 794
+  },
+  {
+   "id": "L_rostral_anterior_cingulate",
+   "name": "Rostral Anterior Cingulate",
+   "hemi": "L",
+   "atlasLabels": [
+    59
+   ],
+   "atlasNames": [
+    "Rostral Anterior Cingulate (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3782,
+   "centroidMNI": [
+    -5.5,
+    36.3,
+    2.3
+   ],
+   "faces": 452
+  },
+  {
+   "id": "L_rostral_middle_frontal",
+   "name": "Rostral Middle Frontal",
+   "hemi": "L",
+   "atlasLabels": [
+    52
+   ],
+   "atlasNames": [
+    "Rostral Middle Frontal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 21742,
+   "centroidMNI": [
+    -38.5,
+    42.7,
+    17.7
+   ],
+   "faces": 2608
+  },
+  {
+   "id": "L_superior_frontal",
+   "name": "Superior Frontal",
+   "hemi": "L",
+   "atlasLabels": [
+    89
+   ],
+   "atlasNames": [
+    "Superior Frontal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 52819,
+   "centroidMNI": [
+    -13.2,
+    33.8,
+    37.4
+   ],
+   "faces": 3600
+  },
+  {
+   "id": "L_superior_parietal",
+   "name": "Superior Parietal",
+   "hemi": "L",
+   "atlasLabels": [
+    60
+   ],
+   "atlasNames": [
+    "Superior Parietal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 19333,
+   "centroidMNI": [
+    -25.9,
+    -61.9,
+    52.4
+   ],
+   "faces": 2318
+  },
+  {
+   "id": "L_superior_temporal",
+   "name": "Superior Temporal",
+   "hemi": "L",
+   "atlasLabels": [
+    96
+   ],
+   "atlasNames": [
+    "Superior Temporal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 25351,
+   "centroidMNI": [
+    -51.1,
+    -8.1,
+    -8.6
+   ],
+   "faces": 3042
+  },
+  {
+   "id": "L_supramarginal",
+   "name": "Supramarginal",
+   "hemi": "L",
+   "atlasLabels": [
+    102
+   ],
+   "atlasNames": [
+    "Supramarginal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 16033,
+   "centroidMNI": [
+    -55.2,
+    -35.1,
+    36.0
+   ],
+   "faces": 1922
+  },
+  {
+   "id": "L_thalamus",
+   "name": "Thalamus",
+   "hemi": "L",
+   "atlasLabels": [
+    91
+   ],
+   "atlasNames": [
+    "Thalamus (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 10037,
+   "centroidMNI": [
+    -11.7,
+    -18.1,
+    6.8
+   ],
+   "faces": 1202
+  },
+  {
+   "id": "L_transverse_temporal",
+   "name": "Transverse Temporal",
+   "hemi": "L",
+   "atlasLabels": [
+    65
+   ],
+   "atlasNames": [
+    "Transverse Temporal (L)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 1882,
+   "centroidMNI": [
+    -45.7,
+    -19.8,
+    8.3
+   ],
+   "faces": 348
+  },
+  {
+   "id": "L_ventral_diencephalon",
+   "name": "Ventral Diencephalon",
+   "hemi": "L",
+   "atlasLabels": [
+    77
+   ],
+   "atlasNames": [
+    "Ventral Diencephalon (L)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 6102,
+   "centroidMNI": [
+    -10.3,
+    -16.8,
+    -10.3
+   ],
+   "faces": 732
+  },
+  {
+   "id": "R_accumbens_area",
+   "name": "Accumbens Area",
+   "hemi": "R",
+   "atlasLabels": [
+    4
+   ],
+   "atlasNames": [
+    "Accumbens Area (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 553,
+   "centroidMNI": [
+    9.0,
+    11.8,
+    -7.3
+   ],
+   "faces": 350
+  },
+  {
+   "id": "R_amygdala",
+   "name": "Amygdala",
+   "hemi": "R",
+   "atlasLabels": [
+    19
+   ],
+   "atlasNames": [
+    "Amygdala (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 1650,
+   "centroidMNI": [
+    23.4,
+    -4.4,
+    -20.7
+   ],
+   "faces": 348
+  },
+  {
+   "id": "R_basal_forebrain",
+   "name": "Basal Forebrain",
+   "hemi": "R",
+   "atlasLabels": [
+    25
+   ],
+   "atlasNames": [
+    "Basal Forebrain (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 192,
+   "centroidMNI": [
+    7.1,
+    4.0,
+    -11.9
+   ],
+   "faces": 350
+  },
+  {
+   "id": "R_caudal_anterior_cingulate",
+   "name": "Caudal Anterior Cingulate",
+   "hemi": "R",
+   "atlasLabels": [
+    30
+   ],
+   "atlasNames": [
+    "Caudal Anterior Cingulate (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3652,
+   "centroidMNI": [
+    5.1,
+    20.7,
+    27.4
+   ],
+   "faces": 436
+  },
+  {
+   "id": "R_caudal_middle_frontal",
+   "name": "Caudal Middle Frontal",
+   "hemi": "R",
+   "atlasLabels": [
+    42
+   ],
+   "atlasNames": [
+    "Caudal Middle Frontal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 13220,
+   "centroidMNI": [
+    36.9,
+    12.3,
+    47.7
+   ],
+   "faces": 1584
+  },
+  {
+   "id": "R_caudate",
+   "name": "Caudate",
+   "hemi": "R",
+   "atlasLabels": [
+    49
+   ],
+   "atlasNames": [
+    "Caudate (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 5643,
+   "centroidMNI": [
+    13.9,
+    9.6,
+    10.4
+   ],
+   "faces": 676
+  },
+  {
+   "id": "R_cerebellum",
+   "name": "Cerebellar hemisphere",
+   "hemi": "R",
+   "atlasLabels": [
+    46,
+    39
+   ],
+   "atlasNames": [
+    "Cerebellum Gray Matter (R)",
+    "Cerebellum White Matter (R)"
+   ],
+   "kind": "cerebellar",
+   "volumeMm3": 84228,
+   "centroidMNI": [
+    25.6,
+    -61.5,
+    -38.4
+   ],
+   "faces": 3600
+  },
+  {
+   "id": "R_cuneus",
+   "name": "Cuneus",
+   "hemi": "R",
+   "atlasLabels": [
+    43
+   ],
+   "atlasNames": [
+    "Cuneus (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8072,
+   "centroidMNI": [
+    8.6,
+    -81.3,
+    24.6
+   ],
+   "faces": 966
+  },
+  {
+   "id": "R_entorhinal",
+   "name": "Entorhinal",
+   "hemi": "R",
+   "atlasLabels": [
+    36
+   ],
+   "atlasNames": [
+    "Entorhinal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3205,
+   "centroidMNI": [
+    22.2,
+    -4.5,
+    -31.9
+   ],
+   "faces": 384
+  },
+  {
+   "id": "R_fusiform",
+   "name": "Fusiform",
+   "hemi": "R",
+   "atlasLabels": [
+    24
+   ],
+   "atlasNames": [
+    "Fusiform (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 13472,
+   "centroidMNI": [
+    35.7,
+    -42.1,
+    -21.4
+   ],
+   "faces": 1614
+  },
+  {
+   "id": "R_hippocampus",
+   "name": "Hippocampus",
+   "hemi": "R",
+   "atlasLabels": [
+    48
+   ],
+   "atlasNames": [
+    "Hippocampus (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 4694,
+   "centroidMNI": [
+    25.9,
+    -22.5,
+    -14.5
+   ],
+   "faces": 562
+  },
+  {
+   "id": "R_inferior_parietal",
+   "name": "Inferior Parietal",
+   "hemi": "R",
+   "atlasLabels": [
+    10
+   ],
+   "atlasNames": [
+    "Inferior Parietal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 26186,
+   "centroidMNI": [
+    45.8,
+    -64.4,
+    31.7
+   ],
+   "faces": 3142
+  },
+  {
+   "id": "R_inferior_temporal",
+   "name": "Inferior temporal",
+   "hemi": "R",
+   "atlasLabels": [
+    3
+   ],
+   "atlasNames": [
+    "Inferior temporal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 16224,
+   "centroidMNI": [
+    49.2,
+    -24.8,
+    -30.0
+   ],
+   "faces": 1944
+  },
+  {
+   "id": "R_insula",
+   "name": "Insula",
+   "hemi": "R",
+   "atlasLabels": [
+    23
+   ],
+   "atlasNames": [
+    "Insula (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 9521,
+   "centroidMNI": [
+    37.1,
+    1.8,
+    0.4
+   ],
+   "faces": 1142
+  },
+  {
+   "id": "R_isthmus_cingulate",
+   "name": "Isthmus Cingulate",
+   "hemi": "R",
+   "atlasLabels": [
+    33
+   ],
+   "atlasNames": [
+    "Isthmus Cingulate (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 4427,
+   "centroidMNI": [
+    8.0,
+    -45.8,
+    18.9
+   ],
+   "faces": 530
+  },
+  {
+   "id": "R_lateral_occipital",
+   "name": "Lateral Occipital",
+   "hemi": "R",
+   "atlasLabels": [
+    34
+   ],
+   "atlasNames": [
+    "Lateral Occipital (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 22807,
+   "centroidMNI": [
+    31.9,
+    -87.2,
+    1.5
+   ],
+   "faces": 2736
+  },
+  {
+   "id": "R_lateral_orbitofrontal",
+   "name": "Lateral Orbitofrontal",
+   "hemi": "R",
+   "atlasLabels": [
+    7
+   ],
+   "atlasNames": [
+    "Lateral Orbitofrontal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 15042,
+   "centroidMNI": [
+    22.6,
+    36.0,
+    -19.1
+   ],
+   "faces": 1804
+  },
+  {
+   "id": "R_lingual",
+   "name": "Lingual",
+   "hemi": "R",
+   "atlasLabels": [
+    12
+   ],
+   "atlasNames": [
+    "Lingual (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 12362,
+   "centroidMNI": [
+    13.5,
+    -69.4,
+    -5.1
+   ],
+   "faces": 1482
+  },
+  {
+   "id": "R_medial_orbitofrontal",
+   "name": "Medial Orbitofrontal",
+   "hemi": "R",
+   "atlasLabels": [
+    15
+   ],
+   "atlasNames": [
+    "Medial Orbitofrontal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8884,
+   "centroidMNI": [
+    5.3,
+    37.7,
+    -18.1
+   ],
+   "faces": 1066
+  },
+  {
+   "id": "R_middle_temporal",
+   "name": "Middle Temporal",
+   "hemi": "R",
+   "atlasLabels": [
+    28
+   ],
+   "atlasNames": [
+    "Middle Temporal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 28291,
+   "centroidMNI": [
+    57.3,
+    -31.6,
+    -11.3
+   ],
+   "faces": 3392
+  },
+  {
+   "id": "R_pallidum",
+   "name": "Pallidum",
+   "hemi": "R",
+   "atlasLabels": [
+    27
+   ],
+   "atlasNames": [
+    "Pallidum (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 1701,
+   "centroidMNI": [
+    18.7,
+    -2.3,
+    -1.9
+   ],
+   "faces": 348
+  },
+  {
+   "id": "R_paracentral",
+   "name": "Paracentral",
+   "hemi": "R",
+   "atlasLabels": [
+    16
+   ],
+   "atlasNames": [
+    "Paracentral (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8238,
+   "centroidMNI": [
+    7.7,
+    -26.5,
+    59.7
+   ],
+   "faces": 986
+  },
+  {
+   "id": "R_parahippocampal",
+   "name": "Parahippocampal",
+   "hemi": "R",
+   "atlasLabels": [
+    18
+   ],
+   "atlasNames": [
+    "Parahippocampal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 2708,
+   "centroidMNI": [
+    23.7,
+    -31.1,
+    -17.4
+   ],
+   "faces": 348
+  },
+  {
+   "id": "R_pars_opercularis",
+   "name": "Pars Opercularis",
+   "hemi": "R",
+   "atlasLabels": [
+    32
+   ],
+   "atlasNames": [
+    "Pars Opercularis (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 7673,
+   "centroidMNI": [
+    47.8,
+    14.9,
+    13.1
+   ],
+   "faces": 918
+  },
+  {
+   "id": "R_pars_orbitalis",
+   "name": "Pars Orbitalis",
+   "hemi": "R",
+   "atlasLabels": [
+    44
+   ],
+   "atlasNames": [
+    "Pars Orbitalis (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3639,
+   "centroidMNI": [
+    43.1,
+    34.0,
+    -12.8
+   ],
+   "faces": 436
+  },
+  {
+   "id": "R_pars_triangularis",
+   "name": "Pars Triangularis",
+   "hemi": "R",
+   "atlasLabels": [
+    22
+   ],
+   "atlasNames": [
+    "Pars Triangularis (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 8196,
+   "centroidMNI": [
+    48.6,
+    31.8,
+    4.7
+   ],
+   "faces": 982
+  },
+  {
+   "id": "R_pericalcarine",
+   "name": "Pericalcarine",
+   "hemi": "R",
+   "atlasLabels": [
+    6
+   ],
+   "atlasNames": [
+    "Pericalcarine (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 5030,
+   "centroidMNI": [
+    11.4,
+    -82.3,
+    6.2
+   ],
+   "faces": 602
+  },
+  {
+   "id": "R_postcentral",
+   "name": "Postcentral",
+   "hemi": "R",
+   "atlasLabels": [
+    13
+   ],
+   "atlasNames": [
+    "Postcentral (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 18194,
+   "centroidMNI": [
+    43.0,
+    -25.0,
+    46.7
+   ],
+   "faces": 2182
+  },
+  {
+   "id": "R_posterior_cingulate",
+   "name": "Posterior Cingulate",
+   "hemi": "R",
+   "atlasLabels": [
+    47
+   ],
+   "atlasNames": [
+    "Posterior Cingulate (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 5411,
+   "centroidMNI": [
+    5.4,
+    -19.8,
+    38.6
+   ],
+   "faces": 648
+  },
+  {
+   "id": "R_precentral",
+   "name": "Precentral",
+   "hemi": "R",
+   "atlasLabels": [
+    35
+   ],
+   "atlasNames": [
+    "Precentral (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 21393,
+   "centroidMNI": [
+    42.8,
+    -7.3,
+    41.7
+   ],
+   "faces": 2566
+  },
+  {
+   "id": "R_precuneus",
+   "name": "Precuneus",
+   "hemi": "R",
+   "atlasLabels": [
+    31
+   ],
+   "atlasNames": [
+    "Precuneus (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 18772,
+   "centroidMNI": [
+    9.1,
+    -59.0,
+    39.7
+   ],
+   "faces": 2250
+  },
+  {
+   "id": "R_putamen",
+   "name": "Putamen",
+   "hemi": "R",
+   "atlasLabels": [
+    21
+   ],
+   "atlasNames": [
+    "Putamen (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 6626,
+   "centroidMNI": [
+    25.5,
+    2.6,
+    0.2
+   ],
+   "faces": 794
+  },
+  {
+   "id": "R_rostral_anterior_cingulate",
+   "name": "Rostral Anterior Cingulate",
+   "hemi": "R",
+   "atlasLabels": [
+    8
+   ],
+   "atlasNames": [
+    "Rostral Anterior Cingulate (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 3832,
+   "centroidMNI": [
+    5.4,
+    36.2,
+    2.2
+   ],
+   "faces": 458
+  },
+  {
+   "id": "R_rostral_middle_frontal",
+   "name": "Rostral Middle Frontal",
+   "hemi": "R",
+   "atlasLabels": [
+    1
+   ],
+   "atlasNames": [
+    "Rostral Middle Frontal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 21742,
+   "centroidMNI": [
+    38.5,
+    42.7,
+    17.7
+   ],
+   "faces": 2608
+  },
+  {
+   "id": "R_superior_frontal",
+   "name": "Superior Frontal",
+   "hemi": "R",
+   "atlasLabels": [
+    38
+   ],
+   "atlasNames": [
+    "Superior Frontal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 52819,
+   "centroidMNI": [
+    13.2,
+    33.8,
+    37.4
+   ],
+   "faces": 3600
+  },
+  {
+   "id": "R_superior_parietal",
+   "name": "Superior Parietal",
+   "hemi": "R",
+   "atlasLabels": [
+    9
+   ],
+   "atlasNames": [
+    "Superior Parietal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 19333,
+   "centroidMNI": [
+    25.9,
+    -61.9,
+    52.4
+   ],
+   "faces": 2318
+  },
+  {
+   "id": "R_superior_temporal",
+   "name": "Superior Temporal",
+   "hemi": "R",
+   "atlasLabels": [
+    45
+   ],
+   "atlasNames": [
+    "Superior Temporal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 25351,
+   "centroidMNI": [
+    51.1,
+    -8.1,
+    -8.6
+   ],
+   "faces": 3042
+  },
+  {
+   "id": "R_supramarginal",
+   "name": "Supramarginal",
+   "hemi": "R",
+   "atlasLabels": [
+    51
+   ],
+   "atlasNames": [
+    "Supramarginal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 16033,
+   "centroidMNI": [
+    55.2,
+    -35.1,
+    36.0
+   ],
+   "faces": 1922
+  },
+  {
+   "id": "R_thalamus",
+   "name": "Thalamus",
+   "hemi": "R",
+   "atlasLabels": [
+    40
+   ],
+   "atlasNames": [
+    "Thalamus (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 10038,
+   "centroidMNI": [
+    11.7,
+    -18.1,
+    6.7
+   ],
+   "faces": 1202
+  },
+  {
+   "id": "R_transverse_temporal",
+   "name": "Transverse Temporal",
+   "hemi": "R",
+   "atlasLabels": [
+    14
+   ],
+   "atlasNames": [
+    "Transverse Temporal (R)"
+   ],
+   "kind": "cortical",
+   "volumeMm3": 1882,
+   "centroidMNI": [
+    45.7,
+    -19.8,
+    8.3
+   ],
+   "faces": 348
+  },
+  {
+   "id": "R_ventral_diencephalon",
+   "name": "Ventral Diencephalon",
+   "hemi": "R",
+   "atlasLabels": [
+    26
+   ],
+   "atlasNames": [
+    "Ventral Diencephalon (R)"
+   ],
+   "kind": "subcortical",
+   "volumeMm3": 6104,
+   "centroidMNI": [
+    10.3,
+    -16.8,
+    -10.3
+   ],
+   "faces": 730
+  },
+  {
+   "id": "brainstem",
+   "name": "Brainstem",
+   "hemi": "bilateral",
+   "atlasLabels": [
+    62,
+    11
+   ],
+   "atlasNames": [
+    "Brainstem (L)",
+    "Brainstem (R)"
+   ],
+   "kind": "brainstem",
+   "volumeMm3": 32593,
+   "centroidMNI": [
+    0.0,
+    -31.4,
+    -36.3
+   ],
+   "faces": 3600
+  },
+  {
+   "id": "vermis",
+   "name": "Cerebellar vermis",
+   "hemi": "bilateral",
+   "atlasLabels": [
+    101,
+    50,
+    53,
+    2,
+    71,
+    20
+   ],
+   "atlasNames": [
+    "Vermal lobules I-V (L)",
+    "Vermal lobules I-V (R)",
+    "Vermal lobules VI-VII (L)",
+    "Vermal lobules VI-VII (R)",
+    "Vermal lobules VIII-X (L)",
+    "Vermal lobules VIII-X (R)"
+   ],
+   "kind": "cerebellar",
+   "volumeMm3": 17397,
+   "centroidMNI": [
+    0.0,
+    -59.4,
+    -22.3
+   ],
+   "faces": 2086
+  }
+ ],
+ "networks_meshes": [
+  {
+   "id": "L_yeo7_cont",
+   "network": "yeo7_cont",
+   "schaeferName": "Cont",
+   "name": "Frontoparietal control",
+   "hemi": "L",
+   "parcels": 22,
+   "volumeMm3": 63891,
+   "faces": 8998
+  },
+  {
+   "id": "L_yeo7_default",
+   "network": "yeo7_default",
+   "schaeferName": "Default",
+   "name": "Default",
+   "hemi": "L",
+   "parcels": 52,
+   "volumeMm3": 156887,
+   "faces": 9000
+  },
+  {
+   "id": "L_yeo7_dorsattn",
+   "network": "yeo7_dorsattn",
+   "schaeferName": "DorsAttn",
+   "name": "Dorsal attention",
+   "hemi": "L",
+   "parcels": 23,
+   "volumeMm3": 60384,
+   "faces": 8998
+  },
+  {
+   "id": "L_yeo7_limbic",
+   "network": "yeo7_limbic",
+   "schaeferName": "Limbic",
+   "name": "Limbic",
+   "hemi": "L",
+   "parcels": 13,
+   "volumeMm3": 49021,
+   "faces": 8998
+  },
+  {
+   "id": "L_yeo7_salventattn",
+   "network": "yeo7_salventattn",
+   "schaeferName": "SalVentAttn",
+   "name": "Salience / ventral attention",
+   "hemi": "L",
+   "parcels": 22,
+   "volumeMm3": 55809,
+   "faces": 8998
+  },
+  {
+   "id": "L_yeo7_sommot",
+   "network": "yeo7_sommot",
+   "schaeferName": "SomMot",
+   "name": "Somatomotor",
+   "hemi": "L",
+   "parcels": 37,
+   "volumeMm3": 78460,
+   "faces": 8998
+  },
+  {
+   "id": "L_yeo7_vis",
+   "network": "yeo7_vis",
+   "schaeferName": "Vis",
+   "name": "Visual",
+   "hemi": "L",
+   "parcels": 31,
+   "volumeMm3": 91630,
+   "faces": 9000
+  },
+  {
+   "id": "R_yeo7_cont",
+   "network": "yeo7_cont",
+   "schaeferName": "Cont",
+   "name": "Frontoparietal control",
+   "hemi": "R",
+   "parcels": 30,
+   "volumeMm3": 94225,
+   "faces": 8998
+  },
+  {
+   "id": "R_yeo7_default",
+   "network": "yeo7_default",
+   "schaeferName": "Default",
+   "name": "Default",
+   "hemi": "R",
+   "parcels": 39,
+   "volumeMm3": 118618,
+   "faces": 9000
+  },
+  {
+   "id": "R_yeo7_dorsattn",
+   "network": "yeo7_dorsattn",
+   "schaeferName": "DorsAttn",
+   "name": "Dorsal attention",
+   "hemi": "R",
+   "parcels": 23,
+   "volumeMm3": 60419,
+   "faces": 9000
+  },
+  {
+   "id": "R_yeo7_limbic",
+   "network": "yeo7_limbic",
+   "schaeferName": "Limbic",
+   "name": "Limbic",
+   "hemi": "R",
+   "parcels": 13,
+   "volumeMm3": 42911,
+   "faces": 9000
+  },
+  {
+   "id": "R_yeo7_salventattn",
+   "network": "yeo7_salventattn",
+   "schaeferName": "SalVentAttn",
+   "name": "Salience / ventral attention",
+   "hemi": "R",
+   "parcels": 25,
+   "volumeMm3": 61944,
+   "faces": 9000
+  },
+  {
+   "id": "R_yeo7_sommot",
+   "network": "yeo7_sommot",
+   "schaeferName": "SomMot",
+   "name": "Somatomotor",
+   "hemi": "R",
+   "parcels": 40,
+   "volumeMm3": 80508,
+   "faces": 9000
+  },
+  {
+   "id": "R_yeo7_vis",
+   "network": "yeo7_vis",
+   "schaeferName": "Vis",
+   "name": "Visual",
+   "hemi": "R",
+   "parcels": 30,
+   "volumeMm3": 95757,
+   "faces": 9000
+  }
+ ]
+}

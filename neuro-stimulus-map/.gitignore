@@ -1,0 +1,10 @@
+node_modules
+dist
+tests/fixtures
+*.log
+.vite
+test-results
+e2e/shots
+scripts/evidence/abstracts
+scripts/evidence/verification_report.json
+atlas_inputs
