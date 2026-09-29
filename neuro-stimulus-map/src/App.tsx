@@ -15,17 +15,22 @@ import { currentTheme } from './ui/colors';
 import { EvidenceBrowser } from './ui/EvidenceBrowser';
 import { AsrDialog, LlmDialog } from './ui/ExternalDialogs';
 import { FeaturePanel } from './ui/FeaturePanel';
-import { ColourMeaning, HighlightedPanel } from './ui/HighlightedPanel';
+import { HighlightedPanel } from './ui/HighlightedPanel';
 import { formatTime } from './ui/format';
 import { Legend, ListenerContextCard } from './ui/Legend';
-import { MediaPanel, TranscriptPanel } from './ui/MediaPanel';
+import { MediaActions, MediaPanel, TranscriptPanel } from './ui/MediaPanel';
 import { ReasoningPanel } from './ui/ReasoningPanel';
 import { RegionPanel } from './ui/RegionPanel';
 import { Timeline } from './ui/Timeline';
+import { usePlayClock } from './heat/clock';
+import { buildHeatModel } from './heat/model';
+import { HeatLegend, HeatNow, VirtualPlayer, Waves } from './ui/HeatViews';
+import type { HeatSource } from './ui/BrainView';
 import { UploadPanel } from './ui/UploadPanel';
 import { HOSTED, HOSTED_NETWORK_NOTE } from './util/hosted';
 
 type RightTab = 'highlighted' | 'reasoning' | 'features';
+type View = 'heat' | 'research';
 
 export default function App() {
   const [session, setSession] = useState<AnalysisSession | null>(null);
@@ -38,6 +43,7 @@ export default function App() {
   const [mesh, setMesh] = useState<string | null>(null);
   const [mode, setMode] = useState<ViewMode>('anatomy');
   const [tab, setTab] = useState<RightTab>('highlighted');
+  const [view, setView] = useState<View>('heat');
   const [time, setTime] = useState(0);
   const [follow, setFollow] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -86,16 +92,6 @@ export default function App() {
     setSegId(s.id);
   }, []);
 
-  const seek = useCallback(
-    (t: number) => {
-      setTime(t);
-      if (player.current) player.current.currentTime = t;
-      const s = segments.find((x) => t >= x.start && t < x.end);
-      if (s) setSegId(s.id);
-    },
-    [segments],
-  );
-
   const onTime = useCallback(
     (t: number) => {
       setTime(t);
@@ -105,6 +101,30 @@ export default function App() {
     },
     [follow, segments, segId],
   );
+
+  const hasMedia = !!mediaUrl && !!session && session.mediaKind !== 'none';
+  const { clock, isPlaying } = usePlayClock(player, hasMedia, session?.duration ?? 0, onTime);
+
+  const seek = useCallback(
+    (t: number) => {
+      setTime(t);
+      clock.seek(t);
+      const s = segments.find((x) => t >= x.start && t < x.end);
+      if (s) setSegId(s.id);
+    },
+    [segments, clock],
+  );
+
+  // The estimated heat map: rebuilt when features, corrections or listener answers change.
+  const heatModel = useMemo(
+    () => (session ? buildHeatModel(db, segments, session.tracks, allCues, ctx, session.duration) : null),
+    [session, segments, allCues, ctx],
+  );
+  const heatSource = useMemo<HeatSource | null>(() => {
+    if (view !== 'heat') return null;
+    if (!heatModel) return { now: () => 0, playing: () => false, at: (_t, out) => (out.clear(), out) };
+    return { now: clock.now, playing: clock.playing, at: heatModel.meshHeat };
+  }, [view, heatModel, clock]);
 
   const reset = () => {
     abort.current?.abort();
@@ -120,6 +140,7 @@ export default function App() {
     setProgress(null);
     setError(null);
     setTab('highlighted');
+    setView('heat');
   };
 
   const loadTranscript = async (f: File | null): Promise<{ cues: TranscriptCue[]; timed: boolean; untimed?: string }> => {
@@ -286,6 +307,10 @@ export default function App() {
       if (el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start' });
     });
   };
+  const why = (meshId: string) => {
+    setView('research');
+    openDetails(meshId);
+  };
   const segIndex = segment ? segments.indexOf(segment) : -1;
   const goSegment = (i: number) => {
     const s = segments[i];
@@ -304,13 +329,13 @@ export default function App() {
         <div className="brand">
           <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
             <rect width="32" height="32" rx="8" className="bm-bg" />
-            <rect x="7" y="16" width="4.5" height="9" rx="1.5" className="bm-limited" />
-            <rect x="13.75" y="11" width="4.5" height="14" rx="1.5" className="bm-moderate" />
-            <rect x="20.5" y="6" width="4.5" height="19" rx="1.5" className="bm-strong" />
+            <rect x="7" y="16" width="4.5" height="9" rx="1.5" className="bm-low" />
+            <rect x="13.75" y="11" width="4.5" height="14" rx="1.5" className="bm-mid" />
+            <rect x="20.5" y="6" width="4.5" height="19" rx="1.5" className="bm-high" />
           </svg>
           <div>
-            <h1>Stimulus Association Map</h1>
-            <p className="tagline">What published research links to the sounds and images in your media. A research-based association map, not a brain scan.</p>
+            <h1>Brain Heat Map</h1>
+            <p className="tagline">Play a video or song and see which brain areas published research links to what's playing, moment by moment. An estimate, not a brain recording.</p>
           </div>
         </div>
         <nav className="header-actions" aria-label="Help and evidence">
@@ -345,62 +370,35 @@ export default function App() {
         </div>
       )}
 
-      <main className="layout">
-        <aside className="col-left card">
-          {!session ? (
-            <UploadPanel busy={busy} progress={progress} error={error} onAnalyze={analyze} onTranscriptOnly={transcriptOnly} onDemo={demo} onCancel={() => abort.current?.abort()} />
-          ) : (
-            <>
-              <MediaPanel
-                ref={player}
-                session={session}
-                url={mediaUrl}
-                time={time}
-                follow={follow}
-                onFollow={setFollow}
-                onTime={onTime}
-                onDelete={() => {
-                  const wasDemo = session.isDemo;
-                  reset();
-                  setNotice(wasDemo ? null : 'Media and all results were deleted from this tab. Nothing had been uploaded or saved.');
-                }}
-                exportData={exportPayload}
-              />
-              <TranscriptPanel cues={allCues} time={time} onSeek={seek} untimed={session.untimedTranscript}>
-                {!session.isDemo && HOSTED && <p className="small muted">{HOSTED_NETWORK_NOTE}</p>}
-                {!session.isDemo && !HOSTED && (
-                  <div className="row wrap">
-                    {session.mediaKind !== 'none' && !hasTimedText && (
-                      <button type="button" className="btn small ghost" disabled={busy} onClick={() => setDialog('asr')}>
-                        Transcribe locally…
-                      </button>
-                    )}
-                    {hasTimedText && (
-                      <button type="button" className="btn small ghost" disabled={busy} onClick={() => setDialog('llm')}>
-                        Suggest interpretations…
-                      </button>
-                    )}
-                  </div>
-                )}
-              </TranscriptPanel>
-              {busy && progress && (
-                <div className="progress" role="status">
-                  <div className="bar">
-                    <div style={{ width: `${Math.round(progress.fraction * 100)}%` }} />
-                  </div>
-                  <span className="small">{progress.note}</span>
-                  <button type="button" className="btn small ghost" onClick={() => abort.current?.abort()}>
-                    Cancel
+      <main className={`layout ${session ? `has-session view-${view} media-${session.mediaKind}` : 'landing'}`}>
+        <div className="col-main">
+          <section className="card brain-card" aria-label="Brain map" ref={brainCol}>
+            <div className="map-head">
+              {session ? (
+                <div className="seg-control mode-switch" role="radiogroup" aria-label="What the brain shows">
+                  <button type="button" role="radio" aria-checked={view === 'heat'} className={view === 'heat' ? 'is-on' : ''} onClick={() => setView('heat')}>
+                    Heat map
+                  </button>
+                  <button type="button" role="radio" aria-checked={view === 'research'} className={view === 'research' ? 'is-on' : ''} onClick={() => setView('research')}>
+                    Evidence
                   </button>
                 </div>
+              ) : (
+                <div className="stepper-text">
+                  <strong>Brain heat map</strong>
+                  <span className="muted small">Load a video or song, or try the demo</span>
+                </div>
               )}
-            </>
-          )}
-        </aside>
-
-        <section className="col-center card" aria-label="Brain map" ref={brainCol}>
-          <div className="map-head">
-            {segment ? (
+              <div className="seg-control" role="radiogroup" aria-label="Map layer">
+                <button type="button" role="radio" aria-checked={mode === 'anatomy'} className={mode === 'anatomy' ? 'is-on' : ''} onClick={() => setMode('anatomy')}>
+                  Regions
+                </button>
+                <button type="button" role="radio" aria-checked={mode === 'networks'} className={mode === 'networks' ? 'is-on' : ''} onClick={() => setMode('networks')}>
+                  Networks
+                </button>
+              </div>
+            </div>
+            {view === 'research' && segment && (
               <div className="stepper" aria-label="Segment">
                 <button type="button" className="icon-btn step-btn" aria-label="Previous segment" disabled={segIndex <= 0} onClick={() => goSegment(segIndex - 1)}>
                   ‹
@@ -417,120 +415,181 @@ export default function App() {
                   ›
                 </button>
               </div>
-            ) : (
-              <div className="stepper-text">
-                <strong>Brain atlas</strong>
-                <span className="muted small">Load media or the demo to colour it</span>
+            )}
+            {focus && view === 'research' && (
+              <div className="focus-bar small" role="status">
+                Showing one association only: {db.associations.find((a) => a.id === focus)?.claim.slice(0, 90)}…
+                <button type="button" className="btn small ghost" onClick={() => setFocus(null)}>
+                  Show all
+                </button>
               </div>
             )}
-            <div className="seg-control" role="radiogroup" aria-label="Map layer">
-              <button type="button" role="radio" aria-checked={mode === 'anatomy'} className={mode === 'anatomy' ? 'is-on' : ''} onClick={() => setMode('anatomy')}>
-                Regions
-              </button>
-              <button type="button" role="radio" aria-checked={mode === 'networks'} className={mode === 'networks' ? 'is-on' : ''} onClick={() => setMode('networks')}>
-                Networks
-              </button>
-            </div>
-          </div>
-          {focus && (
-            <div className="focus-bar small" role="status">
-              Showing one association only: {db.associations.find((a) => a.id === focus)?.claim.slice(0, 90)}…
-              <button type="button" className="btn small ghost" onClick={() => setFocus(null)}>
-                Show all
-              </button>
-            </div>
-          )}
-          <BrainView
-            results={shown}
-            mode={mode}
-            selected={mesh}
-            onSelect={selectMesh}
-            onDetails={session ? () => rightCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) : undefined}
-            theme={theme}
-            isDemo={!!session?.isDemo}
-            focusOn={focusReq}
-            resetKey={session?.id}
-          />
-          <Legend />
-          {mode === 'networks' && (
-            <p className="small muted">
-              Networks view: the 7 resting-state networks of Yeo et al. (2011) as parcellated by Schaefer et al. (2018). Only findings that the cited studies describe at network level are
-              coloured here; deep structures stay visible for context.
-            </p>
-          )}
-        </section>
-
-        <aside className="col-right card" aria-label="Explanation" ref={rightCol}>
-          {!session || !segment || !segMap ? (
-            <div className="intro">
-              <h2>How it works</h2>
-              <ol className="how">
-                <li>
-                  <strong>Detect.</strong> Measurable features are found in your media on this device: speech- and music-like sound, beat, loudness changes, sudden sounds, motion,
-                  cuts, faces and, with a transcript, language cues.
-                </li>
-                <li>
-                  <strong>Link.</strong> Reviewed rules connect each feature to the mental processes it can involve, and say how direct that link is.
-                </li>
-                <li>
-                  <strong>Look up.</strong> Curated, cited research says which brain areas are associated with those processes. Only verified records colour the brain.
-                </li>
-              </ol>
-              <h2>What the colours mean</h2>
-              <ColourMeaning />
+            <BrainView
+              results={shown}
+              mode={mode}
+              selected={mesh}
+              onSelect={selectMesh}
+              onDetails={session ? () => (view === 'heat' && mesh ? why(mesh) : rightCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })) : undefined}
+              theme={theme}
+              isDemo={!!session?.isDemo}
+              focusOn={focusReq}
+              resetKey={session?.id}
+              heat={heatSource}
+            />
+            {view === 'heat' ? <HeatLegend /> : <Legend />}
+            {mode === 'networks' && (
               <p className="small muted">
-                The evidence base holds {db.sources.length} sources, {db.associations.length} graded associations and {db.unsupported.length} explicitly unsupported mappings.
+                Networks view: the 7 resting-state networks of Yeo et al. (2011) as parcellated by Schaefer et al. (2018). Only findings that the cited studies describe at network level
+                are {view === 'heat' ? 'used' : 'coloured'} here; deep structures stay visible for context.
               </p>
-            </div>
+            )}
+          </section>
+          {session && view === 'heat' && heatModel && <Waves model={heatModel} clock={clock} onSeek={seek} />}
+        </div>
+
+        <div className="col-side">
+          {!session ? (
+            <>
+              <section className="card upload-card">
+                <UploadPanel busy={busy} progress={progress} error={error} onAnalyze={analyze} onTranscriptOnly={transcriptOnly} onDemo={demo} onCancel={() => abort.current?.abort()} />
+              </section>
+              <section className="card intro">
+                <h2>How it works</h2>
+                <ol className="how">
+                  <li>
+                    <strong>Analyse.</strong> The app measures what's in your video or song on this device: loudness and beat, speech- and music-like sound, motion, cuts, faces
+                    and, with a transcript, words.
+                  </li>
+                  <li>
+                    <strong>Match.</strong> Curated, cited research says which brain areas are linked to each kind of input. Stronger research counts for more.
+                  </li>
+                  <li>
+                    <strong>Play.</strong> The heat map plays along with the media, and the brain-system traces scroll like a monitor. Tap any area to see why it's warm.
+                  </li>
+                </ol>
+                <h2>What the heat means</h2>
+                <p className="meaning">
+                  Heat is an <strong>estimate</strong> worked out from the media and published research: it shows where the kinds of input playing right now are processed. It is
+                  not a recording of anyone's brain waves or activity, and it can't show feelings, thoughts or dopamine. Areas with no research link stay cold.
+                </p>
+                <p className="small muted">
+                  The evidence base holds {db.sources.length} sources and {db.associations.length} graded associations.
+                </p>
+              </section>
+            </>
           ) : (
             <>
-              <div className="tabs" role="tablist">
-                {(
-                  [
-                    ['highlighted', 'Highlighted'],
-                    ['reasoning', 'Reasoning'],
-                    ['features', 'Features'],
-                  ] as [RightTab, string][]
-                ).map(([k, label]) => (
-                  <button key={k} type="button" role="tab" aria-selected={tab === k} className={`tab ${tab === k ? 'is-active' : ''}`} onClick={() => setTab(k)}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-              {tab === 'highlighted' &&
-                (mesh ? (
-                  <RegionPanel
-                    meshId={mesh}
-                    results={shown}
-                    onSelect={openDetails}
-                    onBack={() => setMesh(null)}
-                    onShowBrain={() => brainCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  />
-                ) : (
-                  <HighlightedPanel key={segment.id} results={shown} mode={mode} onMode={setMode} onSelect={openDetails} segmentLabel={`segment ${segIndex + 1}`} modalities={session.modalities} isDemo={session.isDemo} />
-                ))}
-              {tab === 'reasoning' && (
-                <>
-                  <ListenerContextCard ctx={ctx} onChange={setCtx} />
-                  <ReasoningPanel segment={segment} map={segMap} modalities={session.modalities} onSelectMesh={selectMesh} selectedMesh={mesh} focus={focus} onFocus={setFocus} />
-                </>
-              )}
-              {tab === 'features' && (
-                <FeaturePanel
-                  segment={segment}
-                  modalities={session.modalities}
-                  overridden={overridden}
-                  onConfirm={(id) => editFeature(id, 'confirm')}
-                  onReject={(id) => editFeature(id, 'reject')}
-                  onReset={(id) => editFeature(id, 'reset')}
+              <section className="card media-card">
+                <MediaPanel ref={player} session={session} url={mediaUrl} onTime={onTime}>
+                  {clock.virtual && <VirtualPlayer clock={clock} playing={isPlaying} time={time} duration={session.duration} onSeek={seek} />}
+                </MediaPanel>
+                {busy && progress && (
+                  <div className="progress" role="status">
+                    <div className="bar">
+                      <div style={{ width: `${Math.round(progress.fraction * 100)}%` }} />
+                    </div>
+                    <span className="small">{progress.note}</span>
+                    <button type="button" className="btn small ghost" onClick={() => abort.current?.abort()}>
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </section>
+              <section className="card actions-card" aria-label="Export and delete">
+                <MediaActions
+                  session={session}
+                  follow={follow}
+                  onFollow={view === 'research' ? setFollow : undefined}
+                  onDelete={() => {
+                    const wasDemo = session.isDemo;
+                    reset();
+                    setNotice(wasDemo ? null : 'Media and all results were deleted from this tab. Nothing had been uploaded or saved.');
+                  }}
+                  exportData={exportPayload}
                 />
+              </section>
+              {view === 'heat' && heatModel && <HeatNow model={heatModel} clock={clock} networks={mode === 'networks'} onWhy={why} />}
+              {view === 'research' && segment && segMap && (
+                <aside className="card explain-card" aria-label="Explanation" ref={rightCol}>
+                  <div className="tabs" role="tablist">
+                    {(
+                      [
+                        ['highlighted', 'Highlighted'],
+                        ['reasoning', 'Reasoning'],
+                        ['features', 'Features'],
+                      ] as [RightTab, string][]
+                    ).map(([k, label]) => (
+                      <button key={k} type="button" role="tab" aria-selected={tab === k} className={`tab ${tab === k ? 'is-active' : ''}`} onClick={() => setTab(k)}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  {tab === 'highlighted' &&
+                    (mesh ? (
+                      <RegionPanel
+                        meshId={mesh}
+                        results={shown}
+                        onSelect={openDetails}
+                        onBack={() => setMesh(null)}
+                        onShowBrain={() => brainCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                      />
+                    ) : (
+                      <HighlightedPanel
+                        key={segment.id}
+                        results={shown}
+                        mode={mode}
+                        onMode={setMode}
+                        onSelect={openDetails}
+                        segmentLabel={`segment ${segIndex + 1}`}
+                        modalities={session.modalities}
+                        isDemo={session.isDemo}
+                      />
+                    ))}
+                  {tab === 'reasoning' && (
+                    <>
+                      <ListenerContextCard ctx={ctx} onChange={setCtx} />
+                      <ReasoningPanel segment={segment} map={segMap} modalities={session.modalities} onSelectMesh={selectMesh} selectedMesh={mesh} focus={focus} onFocus={setFocus} />
+                    </>
+                  )}
+                  {tab === 'features' && (
+                    <FeaturePanel
+                      segment={segment}
+                      modalities={session.modalities}
+                      overridden={overridden}
+                      onConfirm={(id) => editFeature(id, 'confirm')}
+                      onReject={(id) => editFeature(id, 'reject')}
+                      onReset={(id) => editFeature(id, 'reset')}
+                    />
+                  )}
+                </aside>
               )}
+              <section className="card transcript-card">
+                <TranscriptPanel cues={allCues} time={time} onSeek={seek} untimed={session.untimedTranscript}>
+                  {!session.isDemo && HOSTED && <p className="small muted">{HOSTED_NETWORK_NOTE}</p>}
+                  {!session.isDemo && !HOSTED && (
+                    <div className="row wrap">
+                      {session.mediaKind !== 'none' && !hasTimedText && (
+                        <button type="button" className="btn small ghost" disabled={busy} onClick={() => setDialog('asr')}>
+                          Transcribe locally…
+                        </button>
+                      )}
+                      {hasTimedText && (
+                        <button type="button" className="btn small ghost" disabled={busy} onClick={() => setDialog('llm')}>
+                          Suggest interpretations…
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </TranscriptPanel>
+              </section>
             </>
           )}
-        </aside>
+        </div>
       </main>
 
-      {session && <Timeline session={session} segments={segments} selectedId={segment?.id ?? null} time={time} onSelect={(s) => (seek(s.start), selectSegment(s))} onSeek={seek} />}
+      {session && view === 'research' && (
+        <Timeline session={session} segments={segments} selectedId={segment?.id ?? null} time={time} onSelect={(s) => (seek(s.start), selectSegment(s))} onSeek={seek} />
+      )}
 
       <footer className="app-footer small muted">
         Anatomy: CerebrA atlas (Manera et al. 2020, CC BY 4.0) on the ICBM 2009c template; networks: Schaefer 2018 / Yeo 2011 (MIT). Evidence database v{db.meta.version}. Educational use

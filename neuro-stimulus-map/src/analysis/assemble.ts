@@ -10,7 +10,7 @@
 import type { FeatureId } from '../evidence/types';
 import type { DetectedFeature, Segment, TimelineTracks, TranscriptCue } from '../pipeline/types';
 import type { AudioAnalysis } from './audio/analyze';
-import { FPS, SILENCE_DB, beatStrength, percentile } from './audio/dsp';
+import { ANALYSIS_RATE, FPS, HOP, SILENCE_DB, beatStrength, percentile } from './audio/dsp';
 import { cueTextIn, languageStats } from './transcript/language';
 import type { VideoAnalysis } from './video/types';
 
@@ -319,6 +319,22 @@ function label(feats: Partial<Record<FeatureId, DetectedFeature>>): string {
   return 'No detected features';
 }
 
+/** 25-per-second loudness and onset strength ("punch"), normalised to the file's own range. */
+export function fineEnvelope(db: number[], flux: number[]): NonNullable<TimelineTracks['fine']> {
+  const per = 2; // 2 frames of 20 ms
+  const outDb: number[] = [];
+  const raw: number[] = [];
+  for (let i = 0; i < db.length; i += per) {
+    outDb.push(Math.round(Math.max(-80, ...db.slice(i, i + per)) * 10) / 10);
+    raw.push(Math.max(0, ...flux.slice(i, i + per)));
+  }
+  // scale onset strength by a high percentile so a few spikes do not flatten everything else
+  const sorted = raw.filter((x) => x > 0).sort((a, b) => a - b);
+  const ref = sorted.length ? sorted[Math.floor(sorted.length * 0.95)] || 1 : 1;
+  const punch = raw.map((x) => Math.round(Math.min(1, x / ref) * 100) / 100);
+  return { step: (per * HOP) / ANALYSIS_RATE, db: outDb, punch };
+}
+
 export function assemble(input: AssembleInput): { segments: Segment[]; tracks: TimelineTracks } {
   const bounds = segmentBoundaries(input);
   const segments: Segment[] = [];
@@ -354,6 +370,7 @@ export function assemble(input: AssembleInput): { segments: Segment[]; tracks: T
     tracks.speech = input.audio.windows.flatMap((w) => [adjSpeech(w.speech, w.music), adjSpeech(w.speech, w.music)]);
     tracks.music = input.audio.windows.flatMap((w) => [w.music, w.music]);
     tracks.onsets = input.audio.onsets;
+    tracks.fine = fineEnvelope(input.audio.frames.db, input.audio.frames.flux);
   }
   if (input.video) {
     const rs = (vals: number[]) => {

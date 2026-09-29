@@ -1,16 +1,22 @@
-# Stimulus Association Map
+# Brain Heat Map
 
-An educational web app. You load a video, song, or podcast, and it shows which brain regions
-and networks **published research associates with the kinds of stimuli detected in that
-media**. It is a *research-based stimulus association map*, **not a brain scan**. It never
-measures, predicts, or simulates anyone's neural activity.
+Load a video, song or podcast and press play: a 3D brain heats up and cools down along with it,
+and a set of traces scrolls like a monitor. The heat is an **estimate** of where the kinds of input
+playing at each moment (sound, voices, music and beat, motion, faces, cuts, words) are processed,
+according to curated, cited research. It is **not a brain recording or scan**: nothing here measures
+anyone's brainwaves or activity, and it cannot show feelings, thoughts or dopamine. An **Evidence**
+view shows every research link behind the heat, with grades, sources and limitations.
 
-![Demo view: detected features → candidate processes → research associations](docs/screenshots/demo-reasoning.png)
+Everything runs in the browser; the media never leaves the device.
+
+![Heat map playing the demo: hearing, music and vision areas warm, with the "Right now" panel](docs/screenshots/heat-map.png)
 
 ## Feasibility: what can and cannot be done honestly
 
 | Goal | Feasible? | How it is handled |
 |---|---|---|
+| Show a heat map that moves with the media | Yes, as a labelled estimate | Moment-to-moment input strength from the media, spread onto the brain areas that research links to that input and weighted by evidence grade and applicability. See [The heat map](#the-heat-map). |
+| Show real brainwaves (EEG) or brain activity | **No** (needs sensors on a person) | Not attempted. The traces are estimates from the media and say so. An EEG headset could be connected in future; see limitations. |
 | Detect observable features in media | Yes, locally in the browser | Audio signal processing (level, onsets, beat, speech/music heuristics), frame sampling (motion, cuts, brightness, face presence), transcript lexical cues. Every feature carries a *detection confidence*. |
 | Link features to cognitive processes | Partly | Reviewed rules. Each rule says whether applying the research is a **direct match**, **partial match**, or **extrapolation** that depends on the listener. |
 | Link processes to regions and networks | Yes, at regional level, where evidence exists | Only curated, cited evidence records can colour a region. Each is graded **strong / moderate / limited / contested**. Anything else is gray, meaning "insufficient evidence". |
@@ -55,8 +61,11 @@ iCloud Drive.
 
 On touch screens:
 
-- **Tap** a region to see its name and grade, then **Details** for the evidence. **Drag** with
-  one finger to rotate, and **pinch** to zoom. Angles, hemispheres and cutaways are under **View**.
+- Press play (or **Play** for the demo). With a video, the player sits right above the heat map
+  so both fit on the screen.
+- **Tap** an area to see its name and heat, then **Why?** for the research behind it. **Drag** with
+  one finger to rotate, and **pinch** to zoom. Angles, hemispheres, cutaways and slow rotation are
+  under **View**.
 - Tap an area in the **Highlighted** list to open its details; **Show on the brain** scrolls back
   up to the brain, already turned to show it.
 - On narrow screens the timeline shows segment times only, and dialogs open as bottom sheets.
@@ -89,6 +98,18 @@ npm run api -- --port 8787            # HTTP API: /openapi.json, /tools/{name}, 
 node tool-dist/cli.mjs features speech_present,faces_visible
 ```
 
+## The heat map
+
+The **Heat map** view is the default. For every moment of playback:
+
+1. **Input strength (0 to 1) is measured from the media** for each detected feature: loudness relative to the file's own quiet-to-loud range and its onset "punch" (25 values per second, so it pulses with beats and syllables), speech- and music-likeness, motion, faces, recent cuts and sudden sounds (decaying pulses), and whether transcript words are being spoken. Interpretations a person confirmed count while their segment plays.
+2. **Each research link reached for that segment** (the same `mapSegment` pipeline as the Evidence view) contributes `weight × input strength` to its brain area. The weight is the evidence grade (strong 1, moderate 0.8, limited 0.55, contested 0.35) × applicability (direct 1, partial 0.75, extrapolation 0.5) × 0.7 when the finding depends on the listener × detection confidence. An area's heat is its strongest link plus 15% of the others, capped at 1.
+3. **Display.** Heat eases up quickly and down slowly, on a dark stage with a warm ramp whose lightness rises steadily (crimson → red → orange → yellow), so hotter always reads as brighter. "Brain systems over time" shows the same estimate grouped by the kind of finding (hearing, voices, language, music and beat, vision, motion, faces, attention and surprise); click it to jump. "Right now" lists those systems and the hottest areas, each with **Why?**, which opens the Evidence view for that area.
+
+What it is not: a recording, a prediction of any person's brain response, or a measure of intensity inside the brain. Areas with no research link never heat up, a transcript alone never heats hearing or vision, and silence never heats hearing (all covered by `tests/heat.test.ts`). The model lives in `src/heat/model.ts`.
+
+![Right now and the brain-system traces](docs/screenshots/right-now-and-traces.png)
+
 ## How it works: an auditable pipeline
 
 ```
@@ -111,17 +132,16 @@ media ──► detected features ──(rules: data/evidence/rules.json)──�
 
 ### Design choices that keep it from reading as a brain scan
 
-- Colours are an ordinal single-hue **evidence** scale plus striped magenta for *contested*. The palette was validated for colour-vision deficiency and has light and dark variants. There is no red-yellow "heat" palette.
-- Gray is labelled "no verified association for this segment (not inactive)".
-- The map switches only when the segment changes. There is no pulsing or animation tied to playback. The timeline lanes are labelled "features measured in the media, not brain activity".
+- The heat map is labelled as an estimate on the brain itself ("Estimated from the media and research · not a brain recording"), in its legend, in "Right now" and in the traces ("not an EEG recording"), and it uses qualitative words (none, low, medium, high) instead of numbers.
+- In the **Evidence** view, colours are an ordinal single-hue **evidence** scale plus striped magenta for *contested*, validated for colour-vision deficiency, with light and dark variants. Gray is labelled "no verified association for this segment (not inactive)", and the map switches only when the segment changes. The timeline lanes are labelled "features measured in the media, not brain activity".
 - Every panel keeps three things separate: *detection confidence* (the software), *evidence grade* (the research), and *applicability* (research → this clip). The text states that strong general evidence ≠ strong evidence for this clip.
 - An optional "About the listener" card (understands the language? enjoys the music? finds it funny?) shows how findings depend on the person. Answering "No" removes associations that assume it.
 - The "Show only this on map" option isolates a single association so a busy map can be read one claim at a time.
 
 | | |
 |---|---|
-| ![Region detail](docs/screenshots/region-detail.png) | ![Coronal cutaway](docs/screenshots/cutaway.png) |
-| ![Network layer](docs/screenshots/networks.png) | ![Local analysis of a synthetic video](docs/screenshots/local-analysis.png) |
+| ![Why? opens the evidence for an area](docs/screenshots/why-evidence.png) | ![Coronal cutaway in the Evidence view](docs/screenshots/cutaway.png) |
+| ![Heat map in dark mode](docs/screenshots/heat-map-dark.png) | ![Phone: the video plays above the heat map](docs/screenshots/phone-video.png) |
 
 ## Evidence database (`data/evidence/`)
 
@@ -230,5 +250,7 @@ confidence and every feature can be corrected.
 - Language features are lexical counts, not comprehension.
 - The evidence base is an initial set. Candidates for review include voice/speech meta-analyses, film-emotion naturalistic studies, and individual-differences work.
 - The ASR and LLM paths should be exercised end-to-end in a normal browser.
+- The heat map's weights and input-strength curves are display choices, not a fitted model; they are listed in `src/heat/model.ts` so they can be reviewed. A validated encoding model (one trained to predict fMRI or EEG responses to films and music) would be needed before the heat could be called a prediction.
+- Real brainwaves need a headset. Consumer EEG headbands can stream to a browser over Web Bluetooth (Chrome on desktop and Android; not iPhone or iPad), which would allow a genuinely measured view next to this estimate.
 
 Educational use only. Not medical advice.

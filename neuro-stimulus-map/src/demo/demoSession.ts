@@ -127,7 +127,35 @@ export function demoSession(): AnalysisSession {
       faces: wave((t) => ((t > 20 && t < 55) || (t > 70 && t < 100) || (t > 135 && t < 150) ? 1 : 0)),
       onsets: [57.2],
       cuts: [6, 12, 17, 57.2],
+      fine: demoFine(),
     },
     notes: ['This is demonstration data. Upload a file to run a real, local analysis.'],
   };
+}
+
+/**
+ * DEMO ONLY: a synthetic 25-per-second loudness/onset envelope so the heat map has something to
+ * follow - beat pulses at 104 BPM in the music parts and a syllable-rate wobble in the speech parts.
+ */
+function demoFine(): NonNullable<AnalysisSession['tracks']['fine']> {
+  const step = 0.04;
+  const db: number[] = [];
+  const punch: number[] = [];
+  const noise = (t: number) => (Math.sin(t * 12.9898) * 43758.5453) % 1;
+  const music = (t: number) => t < 20 || (t > 100 && t < 130) || t > 130;
+  const speech = (t: number) => (t > 20 && t < 55) || (t > 70 && t < 100) || t > 130;
+  let prev = -40;
+  for (let i = 0; i < 160 / step; i++) {
+    const t = i * step;
+    let level = t > 55 && t < 57 ? -34 : t > 57.2 && t < 58 ? -4 : -24;
+    if (music(t)) {
+      const phase = (t * 104) / 60 - Math.floor((t * 104) / 60);
+      level = Math.max(level, -20 + 9 * Math.exp(-phase * 6));
+    }
+    if (speech(t)) level = Math.max(level, -22 + 7 * Math.max(0, Math.sin(t * 2 * Math.PI * 4.3)) + 3 * Math.abs(noise(t)));
+    db.push(Math.round(level * 10) / 10);
+    punch.push(Math.round(Math.min(1, Math.max(0, level - prev) / 8) * 100) / 100);
+    prev = level;
+  }
+  return { step, db, punch };
 }

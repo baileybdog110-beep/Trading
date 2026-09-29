@@ -38,7 +38,7 @@ try {
     const shoot = async (tag) => {
       await page.screenshot({ path: `${OUT}/review-${name}-${tag}.png` });
       if (w < 1180) {
-        await page.locator('.col-right').evaluate((el) => el.scrollIntoView({ block: 'start' }));
+        await page.locator('.now-card, .explain-card, .intro').first().evaluate((el) => el.scrollIntoView({ block: 'start' }));
         await page.waitForTimeout(150);
         await page.screenshot({ path: `${OUT}/review-${name}-${tag}-panel.png` });
         await page.evaluate(() => window.scrollTo(0, 0));
@@ -46,22 +46,26 @@ try {
     };
     await shoot('1-landing');
     await page.click('text=Explore demo data');
-    await page.waitForSelector('.hl-card');
-    await page.waitForTimeout(400);
-    await shoot('2-demo');
-    await page.locator('.hl-card').first().click();
+    await page.waitForSelector('.now-card');
+    // play the demo for a few seconds so the heat map and traces are moving
+    await page.click('.vplayer button');
+    await page.waitForTimeout(4200);
+    await shoot('2-heat');
+    await page.click('.vplayer button'); // pause
+    await page.locator('.now-hot button').first().click();
     await page.waitForSelector('.region-panel');
     await page.waitForTimeout(300);
-    await shoot('3-detail');
+    await shoot('3-why');
     if (name === 'desktop' || name === 'phone') {
       await page.click('text=All highlighted areas');
+      await page.waitForSelector('.hl-card');
+      await shoot('4-evidence');
+      await page.getByRole('radio', { name: 'Heat map' }).click();
       await page.locator('.brain-canvas').scrollIntoViewIfNeeded();
       await page.click('.view-menu summary');
       await page.waitForTimeout(200);
-      await page.screenshot({ path: `${OUT}/review-${name}-4-view-menu.png` });
+      await page.screenshot({ path: `${OUT}/review-${name}-5-view-menu.png` });
       await page.click('.view-menu summary');
-      await page.click('text=Reasoning');
-      await shoot('5-reasoning');
     }
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     console.log(`${name}: horizontal overflow ${overflow}px`);

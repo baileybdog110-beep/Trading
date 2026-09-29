@@ -5,7 +5,24 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
     <Modal title="How to read this map" onClose={onClose} wide>
       <div className="about">
         <section>
-          <h3>What this is - and is not</h3>
+          <h3>The heat map</h3>
+          <p>
+            The <strong>Heat map</strong> view plays along with your media. At each moment the app measures what the media contains - loudness and punch, speech- and music-like
+            sound, motion, faces, cuts and, with a transcript, words - and spreads that onto the brain areas that curated research links to each kind of input. Stronger and more
+            direct research counts for more; findings that depend on the listener count for less; areas with no research link never heat up.
+          </p>
+          <ul>
+            <li>
+              It is an <strong>estimate</strong> for exploring media, not a recording or prediction of anyone's brain activity. Real brainwaves (EEG) or brain scans only come from
+              sensors on a person.
+            </li>
+            <li>The "Brain systems over time" traces show the same estimate for groups of findings (hearing, voices, language, music and beat, vision, motion, faces, attention).</li>
+            <li>It cannot show feelings, thoughts, dopamine or hormones.</li>
+            <li>Tap any area and choose "Why?" to see the research behind it in the Evidence view.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>The Evidence view: what this is - and is not</h3>
           <p>
             This is a <strong>research-based stimulus association map</strong>. It shows which brain regions and networks published studies associate with the <em>kinds</em> of stimuli
             detected in your media. It is <strong>not a brain scan</strong> and does not measure, predict or simulate anyone's neural activity.
@@ -13,7 +30,7 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
           <ul>
             <li>Colours are evidence categories (strong, moderate, limited, contested). They are not intensities, percentages or firing rates.</li>
             <li>Gray means "no verified association for this segment's features" - not "inactive". Every region is active all the time.</li>
-            <li>The timeline shows changing content features. The map switches only when the segment changes; it is not moment-to-moment brain activity.</li>
+            <li>In the Evidence view the map switches only when the segment changes; the timeline shows changing content features, not brain activity.</li>
             <li>Nothing here infers dopamine, hormones, exact emotions or activation levels from media.</li>
           </ul>
         </section>

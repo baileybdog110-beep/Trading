@@ -18,6 +18,9 @@ const page = await browser.newPage({ viewport: { width: 1500, height: 1000 } });
 const errors = [];
 page.on('console', (m) => { if (m.type() === 'error' && !/blob:|Failed to load resource/.test(m.text())) errors.push(m.text()); });
 page.on('pageerror', (e) => errors.push(String(e)));
+// estimated heat per brain system, as shown in the "Right now" panel
+const heatNow = (page) =>
+  page.evaluate(() => Object.fromEntries([...document.querySelectorAll('.now-bars li')].map((li) => [li.dataset.system, +li.dataset.heat])));
 const step = async (name, fn) => { const t = Date.now(); await fn(); console.log(`ok ${name} (${Date.now() - t} ms)`); };
 try {
   await step('landing', async () => {
@@ -29,7 +32,22 @@ try {
   await step('demo', async () => {
     await page.click('text=Explore demo data');
     await page.waitForSelector('text=DEMO DATA');
-    await page.screenshot({ path: `${OUT}/02-demo-seg1.png` });
+    // heat map (default view): play the demo and check that the estimate moves with it
+    await page.waitForSelector('.now-card');
+    await page.click('.vplayer button');
+    await page.waitForTimeout(1500);
+    const a = await heatNow(page);
+    await page.waitForTimeout(900);
+    const b = await heatNow(page);
+    await page.click('.vplayer button');
+    if (!(a.hearing > 0.1 && a.music > 0.1)) throw new Error(`demo music section should heat hearing and music: ${JSON.stringify(a)}`);
+    if (JSON.stringify(a) === JSON.stringify(b)) throw new Error('heat did not change during playback');
+    if (!(await page.locator('canvas.waves').count())) throw new Error('waves missing');
+    console.log(`  heat at play: ${JSON.stringify(a)}`);
+    await page.screenshot({ path: `${OUT}/02-demo-heat.png` });
+    await page.getByRole('radio', { name: 'Evidence' }).click();
+    await page.waitForSelector('.seg-block');
+    await page.screenshot({ path: `${OUT}/02b-demo-evidence.png` });
     await page.click('.seg-block >> nth=1');
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${OUT}/03-demo-seg2.png` });
@@ -99,9 +117,25 @@ try {
     await page.setInputFiles('input[type=file]', files);
     await page.click('text=Analyse locally');
     if (expectSegments) {
-      await page.waitForSelector('.seg-block', { timeout: 180000 });
-      await page.waitForTimeout(500);
+      await page.waitForSelector('.now-card', { timeout: 180000 });
+      // seeking only takes effect once the player has loaded the file's metadata
+      await page.waitForFunction(() => (document.querySelector('video, audio')?.readyState ?? 0) >= 1, null, { timeout: 30000 });
+      // heat follows the file: seek into the speech (10 s) and music (30 s) parts of the fixtures
+      const at = async (t) => {
+        await page.evaluate((tt) => (document.querySelector('video, audio').currentTime = tt), t);
+        // wait until the panel shows the new moment, then let the heat settle
+        await page.waitForFunction((tt) => document.querySelector('.now-time')?.textContent === `0:${String(tt).padStart(2, '0')}`, t, { timeout: 10000 });
+        await page.waitForTimeout(300);
+        return heatNow(page);
+      };
+      const speech = await at(10);
+      const music = await at(30);
+      console.log(`  heat at 0:10 ${JSON.stringify(speech)}\n  heat at 0:30 ${JSON.stringify(music)}`);
+      if (!(speech.voice > 0.1 && speech.voice > music.voice)) throw new Error('voices should be warmer in the speech part');
+      if (!(music.music > 0.1 && music.music > speech.music)) throw new Error('music should be warmer in the music part');
       await page.screenshot({ path: `${OUT}/${shot}`, fullPage: true });
+      await page.getByRole('radio', { name: 'Evidence' }).click();
+      await page.waitForSelector('.seg-block');
       const segs = await page.evaluate(() => [...document.querySelectorAll('.seg-block')].map((b) => b.getAttribute('title')));
       const mods = [await page.textContent('.hl-basis')];
       console.log(`  segments:\n    ${segs.join('\n    ')}\n  modalities: ${mods.join(' | ')}`);

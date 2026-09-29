@@ -66,6 +66,8 @@ export interface TimelineTracks {
   faces?: number[]; // 0/1 per video sample (resampled)
   onsets?: number[]; // times (s)
   cuts?: number[]; // times (s)
+  /** Fine audio envelope for the heat map: level (dBFS) and onset strength (0..1) every `step` s. */
+  fine?: { step: number; db: number[]; punch: number[] };
 }
 
 export interface AnalysisSession {

@@ -1,13 +1,13 @@
 {
-  "name": "Stimulus Association Map",
-  "short_name": "Stimulus Map",
+  "name": "Brain Heat Map",
+  "short_name": "Heat Map",
   "description": "Research-based stimulus association map: links features detected in media to brain regions that cited research associates with them. Not a brain scan.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#f5f4f0",
-  "theme_color": "#f5f4f0",
+  "background_color": "#0b0f14",
+  "theme_color": "#0b0f14",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

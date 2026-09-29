@@ -53,6 +53,13 @@ try {
       await page.waitForFunction(() => !document.querySelector('.brain-msg'), null, { timeout: 30000 });
       await page.tap('text=Explore demo data');
       await page.waitForSelector('text=DEMO DATA');
+      // heat map: play the demo on the touch device, then pause
+      await page.tap('.vplayer button');
+      await page.waitForTimeout(1200);
+      await page.tap('.vplayer button');
+      const heat = await page.evaluate(() => Math.max(...[...document.querySelectorAll('.now-bars li')].map((li) => +li.dataset.heat)));
+      if (!(heat > 0.1)) throw new Error(`no heat after playing the demo (${heat})`);
+      await page.screenshot({ path: `${OUT}/21-${label}-heat.png` });
       // tap near the temporal lobe of the default left lateral view
       await page.locator('.brain-canvas').scrollIntoViewIfNeeded();
       const b = await page.locator('.brain-canvas').boundingBox();
@@ -62,7 +69,8 @@ try {
         throw e;
       });
       await page.screenshot({ path: `${OUT}/20-${label}-tap.png` });
-      await page.tap('.tap-card >> text=Details');
+      // "Why?" on the brain opens the evidence for that area
+      await page.tap('.tap-card .btn');
       await page.waitForSelector('.region-panel');
       await page.tap('text=All highlighted areas');
       await page.tap('.hl-card .hl-title >> nth=0');
@@ -70,7 +78,7 @@ try {
       if (label === 'iphone') {
         await page.tap('text=Show on the brain');
         await page.waitForTimeout(600);
-        const top = await page.locator('.col-center').evaluate((el) => el.getBoundingClientRect().top);
+        const top = await page.locator('.brain-card').evaluate((el) => el.getBoundingClientRect().top);
         if (Math.abs(top) > 40) throw new Error(`"Show on the brain" did not bring the brain into view (top ${top})`);
       }
       await page.tap('.seg-block >> nth=3');
@@ -94,9 +102,11 @@ try {
       await step('iphone: analyse clip.webm (non-secure origin, touch)', async () => {
         await page.setInputFiles('input[type=file]', ['tests/fixtures/clip.webm', 'tests/fixtures/program.srt']);
         await page.tap('text=Analyse locally');
-        await page.waitForSelector('.seg-block', { timeout: 180000 });
-        const n = await page.locator('.seg-block').count();
-        console.log(`  ${n} segments`);
+        await page.waitForSelector('.now-card', { timeout: 180000 });
+        // on a phone the video sits right above the brain, both on the first screen after the header
+        const r = await page.evaluate(() => ({ video: document.querySelector('.media-card').getBoundingClientRect().top, brain: document.querySelector('.brain-card').getBoundingClientRect().top }));
+        if (!(r.video < r.brain)) throw new Error(`expected the video above the brain: ${JSON.stringify(r)}`);
+        console.log(`  video at ${Math.round(r.video)}px, brain at ${Math.round(r.brain)}px`);
         await page.screenshot({ path: `${OUT}/22-iphone-analysis.png` });
         await page.tap('text=Delete media & results');
       });

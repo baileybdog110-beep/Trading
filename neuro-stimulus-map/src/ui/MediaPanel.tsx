@@ -6,15 +6,12 @@ import { formatTime } from './format';
 interface Props {
   session: AnalysisSession;
   url: string | null;
-  time: number;
-  follow: boolean;
-  onFollow: (v: boolean) => void;
   onTime: (t: number) => void;
-  onDelete: () => void;
-  exportData: () => unknown;
+  /** extra controls under the player (play controls when there is no media file) */
+  children?: React.ReactNode;
 }
 
-export const MediaPanel = forwardRef<HTMLMediaElement, Props>(function MediaPanel({ session, url, time, follow, onFollow, onTime, onDelete, exportData }, ref) {
+export const MediaPanel = forwardRef<HTMLMediaElement, Props>(function MediaPanel({ session, url, onTime, children }, ref) {
   const common = {
     controls: true,
     src: url ?? undefined,
@@ -37,22 +34,42 @@ export const MediaPanel = forwardRef<HTMLMediaElement, Props>(function MediaPane
       {session.mediaKind === 'audio' && url && <audio ref={ref as React.Ref<HTMLAudioElement>} {...common} className="player audio" />}
       {session.mediaKind === 'none' && (
         <div className="no-media small muted">
-          {session.isDemo ? 'Demo data has no media. Click segments or the timeline to move through it.' : 'No media file: transcript-only analysis.'}
-          <div className="mono">Position: {formatTime(time)}</div>
+          {session.isDemo ? 'The demo has no media file. Press Play to run the heat map through its fictional 2:40 timeline.' : 'No media file: transcript-only analysis. Press Play to step through the transcript.'}
         </div>
       )}
-      <div className="media-actions">
-        <label className="check small">
-          <input type="checkbox" checked={follow} onChange={(e) => onFollow(e.target.checked)} /> Map follows playback
-        </label>
-        <JsonExportButton label="analysis (JSON)" filename={`stimulus-association-map-${session.isDemo ? 'demo' : 'analysis'}.json`} data={exportData} />
-        <button type="button" className="btn small danger" onClick={onDelete}>
-          {session.isDemo ? 'Close demo' : 'Delete media & results'}
-        </button>
-      </div>
+      {children}
     </section>
   );
 });
+
+/** Export and delete (and, in the Evidence view, whether the segment follows playback). */
+export function MediaActions({
+  session,
+  follow,
+  onFollow,
+  onDelete,
+  exportData,
+}: {
+  session: AnalysisSession;
+  follow?: boolean;
+  onFollow?: (v: boolean) => void;
+  onDelete: () => void;
+  exportData: () => unknown;
+}) {
+  return (
+    <div className="media-actions">
+      {onFollow && (
+        <label className="check small">
+          <input type="checkbox" checked={!!follow} onChange={(e) => onFollow(e.target.checked)} /> Segment follows playback
+        </label>
+      )}
+      <JsonExportButton label="analysis (JSON)" filename={`brain-heat-map-${session.isDemo ? 'demo' : 'analysis'}.json`} data={exportData} />
+      <button type="button" className="btn small danger" onClick={onDelete}>
+        {session.isDemo ? 'Close demo' : 'Delete media & results'}
+      </button>
+    </div>
+  );
+}
 
 export function TranscriptPanel({
   cues,

@@ -4,6 +4,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { meshIndex, networkById, regionById } from '../evidence/db';
 import type { MeshResult } from '../pipeline/mapping';
+import { heatRGB } from '../heat/colors';
+import { heatWord } from '../heat/model';
 import { fetchBinary } from '../util/hosted';
 import { GRADE_COLORS, GRADE_LABEL } from './colors';
 
@@ -48,6 +50,15 @@ interface Props {
   focusOn?: { meshId: string; seq: number } | null;
   /** Changes when new media or the demo is loaded; the view then returns to its default. */
   resetKey?: string;
+  /** When set, the brain shows the estimated heat map for the current playback time instead of evidence grades. */
+  heat?: HeatSource | null;
+}
+
+export interface HeatSource {
+  /** current playback time (s) */
+  now(): number;
+  playing(): boolean;
+  at(t: number, out: Map<string, number>): Map<string, number>;
 }
 
 function makeMaterial(): THREE.MeshStandardMaterial {
@@ -69,7 +80,7 @@ function makeMaterial(): THREE.MeshStandardMaterial {
   return m;
 }
 
-export function BrainView({ results, mode, selected, onSelect, onDetails, theme, isDemo, focusOn, resetKey }: Props) {
+export function BrainView({ results, mode, selected, onSelect, onDetails, theme, isDemo, focusOn, resetKey, heat }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -81,6 +92,9 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
   const [axis, setAxis] = useState<Axis>('y');
   const [cut, setCut] = useState(-5);
   const menuRef = useRef<HTMLDetailsElement>(null);
+  const [autoRotate, setAutoRotate] = useState(true);
+  // smoothed heat currently drawn on each mesh (read by hover labels)
+  const heatShown = useRef(new Map<string, number>());
   // read by the render loop, which is set up once
   const hiddenHemi = useRef({ L: false, R: false });
   // close the View menu when tapping or clicking elsewhere
@@ -165,6 +179,8 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
       }
     };
     controls.addEventListener('change', render);
+    controls.autoRotateSpeed = 0.5;
+    controls.addEventListener('start', () => setAutoRotate(false));
 
     const resize = () => {
       const w = mount.clientWidth;
@@ -334,11 +350,15 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
       m.visible = visible && hemiOk;
       const mat = m.material as THREE.MeshStandardMaterial;
       const r = results.get(m.name);
-      const grade = r?.grade;
-      mat.color.set(grade ? palette[grade] : palette.none);
-      (mat.userData.uniforms as { uStripes: { value: number } }).uStripes.value = grade === 'contested' ? 1 : 0;
+      const grade = heat ? undefined : r?.grade;
       const cortical = info?.kind === 'region' ? regionById.get(info.id)?.kind === 'cortical' : info?.kind === 'network';
       const glass = deep === 'glass' && cortical;
+      m.userData.glass = glass;
+      if (!heat) {
+        mat.color.set(grade ? palette[grade] : palette.none);
+        mat.emissive.setRGB(0, 0, 0);
+      }
+      (mat.userData.uniforms as { uStripes: { value: number } }).uStripes.value = grade === 'contested' ? 1 : 0;
       mat.transparent = glass;
       mat.opacity = glass ? (grade ? 0.35 : 0.12) : 1;
       mat.depthWrite = !glass;
@@ -366,12 +386,60 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
       halo.scale.setScalar(s);
       halo.position.copy(centre).multiplyScalar(1 - s);
       const hm = halo.material as THREE.MeshBasicMaterial;
-      hm.color.set(theme === 'dark' ? '#ffffff' : '#0b0b0b');
+      hm.color.set(theme === 'dark' || heat ? '#ffffff' : '#0b0b0b');
       hm.clippingPlanes = clipOn ? [t.plane] : [];
       hm.needsUpdate = true;
     }
     t.render();
-  }, [results, mode, selected, theme, showL, showR, deep, axis, cut, status, palette]);
+  }, [results, mode, selected, theme, showL, showR, deep, axis, cut, status, palette, heat]);
+
+  // --- heat map animation: follow the playback clock, ease each area up quickly and down slowly ---
+  useEffect(() => {
+    const t3 = three.current;
+    if (!heat || !t3 || status !== 'ready') return;
+    const target = new Map<string, number>();
+    const shown = heatShown.current;
+    shown.clear();
+    const meshes = [...t3.cerebra, ...t3.yeo];
+    const paint = (m: THREE.Mesh, v: number) => {
+      const mat = m.material as THREE.MeshStandardMaterial;
+      const [r, g, b] = heatRGB(v);
+      mat.color.setRGB(r, g, b);
+      const glow = v < 0.02 ? 0 : 0.12 + 0.55 * v;
+      mat.emissive.setRGB(r * glow, g * glow, b * glow);
+      if (m.userData.glass) mat.opacity = v > 0.05 ? 0.3 + 0.45 * v : 0.1;
+    };
+    let last = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const dt = Math.min(0.1, (now - last) / 1000);
+      last = now;
+      heat.at(heat.now(), target);
+      let changed = false;
+      for (const m of meshes) {
+        if (!m.visible) continue;
+        const goal = target.get(m.name) ?? 0;
+        const cur = shown.get(m.name);
+        const from = cur ?? 0;
+        const tau = goal > from ? 0.07 : 0.35;
+        const next = cur === undefined ? goal : from + (goal - from) * (1 - Math.exp(-dt / tau));
+        if (cur === undefined || Math.abs(next - from) > 0.002) {
+          shown.set(m.name, next);
+          paint(m, next);
+          changed = true;
+        }
+      }
+      t3.controls.autoRotate = autoRotate && heat.playing();
+      if (t3.controls.autoRotate) t3.controls.update(); // renders through the 'change' event
+      else if (changed) t3.render();
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      t3.controls.autoRotate = false;
+    };
+  }, [heat, status, mode, showL, showR, deep, autoRotate]);
 
   // --- picking ---
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
@@ -394,6 +462,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     if (!info) return meshId;
     const hemi = info.hemi === 'bilateral' ? '' : info.hemi === 'L' ? 'Left ' : 'Right ';
     const base = info.kind === 'region' ? regionById.get(info.id)?.name : networkById.get(info.id)?.name;
+    if (heat) return `${hemi}${base ?? meshId} — ${heatWord(heatShown.current.get(meshId) ?? 0).toLowerCase()} estimated heat`;
     const r = results.get(meshId);
     return `${hemi}${base ?? meshId}${r ? ` — ${GRADE_LABEL[r.grade]}` : ' — no verified association for this segment'}`;
   };
@@ -401,7 +470,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
   return (
     <div className="brain">
       <div
-        className="brain-canvas"
+        className={`brain-canvas ${heat ? 'is-heat' : ''}`}
         ref={mountRef}
         onPointerDown={(e) => (downAt.current = { x: e.clientX, y: e.clientY })}
         onPointerUp={(e) => {
@@ -437,6 +506,11 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
             <label className="check small">
               <input type="checkbox" checked={showR} onChange={(e) => setShowR(e.target.checked)} /> Right hemisphere
             </label>
+            {heat && (
+              <label className="check small">
+                <input type="checkbox" checked={autoRotate} onChange={(e) => setAutoRotate(e.target.checked)} /> Rotate slowly while playing
+              </label>
+            )}
             <span className="view-label">Look inside</span>
             <select value={deep} onChange={(e) => setDeep(e.target.value as Deep)} aria-label="Show internal structures">
               <option value="none">Surface view</option>
@@ -484,7 +558,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
             <strong>{nameFor(selected)}</strong>
             {onDetails && (
               <button type="button" className="btn small" onClick={onDetails}>
-                Details
+                {heat ? 'Why?' : 'Details'}
               </button>
             )}
             <button type="button" className="icon-btn" aria-label="Clear selection" onClick={() => onSelect(null)}>
@@ -496,8 +570,8 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
         {status === 'error' && <div className="brain-msg error">{error}</div>}
         <div className="brain-stamp" aria-hidden="true">
           {isDemo ? 'DEMO DATA · ' : ''}
-          <span className="stamp-long">Research-based association map · not a brain scan</span>
-          <span className="stamp-short">Not a brain scan</span>
+          <span className="stamp-long">{heat ? 'Estimated from the media and research · not a brain recording' : 'Research-based association map · not a brain scan'}</span>
+          <span className="stamp-short">{heat ? 'Estimate · not a brain recording' : 'Not a brain scan'}</span>
         </div>
         {status === 'ready' && !selected && (
           <div className="brain-hint" aria-hidden="true">

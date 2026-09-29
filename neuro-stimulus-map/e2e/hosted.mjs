@@ -49,7 +49,7 @@ try {
   p.on('request', (r) => !r.url().startsWith(origin) && !r.url().startsWith('blob:') && !r.url().startsWith('data:') && problems.push(`external request: ${r.url()}`));
   await p.goto(origin);
   await p.getByRole('button', { name: /Explore demo data/ }).click();
-  await p.waitForSelector('.seg-block', { timeout: 30000 });
+  await p.waitForSelector('.now-card', { timeout: 30000 });
   await p.waitForSelector('canvas', { timeout: 30000 });
   // Atlas meshes arrive as base64 text in the hosted build; wait until they are parsed.
   await p.waitForFunction(() => !document.querySelector('.brain-msg'), null, { timeout: 30000 });
@@ -64,10 +64,10 @@ try {
   const faces = p.getByLabel(/Detect whether faces are visible/);
   if (!(await faces.isChecked())) await faces.check();
   await p.click('text=Analyse locally');
-  await p.waitForSelector('.seg-block', { timeout: 180000 });
+  await p.waitForSelector('.now-card', { timeout: 180000 });
   const hostedNote = await p.getByText(/not available in this hosted copy/).count();
   if (!hostedNote) problems.push('hosted note missing after analysis');
-  console.log(`ok analyse clip.webm with faces (${await p.locator('.seg-block').count()} segments)`);
+  console.log(`ok analyse clip.webm with faces (heat view shown)`);
 } finally {
   await browser.close();
   server.close();
