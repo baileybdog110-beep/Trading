@@ -30,14 +30,17 @@ try {
     await page.screenshot({ path: `${OUT}/01-landing.png` });
   });
   await step('demo', async () => {
-    await page.click('text=Explore demo data');
+    await page.click('text=Evidence demo');
     await page.waitForSelector('text=DEMO DATA');
     // heat map (default view): play the demo and check that the estimate moves with it
     await page.waitForSelector('.now-card');
     await page.click('.vplayer button');
     await page.waitForTimeout(1500);
     const a = await heatNow(page);
-    await page.waitForTimeout(900);
+    // wait (up to 5 s) for the estimate to move on with playback
+    await page
+      .waitForFunction((prev) => JSON.stringify(Object.fromEntries([...document.querySelectorAll('.now-bars li')].map((li) => [li.dataset.system, +li.dataset.heat]))) !== prev, JSON.stringify(a), { timeout: 5000 })
+      .catch(() => undefined);
     const b = await heatNow(page);
     await page.click('.vplayer button');
     if (!(a.hearing > 0.1 && a.music > 0.1)) throw new Error(`demo music section should heat hearing and music: ${JSON.stringify(a)}`);
@@ -117,7 +120,10 @@ try {
     await page.setInputFiles('input[type=file]', files);
     await page.click('text=Analyse locally');
     if (expectSegments) {
-      await page.waitForSelector('.now-card', { timeout: 180000 });
+      // the Emotion view opens first; this test checks the heat map
+      await page.waitForSelector('.emo-now', { timeout: 240000 });
+      await page.getByRole('radio', { name: 'Heat map' }).click();
+      await page.waitForSelector('.now-card');
       // seeking only takes effect once the player has loaded the file's metadata
       await page.waitForFunction(() => (document.querySelector('video, audio')?.readyState ?? 0) >= 1, null, { timeout: 30000 });
       // heat follows the file: seek into the speech (10 s) and music (30 s) parts of the fixtures

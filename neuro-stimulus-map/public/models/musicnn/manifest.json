@@ -1,0 +1,547 @@
+{
+ "model": "MSD_musicnn",
+ "source": "musicnn 0.1.0 (Pons & Serra 2019), https://github.com/jordipons/musicnn, ISC licence, Music Technology Group, Universitat Pompeu Fabra",
+ "trainingData": "Million Song Dataset audio with the 50 most frequent Last.fm tags; reported ROC-AUC 0.880, PR-AUC 0.289 on its test split",
+ "frontEnd": {
+  "sampleRate": 16000,
+  "nFft": 512,
+  "hop": 256,
+  "nMels": 96,
+  "window": "hann (periodic)",
+  "center": true,
+  "padMode": "constant",
+  "power": 2,
+  "log": "log10(10000 * mel + 1)",
+  "patchFrames": 187
+ },
+ "bnEpsilon": 0.001,
+ "labels": [
+  "rock",
+  "pop",
+  "alternative",
+  "indie",
+  "electronic",
+  "female vocalists",
+  "dance",
+  "00s",
+  "alternative rock",
+  "jazz",
+  "beautiful",
+  "metal",
+  "chillout",
+  "male vocalists",
+  "classic rock",
+  "soul",
+  "indie rock",
+  "Mellow",
+  "electronica",
+  "80s",
+  "folk",
+  "90s",
+  "chill",
+  "instrumental",
+  "punk",
+  "oldies",
+  "blues",
+  "hard rock",
+  "ambient",
+  "acoustic",
+  "experimental",
+  "female vocalist",
+  "guitar",
+  "Hip-Hop",
+  "70s",
+  "party",
+  "country",
+  "easy listening",
+  "sexy",
+  "catchy",
+  "funk",
+  "electro",
+  "heavy metal",
+  "Progressive rock",
+  "60s",
+  "rnb",
+  "indie pop",
+  "sad",
+  "House",
+  "happy"
+ ],
+ "tensors": [
+  {
+   "name": "conv2d/kernel",
+   "shape": [
+    7,
+    38,
+    1,
+    204
+   ],
+   "offset": 0
+  },
+  {
+   "name": "conv2d/bias",
+   "shape": [
+    204
+   ],
+   "offset": 217056
+  },
+  {
+   "name": "conv2d_1/kernel",
+   "shape": [
+    7,
+    67,
+    1,
+    204
+   ],
+   "offset": 217872
+  },
+  {
+   "name": "conv2d_1/bias",
+   "shape": [
+    204
+   ],
+   "offset": 600576
+  },
+  {
+   "name": "conv2d_2/kernel",
+   "shape": [
+    128,
+    1,
+    1,
+    51
+   ],
+   "offset": 601392
+  },
+  {
+   "name": "conv2d_2/bias",
+   "shape": [
+    51
+   ],
+   "offset": 627504
+  },
+  {
+   "name": "conv2d_3/kernel",
+   "shape": [
+    64,
+    1,
+    1,
+    51
+   ],
+   "offset": 627708
+  },
+  {
+   "name": "conv2d_3/bias",
+   "shape": [
+    51
+   ],
+   "offset": 640764
+  },
+  {
+   "name": "conv2d_4/kernel",
+   "shape": [
+    32,
+    1,
+    1,
+    51
+   ],
+   "offset": 640968
+  },
+  {
+   "name": "conv2d_4/bias",
+   "shape": [
+    51
+   ],
+   "offset": 647496
+  },
+  {
+   "name": "conv2d_5/kernel",
+   "shape": [
+    7,
+    561,
+    1,
+    64
+   ],
+   "offset": 647700
+  },
+  {
+   "name": "conv2d_5/bias",
+   "shape": [
+    64
+   ],
+   "offset": 1653012
+  },
+  {
+   "name": "conv2d_6/kernel",
+   "shape": [
+    7,
+    64,
+    1,
+    64
+   ],
+   "offset": 1653268
+  },
+  {
+   "name": "conv2d_6/bias",
+   "shape": [
+    64
+   ],
+   "offset": 1767956
+  },
+  {
+   "name": "conv2d_7/kernel",
+   "shape": [
+    7,
+    64,
+    1,
+    64
+   ],
+   "offset": 1768212
+  },
+  {
+   "name": "conv2d_7/bias",
+   "shape": [
+    64
+   ],
+   "offset": 1882900
+  },
+  {
+   "name": "batch_normalization/gamma",
+   "shape": [
+    1
+   ],
+   "offset": 1883156
+  },
+  {
+   "name": "batch_normalization/beta",
+   "shape": [
+    1
+   ],
+   "offset": 1883160
+  },
+  {
+   "name": "batch_normalization/moving_mean",
+   "shape": [
+    1
+   ],
+   "offset": 1883164
+  },
+  {
+   "name": "batch_normalization/moving_variance",
+   "shape": [
+    1
+   ],
+   "offset": 1883168
+  },
+  {
+   "name": "batch_normalization_1/gamma",
+   "shape": [
+    204
+   ],
+   "offset": 1883172
+  },
+  {
+   "name": "batch_normalization_1/beta",
+   "shape": [
+    204
+   ],
+   "offset": 1883988
+  },
+  {
+   "name": "batch_normalization_1/moving_mean",
+   "shape": [
+    204
+   ],
+   "offset": 1884804
+  },
+  {
+   "name": "batch_normalization_1/moving_variance",
+   "shape": [
+    204
+   ],
+   "offset": 1885620
+  },
+  {
+   "name": "batch_normalization_2/gamma",
+   "shape": [
+    204
+   ],
+   "offset": 1886436
+  },
+  {
+   "name": "batch_normalization_2/beta",
+   "shape": [
+    204
+   ],
+   "offset": 1887252
+  },
+  {
+   "name": "batch_normalization_2/moving_mean",
+   "shape": [
+    204
+   ],
+   "offset": 1888068
+  },
+  {
+   "name": "batch_normalization_2/moving_variance",
+   "shape": [
+    204
+   ],
+   "offset": 1888884
+  },
+  {
+   "name": "batch_normalization_3/gamma",
+   "shape": [
+    51
+   ],
+   "offset": 1889700
+  },
+  {
+   "name": "batch_normalization_3/beta",
+   "shape": [
+    51
+   ],
+   "offset": 1889904
+  },
+  {
+   "name": "batch_normalization_3/moving_mean",
+   "shape": [
+    51
+   ],
+   "offset": 1890108
+  },
+  {
+   "name": "batch_normalization_3/moving_variance",
+   "shape": [
+    51
+   ],
+   "offset": 1890312
+  },
+  {
+   "name": "batch_normalization_4/gamma",
+   "shape": [
+    51
+   ],
+   "offset": 1890516
+  },
+  {
+   "name": "batch_normalization_4/beta",
+   "shape": [
+    51
+   ],
+   "offset": 1890720
+  },
+  {
+   "name": "batch_normalization_4/moving_mean",
+   "shape": [
+    51
+   ],
+   "offset": 1890924
+  },
+  {
+   "name": "batch_normalization_4/moving_variance",
+   "shape": [
+    51
+   ],
+   "offset": 1891128
+  },
+  {
+   "name": "batch_normalization_5/gamma",
+   "shape": [
+    51
+   ],
+   "offset": 1891332
+  },
+  {
+   "name": "batch_normalization_5/beta",
+   "shape": [
+    51
+   ],
+   "offset": 1891536
+  },
+  {
+   "name": "batch_normalization_5/moving_mean",
+   "shape": [
+    51
+   ],
+   "offset": 1891740
+  },
+  {
+   "name": "batch_normalization_5/moving_variance",
+   "shape": [
+    51
+   ],
+   "offset": 1891944
+  },
+  {
+   "name": "batch_normalization_6/gamma",
+   "shape": [
+    64
+   ],
+   "offset": 1892148
+  },
+  {
+   "name": "batch_normalization_6/beta",
+   "shape": [
+    64
+   ],
+   "offset": 1892404
+  },
+  {
+   "name": "batch_normalization_6/moving_mean",
+   "shape": [
+    64
+   ],
+   "offset": 1892660
+  },
+  {
+   "name": "batch_normalization_6/moving_variance",
+   "shape": [
+    64
+   ],
+   "offset": 1892916
+  },
+  {
+   "name": "batch_normalization_7/gamma",
+   "shape": [
+    64
+   ],
+   "offset": 1893172
+  },
+  {
+   "name": "batch_normalization_7/beta",
+   "shape": [
+    64
+   ],
+   "offset": 1893428
+  },
+  {
+   "name": "batch_normalization_7/moving_mean",
+   "shape": [
+    64
+   ],
+   "offset": 1893684
+  },
+  {
+   "name": "batch_normalization_7/moving_variance",
+   "shape": [
+    64
+   ],
+   "offset": 1893940
+  },
+  {
+   "name": "batch_normalization_8/gamma",
+   "shape": [
+    64
+   ],
+   "offset": 1894196
+  },
+  {
+   "name": "batch_normalization_8/beta",
+   "shape": [
+    64
+   ],
+   "offset": 1894452
+  },
+  {
+   "name": "batch_normalization_8/moving_mean",
+   "shape": [
+    64
+   ],
+   "offset": 1894708
+  },
+  {
+   "name": "batch_normalization_8/moving_variance",
+   "shape": [
+    64
+   ],
+   "offset": 1894964
+  },
+  {
+   "name": "batch_normalization_9/gamma",
+   "shape": [
+    1506
+   ],
+   "offset": 1895220
+  },
+  {
+   "name": "batch_normalization_9/beta",
+   "shape": [
+    1506
+   ],
+   "offset": 1901244
+  },
+  {
+   "name": "batch_normalization_9/moving_mean",
+   "shape": [
+    1506
+   ],
+   "offset": 1907268
+  },
+  {
+   "name": "batch_normalization_9/moving_variance",
+   "shape": [
+    1506
+   ],
+   "offset": 1913292
+  },
+  {
+   "name": "batch_normalization_10/gamma",
+   "shape": [
+    200
+   ],
+   "offset": 1919316
+  },
+  {
+   "name": "batch_normalization_10/beta",
+   "shape": [
+    200
+   ],
+   "offset": 1920116
+  },
+  {
+   "name": "batch_normalization_10/moving_mean",
+   "shape": [
+    200
+   ],
+   "offset": 1920916
+  },
+  {
+   "name": "batch_normalization_10/moving_variance",
+   "shape": [
+    200
+   ],
+   "offset": 1921716
+  },
+  {
+   "name": "dense/kernel",
+   "shape": [
+    1506,
+    200
+   ],
+   "offset": 1922516
+  },
+  {
+   "name": "dense/bias",
+   "shape": [
+    200
+   ],
+   "offset": 3127316
+  },
+  {
+   "name": "dense_1/kernel",
+   "shape": [
+    200,
+    50
+   ],
+   "offset": 3128116
+  },
+  {
+   "name": "dense_1/bias",
+   "shape": [
+    50
+   ],
+   "offset": 3168116
+  }
+ ],
+ "bytes": 3168316
+}

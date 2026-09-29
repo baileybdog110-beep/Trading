@@ -1,0 +1,114 @@
+{
+  "note": "Brain-chemistry systems shown in the Emotion view. Every statement cites records in data/evidence/sources.json. The emotion estimate (valence/arousal) is checked against listener ratings (data/emotion/valence_arousal.json); how strongly each system is engaged is NOT measured anywhere - it applies the cited findings to the estimated emotion and to musical events, and is labelled as such.",
+  "systems": [
+    {
+      "id": "reward",
+      "name": "Reward & pleasure",
+      "chemicals": "Dopamine, plus the brain's own opioids",
+      "color": "#f5b81c",
+      "grade": "moderate",
+      "summary": "In people who like the music, pleasurable moments - above all build-ups and the peaks they lead to - go with dopamine release in the striatum.",
+      "drivers": [
+        "Pleasant, upbeat music (positive valence)",
+        "Build-ups (crescendos) and the peaks they lead to: sudden loudness changes and new instruments entering",
+        "A steady beat at a danceable tempo (groove)",
+        "Only in listeners who enjoy the music: it is scaled by your answer to \"Do you like it?\""
+      ],
+      "regions": [
+        { "region": "accumbens_area", "part": "peak", "role": "Peak pleasure: dopamine release was measured here at the most intense moments.", "sources": ["salimpoor2011", "blood2001", "koelsch2020"] },
+        { "region": "caudate", "part": "anticipation", "role": "Anticipation: dopamine release here in the build-up before a peak.", "sources": ["salimpoor2011"] },
+        { "region": "putamen", "part": "groove", "role": "Groove: the pleasurable urge to move engages motor and reward parts of the striatum.", "sources": ["matthews2020", "koelsch2020"] },
+        { "region": "medial_orbitofrontal", "part": "pleasure", "role": "Valuing pleasure: activity changed with how intense music chills were.", "sources": ["blood2001", "koelsch2020"] },
+        { "region": "brainstem", "part": "source", "role": "Home of the midbrain dopamine neurons; midbrain activity rose with chills. The atlas has no separate midbrain, so the whole brainstem is lit.", "sources": ["blood2001"] }
+      ],
+      "evidence": [
+        { "source": "salimpoor2011", "says": "PET showed dopamine release in the striatum during intensely pleasurable music: the caudate during anticipation, the nucleus accumbens at the peak." },
+        { "source": "ferreri2019", "says": "Raising dopamine with a drug increased musical pleasure and blocking it reduced pleasure (27 people): dopamine causally contributes." },
+        { "source": "mallik2017", "says": "Blocking opioid receptors dulled emotional responses to music, so opioids are part of the pleasure system too." },
+        { "source": "defleurian2021", "says": "Chills most often follow crescendos, sudden dynamic changes, roughness and new instruments or voices entering." },
+        { "source": "grewe2007", "says": "Loudness rose around chills, but the same passage did not give everyone chills (38 listeners)." },
+        { "source": "matthews2020", "says": "Groove (wanting to move to the beat) engaged motor and reward networks." },
+        { "source": "koelsch2020", "says": "Across 47 studies, pleasant music engaged the ventral and dorsal striatum, orbitofrontal cortex, insula and other reward areas." },
+        { "source": "masherrero2014", "says": "Some healthy people get little pleasure from music at all (musical anhedonia) while money still rewards them." }
+      ],
+      "caveats": [
+        "Dopamine was measured in people hearing music they chose and loved. Nobody can measure your dopamine from a file; this shows moments of the kind that went with release in those listeners.",
+        "Chills and pleasure depend heavily on the listener, familiarity and mood."
+      ]
+    },
+    {
+      "id": "stress",
+      "name": "Stress & tension",
+      "chemicals": "Stress hormones (cortisol, adrenaline) and a faster heartbeat",
+      "color": "#ef4444",
+      "grade": "limited",
+      "summary": "Tense, harsh or unpleasant music and sudden loud hits engage threat-related areas such as the amygdala, and fast music speeds up breathing and heart rate. Evidence that music raises stress hormones is weak.",
+      "drivers": [
+        "Tense, dark-and-energetic moments (negative valence with high arousal)",
+        "Harsh or clashing sound (dissonance, noise)",
+        "Sudden loud hits (startle)",
+        "Fast tempo raises heart rate and breathing"
+      ],
+      "regions": [
+        { "region": "amygdala", "part": "threat", "role": "Responds to unpleasant, dissonant music - and also to joyful music, so it is not simply a fear centre.", "sources": ["koelsch2006", "koelsch2013", "koelsch2020"] },
+        { "region": "hippocampus", "part": "unpleasant", "role": "Engaged by unpleasant, dissonant music.", "sources": ["koelsch2006"] },
+        { "region": "parahippocampal", "part": "unpleasant", "role": "Engaged by unpleasant, dissonant music.", "sources": ["koelsch2006"] },
+        { "region": "ventral_diencephalon", "part": "hormones", "role": "Contains the hypothalamus, which starts the stress-hormone response. Not measured in music studies: shown as an extrapolation.", "sources": ["chanda2013"] }
+      ],
+      "evidence": [
+        { "source": "koelsch2006", "says": "Unpleasant, dissonant music engaged the amygdala, hippocampus, parahippocampal gyrus and temporal poles." },
+        { "source": "koelsch2013", "says": "The superficial amygdala responded to both fear-evoking and joyful music (in opposite directions)." },
+        { "source": "bernardi2006", "says": "Faster music raised breathing, heart rate and blood pressure; pauses brought them below baseline (24 people)." },
+        { "source": "dewitte2020", "says": "Across 104 trials, music interventions lowered heart rate and stress hormones on average - the calming direction." },
+        { "source": "chanda2013", "says": "Music has been linked to cortisol and other stress hormones, but mostly in small studies." }
+      ],
+      "caveats": [
+        "Tense music on screen or in a song is often enjoyed; perceiving tension is not the same as being stressed.",
+        "No study measured stress hormones moment by moment during a song."
+      ]
+    },
+    {
+      "id": "sadness",
+      "name": "Sadness & reflection",
+      "chemicals": "No specific chemical identified",
+      "color": "#5b8def",
+      "grade": "limited",
+      "summary": "Sad, slow, soft music engages memory and emotion areas such as the hippocampus and amygdala.",
+      "drivers": ["Sad moments: negative valence with low arousal (slow, soft, minor, dark)"],
+      "regions": [
+        { "region": "hippocampus", "part": "sad", "role": "Engaged by sad music (and by music-evoked emotion generally).", "sources": ["mitterschiffthaler2007", "koelsch2020"] },
+        { "region": "amygdala", "part": "sad", "role": "Engaged by sad music together with the hippocampus.", "sources": ["mitterschiffthaler2007"] }
+      ],
+      "evidence": [
+        { "source": "mitterschiffthaler2007", "says": "Sad classical music engaged the hippocampus/amygdala region; happy music engaged the striatum (16 people scanned)." }
+      ],
+      "caveats": ["Many people enjoy sad music; sadness in the music does not mean the listener feels sad."]
+    },
+    {
+      "id": "calm",
+      "name": "Calm & relaxation",
+      "chemicals": "Body level: slower heartbeat and breathing; lower stress hormones in some studies",
+      "color": "#2cb5a0",
+      "grade": "limited",
+      "summary": "Slow, soft, pleasant music tends to slow breathing and heart rate. It is not tied to one brain area, so nothing on the brain lights for it.",
+      "drivers": ["Calm moments: positive valence with low arousal (slow, soft, consonant)"],
+      "regions": [],
+      "evidence": [
+        { "source": "dewitte2020", "says": "Music interventions lowered heart rate (d = 0.46) and stress hormones (d = 0.35) on average across 104 trials." },
+        { "source": "bernardi2006", "says": "Slow music and pauses lowered breathing and heart rate." },
+        { "source": "adiasto2022", "says": "But after a lab stressor, listening to music did not significantly speed recovery (14 studies)." },
+        { "source": "thoma2013", "says": "Relaxing music before a stressor sped autonomic recovery but did not lower cortisol." }
+      ],
+      "caveats": ["Effects are averages over people and sessions and are small to moderate."]
+    }
+  ],
+  "notEstimated": [
+    {
+      "id": "serotonin",
+      "name": "Serotonin",
+      "summary": "Not estimated: no brain study has measured serotonin release to music.",
+      "detail": "The only direct study measured serotonin in blood platelets, not the brain: levels differed between pleasant and unpleasant music. Serotonin is often called a 'happiness chemical', but mood depends on far more than one chemical, and nothing links it to particular moments of a song.",
+      "sources": ["eversuhr2000", "chanda2013"]
+    }
+  ]
+}

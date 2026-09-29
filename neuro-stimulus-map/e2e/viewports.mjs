@@ -45,7 +45,7 @@ try {
       }
     };
     await shoot('1-landing');
-    await page.click('text=Explore demo data');
+    await page.click('text=Evidence demo');
     await page.waitForSelector('.now-card');
     // play the demo for a few seconds so the heat map and traces are moving
     await page.click('.vplayer button');

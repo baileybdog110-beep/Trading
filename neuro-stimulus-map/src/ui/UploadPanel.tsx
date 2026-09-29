@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { SUPPORTED_EXT, type Progress } from '../analysis/run';
 import { HOSTED, HOSTED_NETWORK_NOTE } from '../util/hosted';
 
@@ -13,9 +13,11 @@ interface Props {
   onTranscriptOnly: (transcript: File) => void;
   onDemo: () => void;
   onCancel: () => void;
+  /** extra content under the demo button (demo songs) */
+  children?: ReactNode;
 }
 
-export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly, onDemo, onCancel }: Props) {
+export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly, onDemo, onCancel, children }: Props) {
   const [media, setMedia] = useState<File | null>(null);
   const [transcript, setTranscript] = useState<File | null>(null);
   const [faces, setFaces] = useState(true);
@@ -94,8 +96,8 @@ export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly
           </ul>
           {media && (
             <label className="check small">
-              <input type="checkbox" checked={faces} onChange={(e) => setFaces(e.target.checked)} disabled={busy} /> Detect whether faces are visible (local model; no identity or
-              expression analysis)
+              <input type="checkbox" checked={faces} onChange={(e) => setFaces(e.target.checked)} disabled={busy} /> Detect faces and the expressions they show (local models; no
+              identity)
             </label>
           )}
           <div className="actions">
@@ -119,7 +121,15 @@ export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly
             <div style={{ width: `${Math.round(progress.fraction * 100)}%` }} />
           </div>
           <span className="small">
-            {progress.stage === 'audio' ? 'Step 1/3 · ' : progress.stage === 'video' ? 'Step 2/3 · ' : progress.stage === 'assemble' ? 'Step 3/3 · ' : ''}
+            {progress.stage === 'audio'
+              ? 'Step 1/4 · '
+              : progress.stage === 'emotion'
+                ? 'Step 2/4 · '
+                : progress.stage === 'video'
+                  ? 'Step 3/4 · '
+                  : progress.stage === 'assemble'
+                    ? 'Step 4/4 · '
+                    : ''}
             {progress.note}
           </span>
           <button type="button" className="btn small ghost" onClick={onCancel}>
@@ -129,10 +139,11 @@ export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly
       )}
       {error && <p className="error">{error}</p>}
 
+      {children}
       <div className="demo-row">
-        <span className="small muted">No file to hand?</span>
-        <button type="button" className="btn" disabled={busy} onClick={onDemo}>
-          Explore demo data
+        <span className="small muted">Or explore a hand-made example (no audio):</span>
+        <button type="button" className="btn small ghost" disabled={busy} onClick={onDemo}>
+          Evidence demo
         </button>
       </div>
 
@@ -145,7 +156,7 @@ export function UploadPanel({ busy, progress, error, onAnalyze, onTranscriptOnly
           Private: your media never leaves this device
         </summary>
         <p className="small">
-          Decoding, audio features, frame sampling and face detection run inside this browser tab. Nothing is uploaded, and nothing is saved to disk; closing the tab or pressing{' '}
+          Decoding, audio features, the music mood tagger, frame sampling and face detection run inside this browser tab. Nothing is uploaded, and nothing is saved to disk; closing the tab or pressing{' '}
           <em>Delete media & results</em> discards it.
         </p>
         {HOSTED ? (

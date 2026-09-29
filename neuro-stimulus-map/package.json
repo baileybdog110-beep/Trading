@@ -14,7 +14,7 @@
     "validate:evidence": "vitest run tests/evidence.test.ts",
     "evidence:table": "node scripts/evidence/build_table.mjs",
     "verify:citations": "python3 scripts/evidence/verify_citations.py",
-    "test:e2e": "vite build && node scripts/tool/build.mjs && node scripts/hosted/make_page.mjs && node e2e/smoke.mjs && node e2e/mobile.mjs && node e2e/tool-smoke.mjs && node e2e/hosted.mjs && node e2e/viewports.mjs",
+    "test:e2e": "vite build && node scripts/tool/build.mjs && node scripts/hosted/make_page.mjs && node e2e/smoke.mjs && node e2e/mobile.mjs && node e2e/tool-smoke.mjs && node e2e/hosted.mjs && node e2e/viewports.mjs && node e2e/emotion.mjs",
     "fixtures": "python3 scripts/testdata/make_fixtures.py",
     "atlas": "python3 scripts/atlas/build_atlas.py --inputs atlas_inputs --out public/atlas",
     "dev:phone": "vite --host",
@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.31.0",
+    "@tensorflow/tfjs-backend-cpu": "^4.22.0",
+    "@tensorflow/tfjs-core": "^4.22.0",
     "@types/node": "^22.20.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

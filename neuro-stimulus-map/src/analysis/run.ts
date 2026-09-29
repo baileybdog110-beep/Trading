@@ -9,9 +9,13 @@ import { WHOLE_FILE_WARN_BYTES, WHOLE_FILE_WARN_SECONDS, chooseStrategy, decodeC
 import { assemble } from './assemble';
 import { analyzeVideo, probeVideo } from './video/sample';
 import type { VideoAnalysis } from './video/types';
+import { EmotionFrameAnalyzer, type EmotionFrames } from '../emotion/features';
+import { MAX_MEL_FRAMES, loadMelFilters, tagMusic } from '../emotion/analyze';
+import { buildEmotion, silentTimeline, withVisual } from '../emotion/model';
+import { visualEmotion } from '../emotion/visual';
 
 export interface Progress {
-  stage: 'probe' | 'audio' | 'video' | 'assemble' | 'done';
+  stage: 'probe' | 'audio' | 'emotion' | 'video' | 'assemble' | 'done';
   fraction: number;
   note: string;
 }
@@ -50,7 +54,17 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
 
   // --- audio ---
   let audio: AudioAnalysis | null = null;
+  let emotionFrames: EmotionFrames | null = null;
   const strategy = chooseStrategy(file);
+  // The music tagger needs the log-mel spectrogram; files over 20 minutes use the cue-only emotion model.
+  const melFilters = duration <= 20 * 60 ? await loadMelFilters() : null;
+  const emo = new EmotionFrameAnalyzer(melFilters ?? undefined, MAX_MEL_FRAMES);
+  async function* tee(chunks: AsyncIterable<Float32Array>) {
+    for await (const c of chunks) {
+      emo.push(c);
+      yield c;
+    }
+  }
   if (strategy === 'whole-file' && (file.size > WHOLE_FILE_WARN_BYTES || duration > WHOLE_FILE_WARN_SECONDS)) {
     notes.push(
       'Long or large non-WAV/MP3 file: the browser decodes its audio in one piece, which may run out of memory (especially on phones and tablets). Converting to MP3 or WAV enables chunked processing.',
@@ -58,7 +72,7 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
   }
   try {
     audio = await analyzeAudioStream(
-      decodeChunks(file, strategy),
+      tee(decodeChunks(file, strategy)),
       (sec) => opts.onProgress({ stage: 'audio', fraction: Math.min(1, sec / duration), note: `Audio: ${Math.round(sec)} / ${Math.round(duration)} s (${strategy === 'whole-file' ? 'decoded in one piece' : 'chunked'})` }),
       opts.signal,
     );
@@ -66,6 +80,7 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
       state: 'analyzed',
       detail: `Decoded locally at 16 kHz mono (${strategy === 'wav-stream' ? 'streamed WAV' : strategy === 'mp3-chunks' ? 'MP3 decoded in chunks' : 'decoded in one piece by the browser'}).`,
     };
+    emotionFrames = emo.finish();
   } catch (e) {
     if ((e as Error).name === 'AbortError') throw e;
     modalities.audio = {
@@ -94,6 +109,36 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
     }
   }
 
+  // --- emotion (audio) ---
+  let emotion: AnalysisSession['emotion'];
+  if (audio && emotionFrames) {
+    let tags: Awaited<ReturnType<typeof tagMusic>> | null = null;
+    if (emotionFrames.logmel?.length) {
+      opts.onProgress({ stage: 'emotion', fraction: 0, note: 'Listening for mood (music tagger, on this device)' });
+      tags = await tagMusic(emotionFrames.logmel, (f) => opts.onProgress({ stage: 'emotion', fraction: f, note: 'Listening for mood (music tagger, on this device)' }), opts.signal);
+      emotionFrames.logmel = null; // no longer needed; free the memory
+    }
+    const timeline = buildEmotion({
+      duration,
+      db: audio.frames.db,
+      flux: audio.frames.flux,
+      flatness: audio.frames.flatness,
+      frames: emotionFrames,
+      onsets: audio.onsets,
+      tags: tags?.labels ? { labels: tags.labels, frames: tags.frames } : null,
+    });
+    emotion = {
+      ...timeline,
+      note: tags ? tags.note : duration > 20 * 60 ? 'Over 20 minutes long: emotion uses the audio cues only (no mood tagger).' : 'Emotion uses the audio cues only.',
+    };
+  }
+
+  // --- emotion (picture) ---
+  if (video) {
+    const base = emotion ?? { ...silentTimeline(duration), note: 'No audio: emotion comes from the picture only.' };
+    emotion = { ...withVisual(base, visualEmotion(video, base.valence.length, base.step)), note: base.note };
+  }
+
   opts.onProgress({ stage: 'assemble', fraction: 1, note: 'Building segments' });
   const { segments, tracks } = assemble({ duration, audio, video, cues: opts.cues });
   opts.onProgress({ stage: 'done', fraction: 1, note: 'Done' });
@@ -110,6 +155,7 @@ export async function runAnalysis(file: File, url: string, opts: RunOptions): Pr
       tracks,
       untimedTranscript: opts.untimedTranscript,
       notes,
+      emotion,
     },
     raw: { audio, video },
   };

@@ -27,10 +27,13 @@ import { buildHeatModel } from './heat/model';
 import { HeatLegend, HeatNow, VirtualPlayer, Waves } from './ui/HeatViews';
 import type { HeatSource } from './ui/BrainView';
 import { UploadPanel } from './ui/UploadPanel';
+import { ChemistryPanel, DemoSongs, EmotionLegend, EmotionNow, EmotionTrack, useEmotionSource } from './ui/EmotionViews';
+import { DEMO_SONGS, loadDemoSong } from './demo/songs';
+import type { Liking } from './emotion/model';
 import { HOSTED, HOSTED_NETWORK_NOTE } from './util/hosted';
 
 type RightTab = 'highlighted' | 'reasoning' | 'features';
-type View = 'heat' | 'research';
+type View = 'emotion' | 'heat' | 'research';
 
 export default function App() {
   const [session, setSession] = useState<AnalysisSession | null>(null);
@@ -44,6 +47,7 @@ export default function App() {
   const [mode, setMode] = useState<ViewMode>('anatomy');
   const [tab, setTab] = useState<RightTab>('highlighted');
   const [view, setView] = useState<View>('heat');
+  const [liking, setLiking] = useState<Liking>('unsure');
   const [time, setTime] = useState(0);
   const [follow, setFollow] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -126,6 +130,9 @@ export default function App() {
     return { now: clock.now, playing: clock.playing, at: heatModel.meshHeat };
   }, [view, heatModel, clock]);
 
+  const emotionSource = useEmotionSource(view === 'emotion' ? session?.emotion : undefined, clock, liking);
+  const chemCol = useRef<HTMLDivElement>(null);
+
   const reset = () => {
     abort.current?.abort();
     if (mediaUrl) URL.revokeObjectURL(mediaUrl);
@@ -170,6 +177,7 @@ export default function App() {
       setMediaUrl(url);
       setSession(result.session);
       setSegId(result.session.segments[0]?.id ?? null);
+      setView(result.session.emotion ? 'emotion' : 'heat');
       setNotice(result.session.notes.join(' ') || null);
     } catch (e) {
       URL.revokeObjectURL(url);
@@ -190,6 +198,16 @@ export default function App() {
     setSession(s);
     setSegId(s.segments[0]?.id ?? null);
     setNotice(s.notes.join(' '));
+  };
+
+  const demoSong = async (id: string) => {
+    const song = DEMO_SONGS.find((s) => s.id === id);
+    if (!song) return;
+    try {
+      await analyze(await loadDemoSong(song), null, { faces: false });
+    } catch (e) {
+      setError(`Could not load the demo song: ${(e as Error).message}`);
+    }
   };
 
   const demo = () => {
@@ -335,7 +353,10 @@ export default function App() {
           </svg>
           <div>
             <h1>Brain Heat Map</h1>
-            <p className="tagline">Play a video or song and see which brain areas published research links to what's playing, moment by moment. An estimate, not a brain recording.</p>
+            <p className="tagline">
+              Play a song or video and see the emotion it carries moment by moment, and the brain systems research links to it: reward (dopamine), stress and more. An estimate
+              from published studies and real listener ratings, not a brain recording.
+            </p>
           </div>
         </div>
         <nav className="header-actions" aria-label="Help and evidence">
@@ -376,6 +397,11 @@ export default function App() {
             <div className="map-head">
               {session ? (
                 <div className="seg-control mode-switch" role="radiogroup" aria-label="What the brain shows">
+                  {session.emotion && (
+                    <button type="button" role="radio" aria-checked={view === 'emotion'} className={view === 'emotion' ? 'is-on' : ''} onClick={() => setView('emotion')}>
+                      Emotion
+                    </button>
+                  )}
                   <button type="button" role="radio" aria-checked={view === 'heat'} className={view === 'heat' ? 'is-on' : ''} onClick={() => setView('heat')}>
                     Heat map
                   </button>
@@ -389,7 +415,7 @@ export default function App() {
                   <span className="muted small">Load a video or song, or try the demo</span>
                 </div>
               )}
-              <div className="seg-control" role="radiogroup" aria-label="Map layer">
+              <div className="seg-control" role="radiogroup" aria-label="Map layer" hidden={view === 'emotion'}>
                 <button type="button" role="radio" aria-checked={mode === 'anatomy'} className={mode === 'anatomy' ? 'is-on' : ''} onClick={() => setMode('anatomy')}>
                   Regions
                 </button>
@@ -429,15 +455,24 @@ export default function App() {
               mode={mode}
               selected={mesh}
               onSelect={selectMesh}
-              onDetails={session ? () => (view === 'heat' && mesh ? why(mesh) : rightCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })) : undefined}
+              onDetails={
+                session
+                  ? () =>
+                      view === 'emotion'
+                        ? chemCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        : view === 'heat' && mesh
+                          ? why(mesh)
+                          : rightCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  : undefined
+              }
               theme={theme}
               isDemo={!!session?.isDemo}
               focusOn={focusReq}
               resetKey={session?.id}
-              heat={heatSource}
+              heat={view === 'emotion' ? emotionSource : heatSource}
             />
-            {view === 'heat' ? <HeatLegend /> : <Legend />}
-            {mode === 'networks' && (
+            {view === 'emotion' ? <EmotionLegend /> : view === 'heat' ? <HeatLegend /> : <Legend />}
+            {mode === 'networks' && view !== 'emotion' && (
               <p className="small muted">
                 Networks view: the 7 resting-state networks of Yeo et al. (2011) as parcellated by Schaefer et al. (2018). Only findings that the cited studies describe at network level
                 are {view === 'heat' ? 'used' : 'coloured'} here; deep structures stay visible for context.
@@ -445,32 +480,38 @@ export default function App() {
             )}
           </section>
           {session && view === 'heat' && heatModel && <Waves model={heatModel} clock={clock} onSeek={seek} />}
+          {session?.emotion && view === 'emotion' && <EmotionTrack tl={session.emotion} clock={clock} liking={liking} duration={session.duration} onSeek={seek} />}
         </div>
 
         <div className="col-side">
           {!session ? (
             <>
               <section className="card upload-card">
-                <UploadPanel busy={busy} progress={progress} error={error} onAnalyze={analyze} onTranscriptOnly={transcriptOnly} onDemo={demo} onCancel={() => abort.current?.abort()} />
+                <UploadPanel busy={busy} progress={progress} error={error} onAnalyze={analyze} onTranscriptOnly={transcriptOnly} onDemo={demo} onCancel={() => abort.current?.abort()}>
+                  <DemoSongs songs={DEMO_SONGS} busy={busy} onPick={demoSong} />
+                </UploadPanel>
               </section>
               <section className="card intro">
                 <h2>How it works</h2>
                 <ol className="how">
                   <li>
-                    <strong>Analyse.</strong> The app measures what's in your video or song on this device: loudness and beat, speech- and music-like sound, motion, cuts, faces
-                    and, with a transcript, words.
+                    <strong>Listen.</strong> On this device, the app measures the cues that carry emotion in music (loudness, note density, tempo and beat, major or minor
+                    harmony, clashing notes, brightness) and runs a music mood tagger trained on listeners' tags. For video it also reads colour, motion, cuts and faces.
                   </li>
                   <li>
-                    <strong>Match.</strong> Curated, cited research says which brain areas are linked to each kind of input. Stronger research counts for more.
+                    <strong>Estimate the emotion.</strong> A model fitted to real listeners' moment-by-moment ratings turns those cues into how pleasant and how energetic
+                    each moment is - joyful, tense, sad, calm and so on. On music it had never seen, it agreed with the average listener about as well as one listener does.
                   </li>
                   <li>
-                    <strong>Play.</strong> The heat map plays along with the media, and the brain-system traces scroll like a monitor. Tap any area to see why it's warm.
+                    <strong>Map the brain systems.</strong> Published studies (brain scans, drug studies, meta-analyses) link those moments to the reward system (dopamine),
+                    stress and threat areas, sadness and calm. The brain lights up in each system's colour as the media plays.
                   </li>
                 </ol>
-                <h2>What the heat means</h2>
+                <h2>What it can and can't tell you</h2>
                 <p className="meaning">
-                  Heat is an <strong>estimate</strong> worked out from the media and published research: it shows where the kinds of input playing right now are processed. It is
-                  not a recording of anyone's brain waves or activity, and it can't show feelings, thoughts or dopamine. Areas with no research link stay cold.
+                  Everything is an <strong>estimate for a typical listener</strong>, not a recording of anyone's brain. Dopamine release depends on whether you enjoy the music,
+                  so you can tell the app. Serotonin is not shown: no study has measured it in the brain during music. The <em>Heat map</em> and <em>Evidence</em> views show
+                  which areas process the sounds and pictures themselves.
                 </p>
                 <p className="small muted">
                   The evidence base holds {db.sources.length} sources and {db.associations.length} graded associations.
@@ -508,6 +549,25 @@ export default function App() {
                   exportData={exportPayload}
                 />
               </section>
+              {view === 'emotion' && session.emotion && (
+                <>
+                  <EmotionNow tl={session.emotion} clock={clock} />
+                  <div ref={chemCol} className="chem-wrap">
+                    <ChemistryPanel
+                      tl={session.emotion}
+                      clock={clock}
+                      liking={liking}
+                      onLiking={setLiking}
+                      onFocusRegion={(id) => {
+                        setMesh(id);
+                        setFocusReq((f) => ({ meshId: id, seq: (f?.seq ?? 0) + 1 }));
+                        brainCol.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+              {view === 'emotion' && !session.emotion && <section className="card small">No audio or picture was analysed, so there is no emotion estimate.</section>}
               {view === 'heat' && heatModel && <HeatNow model={heatModel} clock={clock} networks={mode === 'networks'} onWhy={why} />}
               {view === 'research' && segment && segMap && (
                 <aside className="card explain-card" aria-label="Explanation" ref={rightCol}>

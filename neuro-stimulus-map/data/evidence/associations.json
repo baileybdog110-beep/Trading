@@ -830,7 +830,7 @@
     ],
     "limitations": [
       "Conditional: only relevant if a listener finds the music pleasurable or moving; familiarity and personal history strongly change responses.",
-      "This app never estimates dopamine release, hormone levels or how much anyone enjoys the music."
+      "This association does not estimate dopamine release; the Emotion view gives a separate, labelled estimate for a typical listener who says they enjoy the music."
     ]
   },
   {

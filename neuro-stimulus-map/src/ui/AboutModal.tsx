@@ -5,6 +5,25 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
     <Modal title="How to read this map" onClose={onClose} wide>
       <div className="about">
         <section>
+          <h3>The Emotion view</h3>
+          <p>
+            The <strong>Emotion</strong> view estimates, every half second, how pleasant (valence) and how energetic (arousal) the music sounds to a typical listener, and names the
+            emotion: joyful, tense, sad, calm and so on (Russell's circumplex). The estimate comes from the cues that carry emotion in music - loudness, note density, tempo and beat,
+            major or minor harmony, clashing notes, brightness - plus a music mood tagger trained on listeners' tags (musicnn). The weights were fitted to real listeners'
+            moment-by-moment ratings (VGMIDI) and checked on music the model never saw: it matched the average listener about as well as one listener matches the others.
+          </p>
+          <ul>
+            <li>
+              The brain is then lit by <strong>system</strong>: reward and pleasure (dopamine and opioids; gold), stress and tension (red), sadness (blue). These levels apply
+              published brain-imaging and drug studies to the estimated emotion and to musical events such as build-ups and peaks. They are not measured, and they describe a
+              typical listener.
+            </li>
+            <li>Dopamine release depends on enjoying the music, so the reward system follows your answer to "Do you like it?".</li>
+            <li>Serotonin is not shown: no study has measured serotonin in the brain during music.</li>
+            <li>For video, colour, motion, cuts and the expressions on faces add to the sound estimate; those picture rules were not checked against ratings.</li>
+          </ul>
+        </section>
+        <section>
           <h3>The heat map</h3>
           <p>
             The <strong>Heat map</strong> view plays along with your media. At each moment the app measures what the media contains - loudness and punch, speech- and music-like
@@ -17,7 +36,7 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
               sensors on a person.
             </li>
             <li>The "Brain systems over time" traces show the same estimate for groups of findings (hearing, voices, language, music and beat, vision, motion, faces, attention).</li>
-            <li>It cannot show feelings, thoughts, dopamine or hormones.</li>
+            <li>It shows where the kinds of input are processed, not feelings or brain chemistry (see the Emotion view for those estimates).</li>
             <li>Tap any area and choose "Why?" to see the research behind it in the Evidence view.</li>
           </ul>
         </section>
@@ -31,7 +50,7 @@ export function AboutModal({ onClose }: { onClose: () => void }) {
             <li>Colours are evidence categories (strong, moderate, limited, contested). They are not intensities, percentages or firing rates.</li>
             <li>Gray means "no verified association for this segment's features" - not "inactive". Every region is active all the time.</li>
             <li>In the Evidence view the map switches only when the segment changes; the timeline shows changing content features, not brain activity.</li>
-            <li>Nothing here infers dopamine, hormones, exact emotions or activation levels from media.</li>
+            <li>This view infers no dopamine, hormones, emotions or activation levels; the Emotion view makes those estimates separately and labels them as estimates.</li>
           </ul>
         </section>
         <section>

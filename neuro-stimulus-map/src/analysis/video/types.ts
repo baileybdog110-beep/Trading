@@ -13,6 +13,10 @@ export interface VideoSample {
   faces: number | null;
   /** largest face area as fraction of frame (null when not checked) */
   faceArea: number | null;
+  /** mean colour saturation 0..1 */
+  sat?: number;
+  /** expression shown on the largest face, by the local expression model (null when not checked or no face) */
+  expr?: Partial<Record<'neutral' | 'happy' | 'sad' | 'angry' | 'fearful' | 'disgusted' | 'surprised', number>> | null;
 }
 
 export interface VideoAnalysis {

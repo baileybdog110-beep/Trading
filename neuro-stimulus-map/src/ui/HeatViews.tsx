@@ -7,7 +7,7 @@ import { formatTime } from './format';
 
 /** Plain statement of what the heat is, shared by the legend and the panel. */
 export const HEAT_DISCLAIMER =
-  "Worked out from what's in the media at each moment and the published research on it. It is not a recording of brain activity, and it can't show feelings, thoughts or dopamine.";
+  "Worked out from what's in the media at each moment and the published research on it: where the kinds of input playing now are processed. It is not a recording of brain activity; the Emotion view estimates feelings and brain chemistry.";
 
 export function HeatLegend() {
   return (

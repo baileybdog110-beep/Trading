@@ -48,7 +48,7 @@ try {
   p.on('response', (r) => r.status() >= 400 && problems.push(`http ${r.status()}: ${r.url()}`));
   p.on('request', (r) => !r.url().startsWith(origin) && !r.url().startsWith('blob:') && !r.url().startsWith('data:') && problems.push(`external request: ${r.url()}`));
   await p.goto(origin);
-  await p.getByRole('button', { name: /Explore demo data/ }).click();
+  await p.getByRole('button', { name: /Evidence demo/ }).click();
   await p.waitForSelector('.now-card', { timeout: 30000 });
   await p.waitForSelector('canvas', { timeout: 30000 });
   // Atlas meshes arrive as base64 text in the hosted build; wait until they are parsed.
@@ -61,13 +61,15 @@ try {
 
   await p.click('text=Close demo');
   await p.setInputFiles('input[type=file]', 'tests/fixtures/clip.webm');
-  const faces = p.getByLabel(/Detect whether faces are visible/);
+  const faces = p.getByLabel(/Detect faces/);
   if (!(await faces.isChecked())) await faces.check();
   await p.click('text=Analyse locally');
-  await p.waitForSelector('.now-card', { timeout: 180000 });
+  await p.waitForSelector('.emo-now', { timeout: 240000 });
+  await p.getByRole('radio', { name: 'Heat map' }).click();
+  await p.waitForSelector('.now-card');
   const hostedNote = await p.getByText(/not available in this hosted copy/).count();
   if (!hostedNote) problems.push('hosted note missing after analysis');
-  console.log(`ok analyse clip.webm with faces (heat view shown)`);
+  console.log(`ok analyse clip.webm with faces (emotion view, then heat view)`);
 } finally {
   await browser.close();
   server.close();

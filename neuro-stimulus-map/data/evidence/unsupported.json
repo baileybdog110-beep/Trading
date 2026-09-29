@@ -9,7 +9,7 @@
    "sources": ["lindquist2012", "poldrack2006"]},
   {"id": "u_dopamine_hormones", "topic": "Dopamine release, hormone levels, or neurotransmitter estimates",
    "appliesTo": {"processes": ["music_evoked_reward", "humor_appreciation"]},
-   "reason": "Dopamine release has been measured with PET in specific listeners hearing music they chose (Salimpoor et al. 2011). Neurochemistry cannot be inferred from a media file, so the app never displays it.",
+   "reason": "Dopamine release has been measured with PET in specific listeners hearing music they chose (Salimpoor et al. 2011). The evidence map does not assign neurochemistry to regions; the separate Emotion view estimates reward-system engagement for a typical listener who enjoys the music and labels it as an estimate, not a measurement.",
    "sources": ["salimpoor2011"]},
   {"id": "u_activation_levels", "topic": "Activation percentages, firing rates or 'how intensely your brain fires'",
    "appliesTo": {},

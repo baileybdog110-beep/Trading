@@ -1,3 +1,4 @@
+import type { EmotionTimeline } from '../emotion/model';
 import type { DetectionConfidence, FeatureId, ListenerConditionKey } from '../evidence/types';
 
 export type FeatureStatus =
@@ -82,4 +83,6 @@ export interface AnalysisSession {
   tracks: TimelineTracks;
   untimedTranscript?: string;
   notes: string[];
+  /** Estimated emotion over time and the brain systems linked to it (src/emotion); absent without audio. */
+  emotion?: EmotionTimeline & { note: string };
 }

@@ -1,15 +1,19 @@
 # Brain Heat Map
 
-Load a video, song or podcast and press play: a 3D brain heats up and cools down along with it,
-and a set of traces scrolls like a monitor. The heat is an **estimate** of where the kinds of input
-playing at each moment (sound, voices, music and beat, motion, faces, cuts, words) are processed,
-according to curated, cited research. It is **not a brain recording or scan**: nothing here measures
-anyone's brainwaves or activity, and it cannot show feelings, thoughts or dopamine. An **Evidence**
-view shows every research link behind the heat, with grades, sources and limitations.
+Load a song or video and press play. The **Emotion** view (the default) shows, every half second,
+the emotion the music carries: joyful, tense, sad, calm and so on. It also lights up the brain
+systems published studies link to that moment: **reward and pleasure** (dopamine and the brain's
+own opioids), **stress and tension**, **sadness**, and **calm**. The emotion estimate was fitted
+to, and checked against, real listeners' moment-by-moment ratings. The brain-system levels apply
+PET, fMRI and drug studies to that estimate.
+
+A **Heat map** view shows where the kinds of input (sound, voices, beat, motion, faces, words) are
+processed. An **Evidence** view shows every research link with grades, sources and limitations.
+None of it is a brain recording: it is an estimate for a typical listener, and it says so.
 
 Everything runs in the browser; the media never leaves the device.
 
-![Heat map playing the demo: hearing, music and vision areas warm, with the "Right now" panel](docs/screenshots/heat-map.png)
+![Emotion view playing a demo song: the reward circuit lit in gold, the emotion on the circumplex, and the brain systems right now](docs/screenshots/emotion-view.png)
 
 ## Feasibility: what can and cannot be done honestly
 
@@ -20,7 +24,10 @@ Everything runs in the browser; the media never leaves the device.
 | Detect observable features in media | Yes, locally in the browser | Audio signal processing (level, onsets, beat, speech/music heuristics), frame sampling (motion, cuts, brightness, face presence), transcript lexical cues. Every feature carries a *detection confidence*. |
 | Link features to cognitive processes | Partly | Reviewed rules. Each rule says whether applying the research is a **direct match**, **partial match**, or **extrapolation** that depends on the listener. |
 | Link processes to regions and networks | Yes, at regional level, where evidence exists | Only curated, cited evidence records can colour a region. Each is graded **strong / moderate / limited / contested**. Anything else is gray, meaning "insufficient evidence". |
-| Say what *your* brain is doing, how intensely, or infer dopamine, hormones, or emotions | **No** | Not attempted. fMRI evidence is indirect (blood oxygenation), group-level, and context-dependent. The app shows explicit "not mapped" records explaining why. |
+| Estimate the emotion a song or video carries, moment by moment | Yes, validated for music | A model fitted to real listeners' ratings (VGMIDI). On music it never saw, it matched the average listener about as well as one listener does (r = 0.69 pleasantness, 0.77 energy). See [The Emotion view](#the-emotion-view). |
+| Show when the dopamine/reward, stress or sadness systems are likely engaged | Yes, as a labelled research-based estimate | Published PET, drug and fMRI findings applied to the estimated emotion and to musical events such as build-ups and peaks. Reward is scaled by whether the listener enjoys the music, because dopamine release depends on it. |
+| Serotonin | **No** | No study has measured serotonin in the brain during music (one measured blood platelets). The app says so instead of guessing. |
+| Say what *your* brain is doing or measure chemicals | **No** | Needs sensors or scans on a person. Everything shown is an estimate for a typical listener. |
 | Voxel-precise hotspots | No (evidence is regional) | Whole atlas regions are highlighted. Functional areas without an atlas label (FFA, MT+, SMA, TPJ) are marked "≈" (approximate). |
 | Use Neurosynth / NeuroQuery maps as predictions | No | They were considered as curation aids only. Their maps summarise literature coordinates for terms and are not validated predictions for arbitrary stimuli. |
 
@@ -98,9 +105,26 @@ npm run api -- --port 8787            # HTTP API: /openapi.json, /tools/{name}, 
 node tool-dist/cli.mjs features speech_present,faces_visible
 ```
 
+## The Emotion view
+
+For every half second of audio (`src/emotion/`):
+
+1. **Cues.** The app computes the cues that carry emotion in music, over the preceding 4 s (8 s for tempo and key). These are loudness relative to the track, loudness swings, notes and hits per second, amount of sound change, tempo and beat clarity, brightness, noisiness, major-versus-minor harmony (Krumhansl-Kessler key profiles), key clarity and clashing notes. The literature behind each cue: Juslin & Laukka 2003, Gomez & Danuser 2007, Eerola et al. 2013.
+2. **Mood tags.** The **musicnn** tagger (Pons & Serra 2019, trained on Last.fm listeners' tags for the Million Song Dataset) runs locally on 3-s windows. The model uses its mood tags (happy, sad, mellow, party and so on). It runs on WebGL, with fewer windows on CPU; files over 20 minutes skip it.
+3. **Valence and arousal.** Ridge regression turns cues and tags (and each one relative to the track's average) into valence and arousal. It was fitted to VGMIDI listeners' bar-by-bar ratings. The emotion name comes from Russell's circumplex. The typical error is drawn around the dot.
+4. **Brain systems** (`data/emotion/systems.json`, each statement cited):
+   - **Reward & pleasure.** Nucleus accumbens at peaks, caudate during build-ups (Salimpoor 2011), putamen for groove (Matthews 2020), medial OFC and midbrain (Blood & Zatorre 2001). Driven by pleasant moments, build-ups and peaks (crescendos, sudden loudness increases, new sounds; de Fleurian & Pearce 2021, Grewe 2007) and a danceable beat. Scaled by "Do you like it?" (Ferreri 2019; Mas-Herrero 2014).
+   - **Stress & tension.** Amygdala, hippocampus and parahippocampal gyrus for unpleasant, dissonant, tense music (Koelsch 2006). Also sudden loud hits, and fearful or angry faces on screen (Fusar-Poli 2009). The hypothalamus is marked as an extrapolation; fast tempo raises heart rate (Bernardi 2006).
+   - **Sadness.** Hippocampus and amygdala (Mitterschiffthaler 2007).
+   - **Calm.** Body level only: heart rate and breathing (de Witte 2020), with the null result of Adiasto 2022 shown.
+   - **Serotonin.** Explicitly not estimated (Evers & Suhr 2000 measured platelets, not the brain).
+5. **Video.** Brightness and saturation (Valdez & Mehrabian 1994), motion and cutting pace (Hanjalic & Xu 2005), and the expression on the largest face (face-api) add to the sound estimate at half weight. They are labelled as not validated. Expressions are treated as what a viewer sees, not what the person feels (Barrett et al. 2019).
+
+Validation: [`docs/validation/README.md`](docs/validation/README.md). Three real recordings with open licences are included as demos (`public/demo`).
+
 ## The heat map
 
-The **Heat map** view is the default. For every moment of playback:
+In the **Heat map** view, for every moment of playback:
 
 1. **Input strength (0 to 1) is measured from the media** for each detected feature: loudness relative to the file's own quiet-to-loud range and its onset "punch" (25 values per second, so it pulses with beats and syllables), speech- and music-likeness, motion, faces, recent cuts and sudden sounds (decaying pulses), and whether transcript words are being spoken. Interpretations a person confirmed count while their segment plays.
 2. **Each research link reached for that segment** (the same `mapSegment` pipeline as the Evidence view) contributes `weight × input strength` to its brain area. The weight is the evidence grade (strong 1, moderate 0.8, limited 0.55, contested 0.35) × applicability (direct 1, partial 0.75, extrapolation 0.5) × 0.7 when the finding depends on the listener × detection confidence. An area's heat is its strongest link plus 15% of the others, capped at 1.
@@ -217,7 +241,14 @@ npm run test:e2e  # headless browser + tool transports (see below)
 - `e2e/mobile.mjs`: iPhone and iPad emulation over a plain-http LAN address. It taps the brain, Details, the Highlighted list, Show on the brain and the timeline, opens dialogs, checks for horizontal overflow and small controls, and analyses a video on the phone;
 - `e2e/tool-smoke.mjs`: the MCP stdio server, the HTTP API (auth, OpenAPI, no local-file access) and MCP over HTTP, using the official MCP client;
 - `e2e/viewports.mjs`: design-review screenshots at desktop, tablet and phone sizes in light and dark themes (landing, demo, area details, View menu, Reasoning), failing on console errors or horizontal overflow;
-- `e2e/hosted.mjs`: the hosted build under a strict Content-Security-Policy (no eval, no outside requests): demo, atlas loading, copy export, and video analysis with face detection.
+- `e2e/hosted.mjs`: the hosted build under a strict Content-Security-Policy (no eval, no outside requests): demo, atlas loading, copy export, and video analysis with face detection;
+- `e2e/emotion.mjs`: analyses the three demo songs in the browser (decoding, cues, the musicnn tagger, the emotion model), plays one, and checks the Emotion view, the liking answer and the phone layout.
+
+The emotion code is checked against its Python reference, which is the code validated on listener ratings:
+
+- `tests/emotion-features.test.ts`: the streaming cues;
+- `tests/musicnn.test.ts`: the TensorFlow.js tagger against a NumPy forward pass of the original checkpoint, and the log-mel front end against librosa;
+- `tests/emotion-model.test.ts`: the fitted model, emotion labels, brain systems and picture cues.
 
 The tests check that:
 
@@ -239,7 +270,10 @@ confidence and every feature can be corrected.
 - Regions: **CerebrA** (Manera et al. 2020, CC BY 4.0), on the ICBM 2009c symmetric template, via TemplateFlow.
 - Networks: **Schaefer 2018** 7-network assignment (Yeo et al. 2011, MIT licence), on the ICBM 2009c asymmetric template. The overlay alignment is approximate.
 - Rebuild with `scripts/atlas/fetch_inputs.sh atlas_inputs && npm run atlas`. See [`public/atlas/ATTRIBUTION.md`](public/atlas/ATTRIBUTION.md).
-- Face detector weights: @vladmandic/face-api (MIT).
+- Face detector and expression weights: @vladmandic/face-api (MIT).
+- Music tagger: musicnn MSD model (Pons & Serra 2019, ISC licence), exported by `scripts/models/export_musicnn.py`.
+- Demo recordings: Kevin MacLeod (CC BY 3.0) and a public-domain Brahms recording; see [`public/demo/README.md`](public/demo/README.md).
+- Emotion ratings used for fitting: VGMIDI (Ferreira & Whitehead 2019).
 - Typefaces: Source Sans 3 and Source Serif 4 (SIL Open Font License 1.1), bundled through `@fontsource-variable`, so no font requests leave the device.
 
 ## Known limitations and next steps
@@ -251,6 +285,8 @@ confidence and every feature can be corrected.
 - The evidence base is an initial set. Candidates for review include voice/speech meta-analyses, film-emotion naturalistic studies, and individual-differences work.
 - The ASR and LLM paths should be exercised end-to-end in a normal browser.
 - The heat map's weights and input-strength curves are display choices, not a fitted model; they are listed in `src/heat/model.ts` so they can be reviewed. A validated encoding model (one trained to predict fMRI or EEG responses to films and music) would be needed before the heat could be called a prediction.
+- The emotion model was validated on solo-piano game music only. Rated full-band datasets (DEAM, PMEmo, Emotify, 4Q) were not reachable from this environment; re-running `scripts/validation/vgmidi_eval.py`'s approach on one of them is the most useful next check.
+- The brain-system levels are research-based rules, not a fitted model: no public dataset pairs songs with measured dopamine or cortisol over time.
 - Real brainwaves need a headset. Consumer EEG headbands can stream to a browser over Web Bluetooth (Chrome on desktop and Android; not iPhone or iPad), which would allow a genuinely measured view next to this estimate.
 
 Educational use only. Not medical advice.

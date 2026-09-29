@@ -51,7 +51,7 @@ try {
       const secure = await page.evaluate(() => window.isSecureContext);
       if (secure) throw new Error('expected a non-secure context for this test');
       await page.waitForFunction(() => !document.querySelector('.brain-msg'), null, { timeout: 30000 });
-      await page.tap('text=Explore demo data');
+      await page.tap('text=Evidence demo');
       await page.waitForSelector('text=DEMO DATA');
       // heat map: play the demo on the touch device, then pause
       await page.tap('.vplayer button');
@@ -102,7 +102,7 @@ try {
       await step('iphone: analyse clip.webm (non-secure origin, touch)', async () => {
         await page.setInputFiles('input[type=file]', ['tests/fixtures/clip.webm', 'tests/fixtures/program.srt']);
         await page.tap('text=Analyse locally');
-        await page.waitForSelector('.now-card', { timeout: 180000 });
+        await page.waitForSelector('.emo-now', { timeout: 240000 });
         // on a phone the video sits right above the brain, both on the first screen after the header
         const r = await page.evaluate(() => ({ video: document.querySelector('.media-card').getBoundingClientRect().top, brain: document.querySelector('.brain-card').getBoundingClientRect().top }));
         if (!(r.video < r.brain)) throw new Error(`expected the video above the brain: ${JSON.stringify(r)}`);

@@ -9,3 +9,4 @@ scripts/evidence/abstracts
 scripts/evidence/verification_report.json
 atlas_inputs
 dist-hosted
+__pycache__

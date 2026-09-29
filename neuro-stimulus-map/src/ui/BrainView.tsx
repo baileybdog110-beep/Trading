@@ -59,6 +59,12 @@ export interface HeatSource {
   now(): number;
   playing(): boolean;
   at(t: number, out: Map<string, number>): Map<string, number>;
+  /** Colour for a mesh (0..1 RGB) instead of the heat ramp, e.g. the brain system lighting it. */
+  tint?(meshId: string): [number, number, number] | undefined;
+  /** Hover text for a mesh (after its name). */
+  describe?(meshId: string, v: number): string;
+  /** Show deep structures through a see-through cortex by default. */
+  inside?: boolean;
 }
 
 function makeMaterial(): THREE.MeshStandardMaterial {
@@ -93,6 +99,13 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
   const [cut, setCut] = useState(-5);
   const menuRef = useRef<HTMLDetailsElement>(null);
   const [autoRotate, setAutoRotate] = useState(true);
+  // views about deep structures (the emotion view) start with a see-through cortex
+  const wantsInside = !!heat?.inside;
+  const insideRef = useRef(wantsInside);
+  insideRef.current = wantsInside;
+  useEffect(() => {
+    setDeep(wantsInside ? 'glass' : 'none');
+  }, [wantsInside]);
   // smoothed heat currently drawn on each mesh (read by hover labels)
   const heatShown = useRef(new Map<string, number>());
   // read by the render loop, which is set up once
@@ -310,7 +323,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     autoView.current = false;
     setShowL(true);
     setShowR(true);
-    setDeep('none');
+    setDeep(insideRef.current ? 'glass' : 'none');
   }, [selected]);
 
   useEffect(() => {
@@ -318,7 +331,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     autoView.current = false;
     setShowL(true);
     setShowR(true);
-    setDeep('none');
+    setDeep(insideRef.current ? 'glass' : 'none');
     setView('Left');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
@@ -401,9 +414,16 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     const shown = heatShown.current;
     shown.clear();
     const meshes = [...t3.cerebra, ...t3.yeo];
+    const [r0, g0, b0] = heatRGB(0);
     const paint = (m: THREE.Mesh, v: number) => {
       const mat = m.material as THREE.MeshStandardMaterial;
-      const [r, g, b] = heatRGB(v);
+      const tint = heat.tint?.(m.name);
+      let r: number, g: number, b: number;
+      if (tint) {
+        // a system colour, fading in from the cold surface colour
+        const k = Math.min(1, v * 1.4);
+        [r, g, b] = [r0 + (tint[0] - r0) * k, g0 + (tint[1] - g0) * k, b0 + (tint[2] - b0) * k];
+      } else [r, g, b] = heatRGB(v);
       mat.color.setRGB(r, g, b);
       const glow = v < 0.02 ? 0 : 0.12 + 0.55 * v;
       mat.emissive.setRGB(r * glow, g * glow, b * glow);
@@ -462,6 +482,7 @@ export function BrainView({ results, mode, selected, onSelect, onDetails, theme,
     if (!info) return meshId;
     const hemi = info.hemi === 'bilateral' ? '' : info.hemi === 'L' ? 'Left ' : 'Right ';
     const base = info.kind === 'region' ? regionById.get(info.id)?.name : networkById.get(info.id)?.name;
+    if (heat?.describe) return `${hemi}${base ?? meshId} — ${heat.describe(meshId, heatShown.current.get(meshId) ?? 0)}`;
     if (heat) return `${hemi}${base ?? meshId} — ${heatWord(heatShown.current.get(meshId) ?? 0).toLowerCase()} estimated heat`;
     const r = results.get(meshId);
     return `${hemi}${base ?? meshId}${r ? ` — ${GRADE_LABEL[r.grade]}` : ' — no verified association for this segment'}`;

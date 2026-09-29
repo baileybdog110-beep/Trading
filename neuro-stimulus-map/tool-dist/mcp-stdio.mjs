@@ -17457,7 +17457,7 @@ var sources_default = [
     ],
     limitations: [
       "Small, selected sample of listeners using music they chose; sample size not verified here.",
-      "Dopamine was measured with PET in those listeners. Nothing in uploaded media can indicate dopamine release, so this app never displays it."
+      "Dopamine was measured with PET in those listeners. The app's reward estimate uses this to say which kinds of moments went with dopamine release in such listeners; it cannot measure dopamine in anyone."
     ],
     naturalistic: true,
     verification: {
@@ -18607,6 +18607,867 @@ var sources_default = [
       checkedOn: "2026-09-28",
       via: [
         "https://www.nature.com/articles/s41597-020-0557-9"
+      ]
+    }
+  },
+  {
+    id: "ferreri2019",
+    shortCite: "Ferreri et al. 2019",
+    authors: "Ferreri L, Mas-Herrero E, Zatorre RJ, Ripoll\xE9s P, Gomez-Andres A, Alicart H, Oliv\xE9 G, Marco-Pallar\xE9s J, Antonijoan RM, Valle M, Riba J, Rodriguez-Fornells A",
+    year: 2019,
+    title: "Dopamine modulates the reward experiences elicited by music",
+    venue: "Proceedings of the National Academy of Sciences",
+    details: "116(9):3793-3798",
+    doi: "10.1073/pnas.1811878116",
+    pmid: "30670642",
+    url: "https://www.pnas.org/doi/10.1073/pnas.1811878116",
+    design: "pharmacological study",
+    method: "Double-blind, within-participant drug study: a dopamine precursor (levodopa), a dopamine antagonist (risperidone) and placebo, with pleasure ratings, chills, skin conductance and money participants were willing to spend on the music.",
+    population: "Healthy young adults.",
+    n: "27",
+    stimuli: "Self-selected and experimenter-selected pleasurable music.",
+    comparison: "Levodopa vs placebo vs risperidone.",
+    keyFindings: [
+      "Raising dopamine (levodopa) increased musical pleasure, chills-related responses and willingness to pay; blocking it (risperidone) reduced them.",
+      "This is causal evidence that dopamine contributes to musical pleasure."
+    ],
+    limitations: [
+      "Drug effects in healthy young adults; says how dopamine shapes pleasure, not how much dopamine a given song releases.",
+      "Pleasure depended on the listener liking the music."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.pnas.org/doi/10.1073/pnas.1811878116"
+      ]
+    }
+  },
+  {
+    id: "blood2001",
+    shortCite: "Blood & Zatorre 2001",
+    authors: "Blood AJ, Zatorre RJ",
+    year: 2001,
+    title: "Intensely pleasurable responses to music correlate with activity in brain regions implicated in reward and emotion",
+    venue: "Proceedings of the National Academy of Sciences",
+    details: "98(20):11818-11823",
+    doi: "10.1073/pnas.191355898",
+    pmid: "11573015",
+    url: "https://www.pnas.org/doi/10.1073/pnas.191355898",
+    design: "PET study",
+    method: "PET cerebral blood flow while listeners heard music that gave them chills, rated moment to moment for chills intensity.",
+    population: "Musicians who reliably get chills to particular pieces.",
+    n: null,
+    stimuli: "Participant-selected music that gave them chills vs another participant's selection.",
+    comparison: "Own chills music vs control music; covariation with chills intensity.",
+    keyFindings: [
+      "As chills intensity rose, blood flow changed in regions linked to reward, emotion and arousal: ventral striatum, midbrain, amygdala, orbitofrontal cortex and ventromedial prefrontal cortex (increases in some, decreases in others such as the amygdala)."
+    ],
+    limitations: [
+      "Small group of musicians with their own chosen pieces.",
+      "PET blood flow, not dopamine itself."
+    ],
+    naturalistic: true,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.pnas.org/doi/10.1073/pnas.191355898"
+      ]
+    }
+  },
+  {
+    id: "mallik2017",
+    shortCite: "Mallik et al. 2017",
+    authors: "Mallik A, Chanda ML, Levitin DJ",
+    year: 2017,
+    title: "Anhedonia to music and mu-opioids: Evidence from the administration of naltrexone",
+    venue: "Scientific Reports",
+    details: "7:41952",
+    doi: "10.1038/srep41952",
+    pmcid: "PMC5296903",
+    url: "https://www.nature.com/articles/srep41952",
+    design: "pharmacological study",
+    method: "Double-blind placebo-controlled study: the opioid blocker naltrexone vs placebo, with subjective ratings and physiological measures.",
+    population: "Healthy adults, drug-naive.",
+    n: null,
+    stimuli: "Participants' own favourite music and neutral control music.",
+    comparison: "Naltrexone vs placebo.",
+    keyFindings: [
+      "Blocking opioid receptors reduced both positive and negative emotional responses to music.",
+      "The brain's own opioids contribute to musical pleasure alongside dopamine."
+    ],
+    limitations: [
+      "Single study with a modest sample; later work suggests effects on chills intensity specifically."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.nature.com/articles/srep41952",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5296903/"
+      ]
+    }
+  },
+  {
+    id: "masherrero2014",
+    shortCite: "Mas-Herrero et al. 2014",
+    authors: "Mas-Herrero E, Zatorre RJ, Rodriguez-Fornells A, Marco-Pallar\xE9s J",
+    year: 2014,
+    title: "Dissociation between musical and monetary reward responses in specific musical anhedonia",
+    venue: "Current Biology",
+    details: "24(6):699-704",
+    doi: "10.1016/j.cub.2014.01.068",
+    url: "https://www.cell.com/current-biology/comments/S0960-9822(14)00133-X",
+    design: "psychophysiology study",
+    method: "Behavioural and physiological (skin conductance, heart rate) responses to pleasurable music and to monetary reward in people with high, average and low music reward sensitivity.",
+    population: "Healthy adults screened with the Barcelona Music Reward Questionnaire.",
+    n: null,
+    stimuli: "Pleasurable music; a monetary incentive task.",
+    comparison: "Specific musical anhedonia vs average vs high music-reward groups.",
+    keyFindings: [
+      "Some healthy people get little pleasure or physiological response from music while responding normally to money (specific musical anhedonia)."
+    ],
+    limitations: [
+      "Shows that reward to music is not universal; says nothing about any particular song."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.cell.com/current-biology/comments/S0960-9822(14)00133-X"
+      ]
+    }
+  },
+  {
+    id: "defleurian2021",
+    shortCite: "de Fleurian & Pearce 2021",
+    authors: "de Fleurian R, Pearce MT",
+    year: 2021,
+    title: "Chills in music: A systematic review",
+    venue: "Psychological Bulletin",
+    details: "147(9):890-920",
+    doi: "10.1037/bul0000341",
+    url: "https://www.marcus-pearce.com/assets/papers/deFleurianPearce2021b.pdf",
+    design: "narrative review",
+    method: "Systematic review of empirical studies of music-evoked chills, with the Chills in Music (ChiM) dataset of 1,022 pieces reported to elicit chills.",
+    population: "Published studies of music-evoked chills.",
+    n: null,
+    stimuli: "Music reported to elicit chills.",
+    comparison: "Moments with vs without chills; listener and context factors.",
+    keyFindings: [
+      "Musical features usually associated with chills include sudden dynamic changes, crescendi, increased roughness and the entrance of new instruments or voices.",
+      "Chills depend strongly on the listener (personality, familiarity, liking) and context."
+    ],
+    limitations: [
+      "Heterogeneous methods; features associated with chills do not reliably cause them in any one listener."
+    ],
+    naturalistic: true,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.marcus-pearce.com/assets/papers/deFleurianPearce2021b.pdf",
+        "https://osf.io/uyg7m/"
+      ]
+    }
+  },
+  {
+    id: "grewe2007",
+    shortCite: "Grewe et al. 2007",
+    authors: "Grewe O, Nagel F, Kopiez R, Altenm\xFCller E",
+    year: 2007,
+    title: "Listening to music as a re-creative process: Physiological, psychological, and psychoacoustical correlates of chills and strong emotions",
+    venue: "Music Perception",
+    details: "24(3):297-314",
+    doi: "10.1525/mp.2007.24.3.297",
+    url: "https://online.ucpress.edu/mp/article-abstract/24/3/297/95241/Listening-To-Music-As-A-Re-Creative-Process",
+    design: "psychophysiology study",
+    method: "Continuous self-report of chills with skin conductance and heart rate, and psychoacoustic analysis of the music around chills.",
+    population: "Adult listeners.",
+    n: "38",
+    stimuli: "Experimenter-selected and participant-selected music.",
+    comparison: "Moments with vs without reported chills.",
+    keyFindings: [
+      "Chills tended to follow increases in loudness and changes such as the entry of a voice or new instrument; loudness, roughness and fluctuation strength peaked around chills.",
+      "The same passage did not reliably give chills to everyone: listening is re-creative, shaped by the listener."
+    ],
+    limitations: [
+      "Chills are rare and individual; acoustic peaks are necessary-looking but far from sufficient."
+    ],
+    naturalistic: true,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://online.ucpress.edu/mp/article-abstract/24/3/297/95241/Listening-To-Music-As-A-Re-Creative-Process"
+      ]
+    }
+  },
+  {
+    id: "matthews2020",
+    shortCite: "Matthews et al. 2020",
+    authors: "Matthews TE, Witek MAG, Lund T, Vuust P, Penhune VB",
+    year: 2020,
+    title: "The sensation of groove engages motor and reward networks",
+    venue: "NeuroImage",
+    details: "214:116768",
+    doi: "10.1016/j.neuroimage.2020.116768",
+    pmid: "32217163",
+    url: "https://pubmed.ncbi.nlm.nih.gov/32217163/",
+    design: "fMRI study",
+    method: "fMRI while musicians and non-musicians rated experimentally controlled groove rhythms.",
+    population: "Musicians and non-musicians.",
+    n: null,
+    stimuli: "Rhythms varying in syncopation and harmonic complexity.",
+    comparison: "High vs low groove ratings.",
+    keyFindings: [
+      "The pleasurable urge to move to music (groove) engaged motor timing and reward networks, including the basal ganglia."
+    ],
+    limitations: [
+      "Short, controlled rhythms rather than full songs."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://pubmed.ncbi.nlm.nih.gov/32217163/",
+        "https://www.concordia.ca/content/dam/artsci/psychology/penhune/publications/Matthews_NIMG_20.pdf"
+      ]
+    }
+  },
+  {
+    id: "dewitte2020",
+    shortCite: "de Witte et al. 2020",
+    authors: "de Witte M, Spruit A, van Hooren S, Moonen X, Stams GJ",
+    year: 2020,
+    title: "Effects of music interventions on stress-related outcomes: a systematic review and two meta-analyses",
+    venue: "Health Psychology Review",
+    details: "14(2):294-324",
+    doi: "10.1080/17437199.2019.1627897",
+    url: "https://www.tandfonline.com/doi/full/10.1080/17437199.2019.1627897",
+    design: "systematic review and meta-analysis",
+    method: "Two multilevel meta-analyses of randomized controlled trials of music interventions on physiological and psychological stress outcomes.",
+    population: "104 RCTs, 327 effect sizes, 9,617 participants.",
+    n: "104 RCTs / 9,617 participants",
+    stimuli: "Music interventions (mostly listening), varied.",
+    comparison: "Music intervention vs control.",
+    keyFindings: [
+      "Music interventions reduced physiological stress measures (for example heart rate, d = 0.456; stress hormones, d = 0.349) and psychological stress."
+    ],
+    limitations: [
+      "Interventions, settings and music vary widely; effects are averages over people and sessions, not per song moment."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.tandfonline.com/doi/full/10.1080/17437199.2019.1627897",
+        "https://research.ou.nl/en/publications/effects-of-music-interventions-on-stress-related-outcomes-a-syste/"
+      ]
+    }
+  },
+  {
+    id: "adiasto2022",
+    shortCite: "Adiasto et al. 2022",
+    authors: "Adiasto K, Beckers DGJ, van Hooff MLM, Roelofs K, Geurts SAE",
+    year: 2022,
+    title: "Music listening and stress recovery in healthy individuals: A systematic review with meta-analysis of experimental studies",
+    venue: "PLOS ONE",
+    details: "17(6):e0270031",
+    doi: "10.1371/journal.pone.0270031",
+    pmid: "35714120",
+    pmcid: "PMC9205498",
+    url: "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0270031",
+    design: "systematic review and meta-analysis",
+    method: "Meta-analysis of randomized experiments in which people listened to music (or a control) after a laboratory stressor.",
+    population: "14 experiments, 706 healthy participants.",
+    n: "14 studies / 706 participants",
+    stimuli: "Music listening after an acute stressor.",
+    comparison: "Music vs control during recovery.",
+    keyFindings: [
+      "No significant overall effect of music listening on stress recovery (g = 0.15, 95% CI -0.21 to 0.52)."
+    ],
+    limitations: [
+      "Few studies; the evidence that music speeds recovery from acute stress is weak."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0270031",
+        "https://pubmed.ncbi.nlm.nih.gov/35714120/"
+      ]
+    }
+  },
+  {
+    id: "thoma2013",
+    shortCite: "Thoma et al. 2013",
+    authors: "Thoma MV, La Marca R, Br\xF6nnimann R, Finkel L, Ehlert U, Nater UM",
+    year: 2013,
+    title: "The effect of music on the human stress response",
+    venue: "PLOS ONE",
+    details: "8(8):e70156",
+    doi: "10.1371/journal.pone.0070156",
+    pmcid: "PMC3734071",
+    url: "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0070156",
+    design: "psychophysiology study",
+    method: "Randomized experiment: relaxing music, rippling water or silence before a standardized psychosocial stress test, with salivary cortisol, alpha-amylase and heart rate.",
+    population: "Healthy women (mean age 25).",
+    n: "60",
+    stimuli: "Relaxing classical music (Allegri, Miserere).",
+    comparison: "Music vs water sound vs silence.",
+    keyFindings: [
+      "Music before the stressor mainly affected the autonomic nervous system (faster alpha-amylase recovery) and less the hormonal and psychological response; cortisol was not lowered."
+    ],
+    limitations: [
+      "Women only; one piece of relaxing music."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0070156"
+      ]
+    }
+  },
+  {
+    id: "bernardi2006",
+    shortCite: "Bernardi et al. 2006",
+    authors: "Bernardi L, Porta C, Sleight P",
+    year: 2006,
+    title: "Cardiovascular, cerebrovascular, and respiratory changes induced by different types of music in musicians and non-musicians: the importance of silence",
+    venue: "Heart",
+    details: "92(4):445-452",
+    doi: "10.1136/hrt.2005.064600",
+    pmid: "16199412",
+    url: "https://pubmed.ncbi.nlm.nih.gov/16199412/",
+    design: "psychophysiology study",
+    method: "Breathing, heart rate, blood pressure and cerebral blood flow velocity during music of different styles and tempi, and during pauses.",
+    population: "Musicians and non-musicians.",
+    n: "24",
+    stimuli: "Six music styles at different tempi, with 2-minute pauses.",
+    comparison: "Fast vs slow music vs silence.",
+    keyFindings: [
+      "Faster tempo raised breathing rate, blood pressure and heart rate (an arousal effect); a pause brought them below baseline."
+    ],
+    limitations: [
+      "Arousal (physiological activation), which is not the same as stress or anxiety."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://pubmed.ncbi.nlm.nih.gov/16199412/"
+      ]
+    }
+  },
+  {
+    id: "koelsch2006",
+    shortCite: "Koelsch et al. 2006",
+    authors: "Koelsch S, Fritz T, v Cramon DY, M\xFCller K, Friederici AD",
+    year: 2006,
+    title: "Investigating emotion with music: an fMRI study",
+    venue: "Human Brain Mapping",
+    details: "27(3):239-250",
+    doi: "10.1002/hbm.20180",
+    url: "https://onlinelibrary.wiley.com/doi/abs/10.1002/hbm.20180",
+    design: "fMRI study",
+    method: "fMRI while listeners heard pleasant dance music and permanently dissonant (unpleasant) versions of it.",
+    population: "Healthy adults.",
+    n: null,
+    stimuli: "Joyful instrumental dance tunes and their electronically made dissonant counterparts.",
+    comparison: "Unpleasant (dissonant) vs pleasant (consonant).",
+    keyFindings: [
+      "Unpleasant, dissonant music engaged the amygdala, hippocampus, parahippocampal gyrus and temporal poles.",
+      "Pleasant music engaged the ventral striatum, inferior frontal gyrus, anterior insula and auditory cortex areas."
+    ],
+    limitations: [
+      "Small sample; extreme, artificial dissonance rather than ordinary tense music."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://onlinelibrary.wiley.com/doi/abs/10.1002/hbm.20180"
+      ]
+    }
+  },
+  {
+    id: "koelsch2013",
+    shortCite: "Koelsch et al. 2013",
+    authors: "Koelsch S, Skouras S, Fritz T, Herrera P, Bonhage C, K\xFCssner MB, Jacobs AM",
+    year: 2013,
+    title: "The roles of superficial amygdala and auditory cortex in music-evoked fear and joy",
+    venue: "NeuroImage",
+    details: "81:49-60",
+    doi: "10.1016/j.neuroimage.2013.05.008",
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S1053811913004989",
+    design: "fMRI study",
+    method: "fMRI during fear-evoking, joy-evoking and neutral music, with ratings of valence, arousal, fear and joy.",
+    population: "Healthy adults.",
+    n: "18",
+    stimuli: "Fear-evoking, joy-evoking and neutral music excerpts.",
+    comparison: "Fear vs joy vs neutral music.",
+    keyFindings: [
+      "Superficial amygdala and auditory cortex activity rose during joy and fell during fear compared with neutral music.",
+      "The amygdala responded early in each piece and then declined."
+    ],
+    limitations: [
+      "Small sample; shows the amygdala is not simply a fear or stress centre."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.sciencedirect.com/science/article/abs/pii/S1053811913004989"
+      ]
+    }
+  },
+  {
+    id: "mitterschiffthaler2007",
+    shortCite: "Mitterschiffthaler et al. 2007",
+    authors: "Mitterschiffthaler MT, Fu CHY, Dalton JA, Andrew CM, Williams SCR",
+    year: 2007,
+    title: "A functional MRI study of happy and sad affective states induced by classical music",
+    venue: "Human Brain Mapping",
+    details: "28(11):1150-1162",
+    doi: "10.1002/hbm.20337",
+    pmid: "17290372",
+    url: "https://pubmed.ncbi.nlm.nih.gov/17290372/",
+    design: "fMRI study",
+    method: "53 volunteers rated 60 classical pieces as happy, sad or neutral; a separate group was scanned while hearing the most reliable pieces.",
+    population: "Healthy adults.",
+    n: "16 scanned (pieces chosen by 53 raters)",
+    stimuli: "5 happy, 5 sad and 10 neutral classical pieces.",
+    comparison: "Happy vs neutral; sad vs neutral.",
+    keyFindings: [
+      "Happy music engaged the ventral and dorsal striatum and anterior cingulate; sad music engaged the hippocampus/amygdala region."
+    ],
+    limitations: [
+      "Small scanned sample; classical music only."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://pubmed.ncbi.nlm.nih.gov/17290372/"
+      ]
+    }
+  },
+  {
+    id: "eversuhr2000",
+    shortCite: "Evers & Suhr 2000",
+    authors: "Evers S, Suhr B",
+    year: 2e3,
+    title: "Changes of the neurotransmitter serotonin but not of hormones during short time music perception",
+    venue: "European Archives of Psychiatry and Clinical Neuroscience",
+    details: "250(3):144-147",
+    doi: "10.1007/s004060070031",
+    pmid: "10941989",
+    url: "https://link.springer.com/article/10.1007/s004060070031",
+    design: "psychophysiology study",
+    method: "Blood serotonin (platelet model), prolactin and ACTH while listening to pleasant and unpleasant music.",
+    population: "Healthy adults.",
+    n: null,
+    stimuli: "Music rated pleasant or unpleasant.",
+    comparison: "Pleasant vs unpleasant music.",
+    keyFindings: [
+      "Platelet serotonin differed between pleasant and unpleasant music, and the difference correlated with rated unpleasantness; prolactin and ACTH did not change."
+    ],
+    limitations: [
+      "Serotonin was measured in blood platelets, not in the brain. No brain-imaging study links music to serotonin release, so the app does not estimate it."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://link.springer.com/article/10.1007/s004060070031",
+        "https://pubmed.ncbi.nlm.nih.gov/10941989/"
+      ]
+    }
+  },
+  {
+    id: "chanda2013",
+    shortCite: "Chanda & Levitin 2013",
+    authors: "Chanda ML, Levitin DJ",
+    year: 2013,
+    title: "The neurochemistry of music",
+    venue: "Trends in Cognitive Sciences",
+    details: "17(4):179-193",
+    doi: "10.1016/j.tics.2013.02.007",
+    url: "https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613(13)00049-1",
+    design: "narrative review",
+    method: "Review of neurochemical studies of music in four domains: reward and pleasure, stress and arousal, immunity, and social affiliation.",
+    population: "Published studies.",
+    n: null,
+    stimuli: "Varied.",
+    comparison: "Varied.",
+    keyFindings: [
+      "Evidence links music to dopamine and opioids (reward), cortisol and related hormones (stress), immune markers and oxytocin (social bonding), with many small studies."
+    ],
+    limitations: [
+      "Many underlying studies are small and not replicated; blood measures do not show brain release."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.cell.com/trends/cognitive-sciences/abstract/S1364-6613(13)00049-1"
+      ]
+    }
+  },
+  {
+    id: "juslin2003",
+    shortCite: "Juslin & Laukka 2003",
+    authors: "Juslin PN, Laukka P",
+    year: 2003,
+    title: "Communication of emotions in vocal expression and music performance: Different channels, same code?",
+    venue: "Psychological Bulletin",
+    details: "129(5):770-814",
+    doi: "10.1037/0033-2909.129.5.770",
+    url: "https://www.semanticscholar.org/paper/Communication-of-emotions-in-vocal-expression-and-Juslin-Laukka/eca56407506a27d7a7ccac7e1499f608340b2328",
+    design: "systematic review and meta-analysis",
+    method: "Review and meta-analysis of studies of emotional expression in speech and music performance, including a summary of which acoustic cues go with which emotions.",
+    population: "104 vocal-expression and 41 music-performance studies.",
+    n: null,
+    stimuli: "Vocal and musical performances expressing emotions.",
+    comparison: "Emotions expressed; acoustic cues.",
+    keyFindings: [
+      "Emotions are communicated by a shared acoustic code: fast tempo and high loudness for happiness and anger, slow tempo, low loudness and dull timbre for sadness and tenderness, sharp timbre and irregularity for anger and fear."
+    ],
+    limitations: [
+      "About emotions listeners recognise in music (perceived), which often but not always match what they feel."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.semanticscholar.org/paper/Communication-of-emotions-in-vocal-expression-and-Juslin-Laukka/eca56407506a27d7a7ccac7e1499f608340b2328"
+      ]
+    }
+  },
+  {
+    id: "gomez2007",
+    shortCite: "Gomez & Danuser 2007",
+    authors: "Gomez P, Danuser B",
+    year: 2007,
+    title: "Relationships between musical structure and psychophysiological measures of emotion",
+    venue: "Emotion",
+    details: "7(2):377-387",
+    doi: "10.1037/1528-3542.7.2.377",
+    pmid: "17516815",
+    url: "https://pubmed.ncbi.nlm.nih.gov/17516815/",
+    design: "psychophysiology study",
+    method: "Felt pleasantness and arousal ratings plus breathing, skin conductance and heart rate for 16 excerpts, related to 11 structural features of the music.",
+    population: "Adult listeners.",
+    n: null,
+    stimuli: "16 musical excerpts.",
+    comparison: "Structural features vs ratings and physiology.",
+    keyFindings: [
+      "Mode, harmonic complexity and rhythmic articulation best separated pleasant from unpleasant; tempo, accentuation and rhythmic articulation best separated high from low arousal."
+    ],
+    limitations: [
+      "16 excerpts; correlational."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://pubmed.ncbi.nlm.nih.gov/17516815/"
+      ]
+    }
+  },
+  {
+    id: "eerola2013",
+    shortCite: "Eerola et al. 2013",
+    authors: "Eerola T, Friberg A, Bresin R",
+    year: 2013,
+    title: "Emotional expression in music: contribution, linearity, and additivity of primary musical cues",
+    venue: "Frontiers in Psychology",
+    details: "4:487",
+    doi: "10.3389/fpsyg.2013.00487",
+    url: "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2013.00487/full",
+    design: "behavioural study",
+    method: "Factorial experiment systematically varying six musical cues (mode, tempo, dynamics, articulation, timbre, register) and collecting emotion ratings.",
+    population: "Adult listeners.",
+    n: null,
+    stimuli: "Specially composed excerpts with manipulated cues.",
+    comparison: "Cue levels.",
+    keyFindings: [
+      "Mode and tempo had the largest effects on perceived emotion; the cues combined mostly additively."
+    ],
+    limitations: [
+      "Perceived (not felt) emotion; artificial stimuli."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2013.00487/xml/nlm"
+      ]
+    }
+  },
+  {
+    id: "russell1980",
+    shortCite: "Russell 1980",
+    authors: "Russell JA",
+    year: 1980,
+    title: "A circumplex model of affect",
+    venue: "Journal of Personality and Social Psychology",
+    details: "39(6):1161-1178",
+    doi: "10.1037/h0077714",
+    url: "https://doi.org/10.1037/h0077714",
+    design: "behavioural study",
+    method: "Scaling studies of emotion words showing they arrange in a circle defined by pleasure (valence) and arousal.",
+    population: "Adult participants.",
+    n: null,
+    stimuli: "Emotion words.",
+    comparison: "Similarity of affect terms.",
+    keyFindings: [
+      "Emotions can be placed on two dimensions, pleasant-unpleasant (valence) and activated-deactivated (arousal)."
+    ],
+    limitations: [
+      "A description of how people describe feelings, not of brain systems."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://doi.org/10.1037/h0077714"
+      ]
+    }
+  },
+  {
+    id: "aljanaki2017",
+    shortCite: "Aljanaki et al. 2017",
+    authors: "Aljanaki A, Yang YH, Soleymani M",
+    year: 2017,
+    title: "Developing a benchmark for emotional analysis of music",
+    venue: "PLOS ONE",
+    details: "12(3):e0173392",
+    doi: "10.1371/journal.pone.0173392",
+    url: "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0173392",
+    design: "methods / database",
+    method: "The DEAM benchmark: continuous crowd-sourced valence and arousal ratings for about 1,800 songs, with results of many computer models.",
+    population: "Crowd-sourced raters.",
+    n: null,
+    stimuli: "45-second excerpts of freely licensed songs.",
+    comparison: "Model predictions vs mean ratings.",
+    keyFindings: [
+      "Computer models predict moment-to-moment arousal much better than valence; loudness and timbre-related features are among the most useful."
+    ],
+    limitations: [
+      "The initial seconds of each rating are unreliable while raters settle, so they are discarded."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0173392"
+      ]
+    }
+  },
+  {
+    id: "ferreira2019",
+    shortCite: "Ferreira & Whitehead 2019",
+    authors: "Ferreira LN, Whitehead J",
+    year: 2019,
+    title: "Learning to generate music with sentiment",
+    venue: "Proceedings of the 20th International Society for Music Information Retrieval Conference (ISMIR)",
+    url: "https://archives.ismir.net/ismir2019/paper/000045.pdf",
+    design: "methods / database",
+    method: "Introduces VGMIDI: piano arrangements of video-game music with continuous valence and arousal ratings collected while listening.",
+    population: "Online raters, about 30 per piece.",
+    n: "95 rated pieces",
+    stimuli: "Piano arrangements of video-game soundtracks.",
+    comparison: "Not applicable (dataset).",
+    keyFindings: [
+      "Provides bar-by-bar valence and arousal ratings from about 30 listeners per piece, with the audio."
+    ],
+    limitations: [
+      "Solo piano, video-game music only; ratings of perceived emotion."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://archives.ismir.net/ismir2019/paper/000045.pdf",
+        "https://github.com/lucasnfe/vgmidi"
+      ]
+    }
+  },
+  {
+    id: "pons2019",
+    shortCite: "Pons & Serra 2019",
+    authors: "Pons J, Serra X",
+    year: 2019,
+    title: "musicnn: Pre-trained convolutional neural networks for music audio tagging",
+    venue: "ISMIR 2019 Late-Breaking/Demo (arXiv:1909.06654)",
+    url: "https://arxiv.org/abs/1909.06654",
+    design: "methods / database",
+    method: "Convolutional networks trained to predict the tags listeners gave songs (Million Song Dataset, 50 Last.fm tags including happy, sad, mellow, chill, party).",
+    population: "Last.fm listeners' tags on Million Song Dataset tracks.",
+    n: null,
+    stimuli: "Popular music recordings.",
+    comparison: "Predicted vs listener tags.",
+    keyFindings: [
+      "Pre-trained models tag music audio with about 0.88 ROC-AUC on the Million Song Dataset."
+    ],
+    limitations: [
+      "Tags are noisy and mostly genre; mood tags are a small part and reflect Last.fm users."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://arxiv.org/abs/1909.06654",
+        "https://github.com/jordipons/musicnn"
+      ]
+    }
+  },
+  {
+    id: "fusarpoli2009",
+    shortCite: "Fusar-Poli et al. 2009",
+    authors: "Fusar-Poli P, Placentino A, Carletti F, et al.",
+    year: 2009,
+    title: "Functional atlas of emotional faces processing: a voxel-based meta-analysis of 105 functional magnetic resonance imaging studies",
+    venue: "Journal of Psychiatry & Neuroscience",
+    details: "34(6):418-432",
+    pmcid: "PMC2783433",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC2783433/",
+    design: "coordinate-based meta-analysis",
+    method: "Voxel-based meta-analysis of fMRI studies of viewing emotional faces.",
+    population: "105 fMRI studies.",
+    n: "105 studies",
+    stimuli: "Photographs of emotional facial expressions.",
+    comparison: "Emotional vs neutral faces; specific emotions.",
+    keyFindings: [
+      "Viewing emotional faces engaged the amygdala, fusiform gyrus and other areas; fearful, happy and sad faces engaged the amygdala, and disgusted faces the insula."
+    ],
+    limitations: [
+      "Posed photographs; perceiving a face's emotion is not feeling it."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC2783433/"
+      ]
+    }
+  },
+  {
+    id: "valdez1994",
+    shortCite: "Valdez & Mehrabian 1994",
+    authors: "Valdez P, Mehrabian A",
+    year: 1994,
+    title: "Effects of color on emotions",
+    venue: "Journal of Experimental Psychology: General",
+    details: "123(4):394-409",
+    doi: "10.1037/0096-3445.123.4.394",
+    url: "https://www.semanticscholar.org/paper/Effects-of-color-on-emotions.-Valdez-Mehrabian/d15bdf485f3a64abb59e4d0d1d1b18a9fc652bf9",
+    design: "behavioural study",
+    method: "Ratings of pleasure, arousal and dominance for colour samples varying in hue, saturation and brightness.",
+    population: "Adult participants.",
+    n: null,
+    stimuli: "Colour samples.",
+    comparison: "Hue, saturation and brightness levels.",
+    keyFindings: [
+      "Brighter colours were rated more pleasant; more saturated colours more arousing."
+    ],
+    limitations: [
+      "Isolated colour samples, not film frames."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://www.semanticscholar.org/paper/Effects-of-color-on-emotions.-Valdez-Mehrabian/d15bdf485f3a64abb59e4d0d1d1b18a9fc652bf9"
+      ]
+    }
+  },
+  {
+    id: "hanjalic2005",
+    shortCite: "Hanjalic & Xu 2005",
+    authors: "Hanjalic A, Xu LQ",
+    year: 2005,
+    title: "Affective video content representation and modeling",
+    venue: "IEEE Transactions on Multimedia",
+    details: "7(1):143-154",
+    doi: "10.1109/TMM.2004.840618",
+    url: "https://research.tudelft.nl/en/publications/affective-video-content-representation-and-modeling/",
+    design: "methods / database",
+    method: "Computational model estimating the arousal curve of video from motion, shot-cut rate and sound energy, grounded in psychophysiology.",
+    population: "Not applicable (model).",
+    n: null,
+    stimuli: "Film and sports video.",
+    comparison: "Model curves vs expected excitement.",
+    keyFindings: [
+      "Motion activity, cut rate and sound energy together give a plausible moment-by-moment arousal curve for video."
+    ],
+    limitations: [
+      "Model evaluated qualitatively; valence was much harder."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://research.tudelft.nl/en/publications/affective-video-content-representation-and-modeling/"
+      ]
+    }
+  },
+  {
+    id: "barrett2019",
+    shortCite: "Barrett et al. 2019",
+    authors: "Barrett LF, Adolphs R, Marsella S, Martinez AM, Pollak SD",
+    year: 2019,
+    title: "Emotional expressions reconsidered: challenges to inferring emotion from human facial movements",
+    venue: "Psychological Science in the Public Interest",
+    details: "20(1):1-68",
+    doi: "10.1177/1529100619832930",
+    url: "https://journals.sagepub.com/doi/10.1177/1529100619832930",
+    design: "narrative review",
+    method: "Systematic review of evidence on whether facial movements reliably and specifically reveal emotional states across people and cultures.",
+    population: "Published studies of facial expression production and perception.",
+    n: null,
+    stimuli: "Facial configurations (posed and spontaneous).",
+    comparison: "Facial movements vs reported or induced emotions.",
+    keyFindings: [
+      "People do smile, scowl and frown more often in the matching emotions than by chance, but far from reliably; the same movement can mean different things in different contexts.",
+      "Facial configurations are not a reliable read-out of what someone feels."
+    ],
+    limitations: [
+      "About inferring the expresser's feelings; viewers still perceive and react to expressions."
+    ],
+    naturalistic: false,
+    verification: {
+      level: "search-index",
+      checkedOn: "2026-09-29",
+      via: [
+        "https://journals.sagepub.com/doi/10.1177/1529100619832930"
       ]
     }
   }
@@ -19961,7 +20822,7 @@ var associations_default = [
     ],
     limitations: [
       "Conditional: only relevant if a listener finds the music pleasurable or moving; familiarity and personal history strongly change responses.",
-      "This app never estimates dopamine release, hormone levels or how much anyone enjoys the music."
+      "This association does not estimate dopamine release; the Emotion view gives a separate, labelled estimate for a typical listener who says they enjoy the music."
     ]
   },
   {
@@ -21117,7 +21978,7 @@ var unsupported_default = [
     id: "u_dopamine_hormones",
     topic: "Dopamine release, hormone levels, or neurotransmitter estimates",
     appliesTo: { processes: ["music_evoked_reward", "humor_appreciation"] },
-    reason: "Dopamine release has been measured with PET in specific listeners hearing music they chose (Salimpoor et al. 2011). Neurochemistry cannot be inferred from a media file, so the app never displays it.",
+    reason: "Dopamine release has been measured with PET in specific listeners hearing music they chose (Salimpoor et al. 2011). The evidence map does not assign neurochemistry to regions; the separate Emotion view estimates reward-system engagement for a typical listener who enjoys the music and labels it as an estimate, not a measurement.",
     sources: ["salimpoor2011"]
   },
   {

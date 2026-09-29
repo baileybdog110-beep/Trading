@@ -1,0 +1,992 @@
+{
+ "dataset": "VGMIDI (Ferreira & Whitehead 2019): continuous valence/arousal per bar, video-game piano pieces rendered to audio",
+ "pieces": 95,
+ "bars": 3936,
+ "raters": 2881,
+ "targetSD": {
+  "valence": 0.253,
+  "arousal": 0.252
+ },
+ "settings": {
+  "shortWindowS": 4.0,
+  "longWindowS": 8.0,
+  "skipStartS": 5.0,
+  "cv": "5-fold, whole pieces held out (GroupKFold); ridge alpha chosen by inner 4-fold group CV; standardisation fitted on training folds"
+ },
+ "human": {
+  "valence": {
+   "oneListenerVsOthers_r": 0.507,
+   "oneListenerVsOthers_pieceR": 0.575,
+   "oneListenerVsOthers_withinR_median": 0.3,
+   "crowdMeanReliability": 0.92
+  },
+  "arousal": {
+   "oneListenerVsOthers_r": 0.486,
+   "oneListenerVsOthers_pieceR": 0.555,
+   "oneListenerVsOthers_withinR_median": 0.232,
+   "crowdMeanReliability": 0.915
+  }
+ },
+ "models": {
+  "valence": {
+   "prior": {
+    "r": 0.254,
+    "r2": 0.059,
+    "pieceR": 0.444,
+    "withinR_median": 0.187,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.642
+   },
+   "cues": {
+    "r": 0.498,
+    "r2": 0.247,
+    "pieceR": 0.652,
+    "withinR_median": 0.22,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.705
+   },
+   "cues+pieceContext": {
+    "r": 0.635,
+    "r2": 0.397,
+    "pieceR": 0.676,
+    "withinR_median": 0.259,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.789
+   },
+   "tags": {
+    "r": 0.468,
+    "r2": 0.219,
+    "pieceR": 0.53,
+    "withinR_median": 0.197,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.695
+   },
+   "cues+tags": {
+    "r": 0.57,
+    "r2": 0.325,
+    "pieceR": 0.685,
+    "withinR_median": 0.159,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.705
+   },
+   "cues+pieceContext+tags": {
+    "r": 0.685,
+    "r2": 0.464,
+    "pieceR": 0.698,
+    "withinR_median": 0.199,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.821
+   }
+  },
+  "arousal": {
+   "prior": {
+    "r": 0.542,
+    "r2": 0.293,
+    "pieceR": 0.668,
+    "withinR_median": 0.436,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.789
+   },
+   "cues": {
+    "r": 0.676,
+    "r2": 0.457,
+    "pieceR": 0.781,
+    "withinR_median": 0.332,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.811
+   },
+   "cues+pieceContext": {
+    "r": 0.754,
+    "r2": 0.567,
+    "pieceR": 0.775,
+    "withinR_median": 0.406,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.8
+   },
+   "tags": {
+    "r": 0.593,
+    "r2": 0.344,
+    "pieceR": 0.73,
+    "withinR_median": 0.285,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.758
+   },
+   "cues+tags": {
+    "r": 0.696,
+    "r2": 0.484,
+    "pieceR": 0.799,
+    "withinR_median": 0.301,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.842
+   },
+   "cues+pieceContext+tags": {
+    "r": 0.769,
+    "r2": 0.592,
+    "pieceR": 0.789,
+    "withinR_median": 0.426,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.821
+   }
+  }
+ },
+ "byGameHeldOut": {
+  "valence": {
+   "cues+pieceContext": {
+    "r": 0.519,
+    "r2": 0.236,
+    "pieceR": 0.588,
+    "withinR_median": 0.23,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.726
+   },
+   "cues+pieceContext+tags": {
+    "r": 0.594,
+    "r2": 0.303,
+    "pieceR": 0.616,
+    "withinR_median": 0.167,
+    "withinR_n": 43,
+    "pieceSignAgreement": 0.737
+   }
+  },
+  "arousal": {
+   "cues+pieceContext": {
+    "r": 0.777,
+    "r2": 0.603,
+    "pieceR": 0.79,
+    "withinR_median": 0.429,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.8
+   },
+   "cues+pieceContext+tags": {
+    "r": 0.808,
+    "r2": 0.645,
+    "pieceR": 0.831,
+    "withinR_median": 0.433,
+    "withinR_n": 47,
+    "pieceSignAgreement": 0.842
+   }
+  }
+ },
+ "perPiece": [
+  {
+   "wav": "BanjoKazooie_BoggysIglooHappy.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 30,
+   "bars": 14,
+   "valence": 0.457,
+   "arousal": 0.178
+  },
+  {
+   "wav": "BanjoKazooie_BoggysIglooSad.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 30,
+   "bars": 14,
+   "valence": 0.112,
+   "arousal": -0.018
+  },
+  {
+   "wav": "BanjoKazooie_BubblegloopSwamp.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 32,
+   "bars": 40,
+   "valence": 0.389,
+   "arousal": 0.298
+  },
+  {
+   "wav": "BanjoKazooie_ClickClockWood.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 31,
+   "bars": 35,
+   "valence": 0.517,
+   "arousal": 0.254
+  },
+  {
+   "wav": "BanjoKazooie_Ending.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 30,
+   "bars": 34,
+   "valence": 0.372,
+   "arousal": -0.121
+  },
+  {
+   "wav": "BanjoKazooie_FreezeezyPeak.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 31,
+   "bars": 21,
+   "valence": 0.348,
+   "arousal": 0.483
+  },
+  {
+   "wav": "BanjoKazooie_GobisValley.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 29,
+   "bars": 65,
+   "valence": 0.334,
+   "arousal": 0.158
+  },
+  {
+   "wav": "BanjoKazooie_MadMonsterMansion.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 29,
+   "bars": 40,
+   "valence": -0.166,
+   "arousal": 0.254
+  },
+  {
+   "wav": "BanjoKazooie_Motzhand.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 30,
+   "bars": 10,
+   "valence": 0.307,
+   "arousal": 0.172
+  },
+  {
+   "wav": "BanjoKazooie_MumbosMountain.wav",
+   "game": "Banjo-Kazooie",
+   "raters": 30,
+   "bars": 48,
+   "valence": 0.464,
+   "arousal": 0.214
+  },
+  {
+   "wav": "Donkey_Kong_Country_2_BayouBoogie.wav",
+   "game": "Donkey Kong Country 2 Diddy's Kong Quest",
+   "raters": 30,
+   "bars": 50,
+   "valence": -0.007,
+   "arousal": -0.137
+  },
+  {
+   "wav": "Donkey_Kong_Country_2_HotHeadBop.wav",
+   "game": "Donkey Kong Country 2 Diddy's Kong Quest",
+   "raters": 30,
+   "bars": 46,
+   "valence": 0.012,
+   "arousal": 0.232
+  },
+  {
+   "wav": "Donkey_Kong_Country_2_JibJig.wav",
+   "game": "Donkey Kong Country 2 Diddy's Kong Quest",
+   "raters": 30,
+   "bars": 46,
+   "valence": 0.316,
+   "arousal": 0.339
+  },
+  {
+   "wav": "Donkey_Kong_Country_2_SnakeyChantey.wav",
+   "game": "Donkey Kong Country 2 Diddy's Kong Quest",
+   "raters": 30,
+   "bars": 41,
+   "valence": 0.529,
+   "arousal": 0.345
+  },
+  {
+   "wav": "Final_Fantasy_7_AHighwindtakestotheSkies.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 79,
+   "valence": 0.338,
+   "arousal": 0.401
+  },
+  {
+   "wav": "Final_Fantasy_7_AerithsTheme.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 42,
+   "valence": 0.255,
+   "arousal": -0.255
+  },
+  {
+   "wav": "Final_Fantasy_7_AnxiousHeart.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 31,
+   "valence": -0.175,
+   "arousal": -0.215
+  },
+  {
+   "wav": "Final_Fantasy_7_BattleTheme.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 26,
+   "valence": 0.089,
+   "arousal": 0.411
+  },
+  {
+   "wav": "Final_Fantasy_7_ChasingTheBlackCapedMan.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 58,
+   "valence": -0.067,
+   "arousal": 0.068
+  },
+  {
+   "wav": "Final_Fantasy_7_CincodeChocobo.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 58,
+   "valence": 0.486,
+   "arousal": 0.212
+  },
+  {
+   "wav": "Final_Fantasy_7_Continue.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 24,
+   "valence": 0.157,
+   "arousal": -0.206
+  },
+  {
+   "wav": "Final_Fantasy_7_CostaDelSol.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 30,
+   "valence": 0.464,
+   "arousal": -0.074
+  },
+  {
+   "wav": "Final_Fantasy_7_ElectricdeChocobo.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 59,
+   "valence": 0.197,
+   "arousal": 0.422
+  },
+  {
+   "wav": "Final_Fantasy_7_FortressoftheCondor.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 53,
+   "valence": -0.118,
+   "arousal": 0.245
+  },
+  {
+   "wav": "Final_Fantasy_7_GoldSaucer.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 84,
+   "valence": 0.487,
+   "arousal": 0.112
+  },
+  {
+   "wav": "Final_Fantasy_7_GreatWarrior.wav",
+   "game": "Final Fantasy VII",
+   "raters": 29,
+   "bars": 81,
+   "valence": 0.1,
+   "arousal": -0.182
+  },
+  {
+   "wav": "Final_Fantasy_7_HoldingMyThoughtsinMyHeart.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 33,
+   "valence": 0.241,
+   "arousal": -0.21
+  },
+  {
+   "wav": "Final_Fantasy_7_ItsDifficultToStandOnBothFeetIsntIt.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 69,
+   "valence": -0.087,
+   "arousal": 0.028
+  },
+  {
+   "wav": "Final_Fantasy_7_JenovaAbsolute.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 46,
+   "valence": 0.057,
+   "arousal": 0.411
+  },
+  {
+   "wav": "Final_Fantasy_7_JudgementDay.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 34,
+   "valence": -0.116,
+   "arousal": 0.147
+  },
+  {
+   "wav": "Final_Fantasy_7_LifeStream.wav",
+   "game": "Final Fantasy VII",
+   "raters": 32,
+   "bars": 70,
+   "valence": -0.012,
+   "arousal": -0.396
+  },
+  {
+   "wav": "Final_Fantasy_7_LurkingInTheDarkness.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 30,
+   "valence": -0.214,
+   "arousal": -0.038
+  },
+  {
+   "wav": "Final_Fantasy_7_MainTheme.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 22,
+   "valence": 0.299,
+   "arousal": -0.052
+  },
+  {
+   "wav": "Final_Fantasy_7_MarkoftheTraitor.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 44,
+   "valence": 0.015,
+   "arousal": -0.312
+  },
+  {
+   "wav": "Final_Fantasy_7_MiningTown.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 20,
+   "valence": 0.187,
+   "arousal": -0.093
+  },
+  {
+   "wav": "Final_Fantasy_7_OnThatDay5YearsAgo.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 53,
+   "valence": -0.041,
+   "arousal": -0.084
+  },
+  {
+   "wav": "Final_Fantasy_7_OppressedPeople.wav",
+   "game": "Final Fantasy VII",
+   "raters": 31,
+   "bars": 38,
+   "valence": -0.133,
+   "arousal": 0.061
+  },
+  {
+   "wav": "Final_Fantasy_7_Overworld.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 56,
+   "valence": 0.333,
+   "arousal": -0.149
+  },
+  {
+   "wav": "Final_Fantasy_7_RufussWelcomingCeremony.wav",
+   "game": "Final Fantasy VII",
+   "raters": 32,
+   "bars": 58,
+   "valence": 0.48,
+   "arousal": 0.218
+  },
+  {
+   "wav": "Final_Fantasy_7_SandyBadlands.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 50,
+   "valence": 0.268,
+   "arousal": -0.298
+  },
+  {
+   "wav": "Final_Fantasy_7_TheNightmareBegins.wav",
+   "game": "Final Fantasy VII",
+   "raters": 32,
+   "bars": 58,
+   "valence": -0.03,
+   "arousal": 0.117
+  },
+  {
+   "wav": "Final_Fantasy_7_ThoseChosenBythePlanet.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 32,
+   "valence": -0.208,
+   "arousal": 0.162
+  },
+  {
+   "wav": "Final_Fantasy_7_Tifa.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 54,
+   "valence": 0.263,
+   "arousal": -0.204
+  },
+  {
+   "wav": "Final_Fantasy_7_TrailofBlood.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 35,
+   "valence": -0.318,
+   "arousal": -0.204
+  },
+  {
+   "wav": "Final_Fantasy_7_VincentsTheme.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 46,
+   "valence": -0.072,
+   "arousal": 0.099
+  },
+  {
+   "wav": "Final_Fantasy_7_WaltzdeChocobo.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 19,
+   "valence": 0.508,
+   "arousal": 0.147
+  },
+  {
+   "wav": "Final_Fantasy_7_WeaponRaid.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 40,
+   "valence": -0.106,
+   "arousal": 0.422
+  },
+  {
+   "wav": "Final_Fantasy_7_WhoAreYou.wav",
+   "game": "Final Fantasy VII",
+   "raters": 30,
+   "bars": 38,
+   "valence": -0.032,
+   "arousal": -0.126
+  },
+  {
+   "wav": "Goldeneye_Caverns.wav",
+   "game": "GoldenEye 007",
+   "raters": 30,
+   "bars": 67,
+   "valence": -0.149,
+   "arousal": 0.063
+  },
+  {
+   "wav": "Goldeneye_Dam.wav",
+   "game": "GoldenEye 007",
+   "raters": 30,
+   "bars": 61,
+   "valence": -0.095,
+   "arousal": 0.409
+  },
+  {
+   "wav": "Goldeneye_FacilityX.wav",
+   "game": "GoldenEye 007",
+   "raters": 31,
+   "bars": 22,
+   "valence": -0.114,
+   "arousal": 0.365
+  },
+  {
+   "wav": "Goldeneye_Frigate.wav",
+   "game": "GoldenEye 007",
+   "raters": 30,
+   "bars": 54,
+   "valence": 0.016,
+   "arousal": 0.334
+  },
+  {
+   "wav": "Goldeneye_Runway.wav",
+   "game": "GoldenEye 007",
+   "raters": 30,
+   "bars": 74,
+   "valence": 0.097,
+   "arousal": 0.125
+  },
+  {
+   "wav": "Goldeneye_RunwayX.wav",
+   "game": "GoldenEye 007",
+   "raters": 31,
+   "bars": 22,
+   "valence": -0.108,
+   "arousal": 0.046
+  },
+  {
+   "wav": "Goldeneye_Statue.wav",
+   "game": "GoldenEye 007",
+   "raters": 30,
+   "bars": 80,
+   "valence": -0.247,
+   "arousal": -0.128
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_AlienInvasion.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 22,
+   "valence": -0.133,
+   "arousal": 0.424
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_ChaseTheme.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 31,
+   "bars": 22,
+   "valence": -0.116,
+   "arousal": 0.494
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_ClockTown.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 33,
+   "valence": 0.458,
+   "arousal": 0.077
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_CremiasWagonRide.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 17,
+   "valence": 0.467,
+   "arousal": -0.17
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_DekuPalace.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 31,
+   "bars": 58,
+   "valence": 0.447,
+   "arousal": 0.19
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_SongOfHealing.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 25,
+   "valence": 0.125,
+   "arousal": -0.282
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_StoneTempleTower.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 28,
+   "valence": -0.209,
+   "arousal": -0.063
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_StoneTowerTempleInverted.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 28,
+   "valence": 0.043,
+   "arousal": 0.039
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Majoras_Mask_TheMayorsOffice.wav",
+   "game": "The Legend of Zelda Majora's Mask",
+   "raters": 30,
+   "bars": 38,
+   "valence": 0.037,
+   "arousal": 0.106
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_Ganondorf.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 16,
+   "valence": -0.098,
+   "arousal": -0.049
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_GerudoValley.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 76,
+   "valence": 0.198,
+   "arousal": 0.431
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_GoronCity.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 30,
+   "valence": 0.428,
+   "arousal": -0.051
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_HyruleCastleTown.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 22,
+   "valence": 0.488,
+   "arousal": 0.153
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_InsideJabuJabusBelly.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 17,
+   "valence": -0.094,
+   "arousal": 0.208
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_Introduction.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 29,
+   "bars": 41,
+   "valence": 0.256,
+   "arousal": -0.323
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_KokiriForest.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 44,
+   "valence": 0.451,
+   "arousal": 0.369
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_LostWoods.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 34,
+   "valence": 0.476,
+   "arousal": 0.002
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_OwlsTheme.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 32,
+   "valence": 0.307,
+   "arousal": -0.017
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_PreludeofLight.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 31,
+   "bars": 7,
+   "valence": 0.333,
+   "arousal": -0.389
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_SariasSong.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 37,
+   "valence": 0.442,
+   "arousal": 0.331
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_Of_Time_WindmillHut.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 32,
+   "valence": 0.3,
+   "arousal": -0.035
+  },
+  {
+   "wav": "Legend_Of_Zelda_The_Ocarina_of_Time_TempleofTime.wav",
+   "game": "The Legend of Zelda Ocarina of Time",
+   "raters": 30,
+   "bars": 39,
+   "valence": -0.033,
+   "arousal": -0.424
+  },
+  {
+   "wav": "Shadow_of_the_Colossus_Memories.wav",
+   "game": "Shadow of the Colossus",
+   "raters": 31,
+   "bars": 14,
+   "valence": 0.055,
+   "arousal": -0.354
+  },
+  {
+   "wav": "Shadow_of_the_Colossus_Prayer.wav",
+   "game": "Shadow of the Colossus",
+   "raters": 30,
+   "bars": 49,
+   "valence": -0.096,
+   "arousal": -0.338
+  },
+  {
+   "wav": "Shadow_of_the_Colossus_TheFarthestLand.wav",
+   "game": "Shadow of the Colossus",
+   "raters": 32,
+   "bars": 49,
+   "valence": -0.119,
+   "arousal": -0.351
+  },
+  {
+   "wav": "Shadow_of_the_Colossus_TheOpenedWay.wav",
+   "game": "Shadow of the Colossus",
+   "raters": 30,
+   "bars": 57,
+   "valence": -0.144,
+   "arousal": 0.393
+  },
+  {
+   "wav": "Shadow_of_the_Colossus_TheTaleofthe16Sacrifices.wav",
+   "game": "Shadow of the Colossus",
+   "raters": 30,
+   "bars": 60,
+   "valence": 0.086,
+   "arousal": -0.182
+  },
+  {
+   "wav": "Super_Mario_64_KoopasTheme.wav",
+   "game": "Super Mario 64",
+   "raters": 32,
+   "bars": 41,
+   "valence": -0.252,
+   "arousal": 0.169
+  },
+  {
+   "wav": "Super_Mario_64_SelectaFile.wav",
+   "game": "Super Mario 64",
+   "raters": 31,
+   "bars": 28,
+   "valence": 0.502,
+   "arousal": 0.124
+  },
+  {
+   "wav": "Super_Mario_Bros_MainTheme.wav",
+   "game": "Super Mario Bros",
+   "raters": 31,
+   "bars": 37,
+   "valence": 0.472,
+   "arousal": 0.295
+  },
+  {
+   "wav": "Super_Mario_Bros_Underwater.wav",
+   "game": "Super Mario Bros",
+   "raters": 32,
+   "bars": 45,
+   "valence": 0.357,
+   "arousal": -0.08
+  },
+  {
+   "wav": "Super_Mario_Bros_Underworld.wav",
+   "game": "Super Mario Bros",
+   "raters": 30,
+   "bars": 9,
+   "valence": -0.105,
+   "arousal": 0.417
+  },
+  {
+   "wav": "Super_Mario_World_Castle.wav",
+   "game": "Super Mario World",
+   "raters": 30,
+   "bars": 97,
+   "valence": -0.136,
+   "arousal": 0.232
+  },
+  {
+   "wav": "Super_Mario_World_EndingTheme.wav",
+   "game": "Super Mario World",
+   "raters": 31,
+   "bars": 54,
+   "valence": 0.423,
+   "arousal": -0.098
+  },
+  {
+   "wav": "Super_Mario_World_ForestofIllusion.wav",
+   "game": "Super Mario World",
+   "raters": 30,
+   "bars": 14,
+   "valence": 0.265,
+   "arousal": 0.193
+  },
+  {
+   "wav": "Super_Mario_World_Overworld.wav",
+   "game": "Super Mario World",
+   "raters": 30,
+   "bars": 44,
+   "valence": 0.409,
+   "arousal": 0.34
+  },
+  {
+   "wav": "Super_Mario_World_Overworld2.wav",
+   "game": "Super Mario World",
+   "raters": 30,
+   "bars": 47,
+   "valence": 0.458,
+   "arousal": 0.383
+  },
+  {
+   "wav": "Super_Mario_World_TitleScreen.wav",
+   "game": "Super Mario World",
+   "raters": 30,
+   "bars": 48,
+   "valence": 0.379,
+   "arousal": 0.359
+  },
+  {
+   "wav": "Tetris_EnterYourName.wav",
+   "game": "Tetris",
+   "raters": 30,
+   "bars": 46,
+   "valence": 0.47,
+   "arousal": 0.225
+  },
+  {
+   "wav": "Tetris_MusicA.wav",
+   "game": "Tetris",
+   "raters": 30,
+   "bars": 45,
+   "valence": 0.176,
+   "arousal": 0.379
+  }
+ ],
+ "cueCorrelations": {
+  "valence": {
+   "level": 0.276,
+   "level_rel": 0.197,
+   "level_var": -0.105,
+   "onset_rate": 0.302,
+   "flux": 0.377,
+   "tempo": 0.05,
+   "pulse": 0.128,
+   "brightness": 0.065,
+   "flatness": -0.029,
+   "mode": 0.297,
+   "key_clarity": 0.36,
+   "dissonance": 0.041
+  },
+  "arousal": {
+   "level": 0.375,
+   "level_rel": 0.333,
+   "level_var": -0.42,
+   "onset_rate": 0.649,
+   "flux": 0.549,
+   "tempo": 0.215,
+   "pulse": 0.334,
+   "brightness": -0.068,
+   "flatness": -0.036,
+   "mode": -0.028,
+   "key_clarity": -0.038,
+   "dissonance": 0.476
+  }
+ },
+ "tagCorrelations": {
+  "valence": {
+   "happy": 0.147,
+   "sad": -0.383,
+   "Mellow": -0.283,
+   "chill": -0.319,
+   "party": 0.077,
+   "beautiful": -0.312,
+   "easy listening": -0.024,
+   "dance": -0.034,
+   "metal": -0.176,
+   "hard rock": -0.223,
+   "punk": -0.382,
+   "ambient": -0.295
+  },
+  "arousal": {
+   "happy": 0.326,
+   "sad": -0.412,
+   "Mellow": -0.371,
+   "chill": -0.396,
+   "party": 0.368,
+   "beautiful": -0.298,
+   "easy listening": -0.304,
+   "dance": 0.187,
+   "metal": -0.074,
+   "hard rock": -0.153,
+   "punk": -0.204,
+   "ambient": -0.191
+  }
+ }
+}

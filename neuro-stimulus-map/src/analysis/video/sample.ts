@@ -1,5 +1,5 @@
 import { detectCuts, estimateMotion, histDistance, separateFlashes, summarize, type FrameSummary } from './frameStats';
-import { detectFaces, loadFaceDetector } from './faces';
+import { detectFaces, loadExpressions, loadFaceDetector } from './faces';
 import type { VideoAnalysis, VideoSample } from './types';
 
 const SUMMARY_W = 96;
@@ -173,12 +173,16 @@ async function sampleFrames(
   const fctx = faceCanvas.getContext('2d')!;
 
   let faceapi: Awaited<ReturnType<typeof loadFaceDetector>> | null = null;
+  let withExpr = false;
   let faceNote = 'Face detection was switched off.';
   if (opts.faces) {
     try {
-      opts.onProgress?.(0, 'Loading local face detector');
+      opts.onProgress?.(0, 'Loading local face models');
       faceapi = await loadFaceDetector();
-      faceNote = 'TinyFaceDetector (local, in-browser) on about one frame per second.';
+      withExpr = await loadExpressions(faceapi);
+      faceNote = withExpr
+        ? 'Faces and the expressions they show (local models, in-browser) on about one frame per second.'
+        : 'TinyFaceDetector (local, in-browser) on about one frame per second; the expression model could not be loaded.';
     } catch (e) {
       faceNote = `Face detector could not be loaded (${(e as Error).message}); faces were not analysed.`;
     }
@@ -209,17 +213,19 @@ async function sampleFrames(
     }
     let faces: number | null = null;
     let faceArea: number | null = null;
+    let expr: VideoSample['expr'] = null;
     if (faceapi && k % faceEvery === 0) {
       fctx.drawImage(video, 0, 0, faceCanvas.width, faceCanvas.height);
       try {
-        const r = await detectFaces(faceapi, faceCanvas);
+        const r = await detectFaces(faceapi, faceCanvas, withExpr);
         faces = r.count;
         faceArea = r.maxArea;
+        expr = r.expr;
       } catch {
         faces = null;
       }
     }
-    samples.push({ t, luma: cur.luma, histDist, motion, residual, changed, faces, faceArea });
+    samples.push({ t, luma: cur.luma, sat: cur.sat, histDist, motion, residual, changed, faces, faceArea, expr });
     times.push(t);
     hists.push(cur.hist);
     prev = cur;

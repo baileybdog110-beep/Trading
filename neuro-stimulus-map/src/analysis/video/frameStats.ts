@@ -14,6 +14,8 @@ export interface FrameSummary {
   gray: Float32Array;
   hist: Float32Array; // 64-bin RGB histogram (4x4x4), normalised
   luma: number; // 0..1
+  /** mean HSV saturation, 0..1 */
+  sat: number;
 }
 
 export function summarize(f: SmallFrame): FrameSummary {
@@ -21,6 +23,7 @@ export function summarize(f: SmallFrame): FrameSummary {
   const gray = new Float32Array(n);
   const hist = new Float32Array(64);
   let sum = 0;
+  let sat = 0;
   for (let i = 0; i < n; i++) {
     const r = f.data[i * 4];
     const g = f.data[i * 4 + 1];
@@ -28,9 +31,11 @@ export function summarize(f: SmallFrame): FrameSummary {
     const y = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
     gray[i] = y;
     sum += y;
+    const mx = Math.max(r, g, b);
+    if (mx > 0) sat += (mx - Math.min(r, g, b)) / mx;
     hist[((r >> 6) << 4) | ((g >> 6) << 2) | (b >> 6)] += 1 / n;
   }
-  return { gray, hist, luma: sum / n };
+  return { gray, hist, luma: sum / n, sat: sat / n };
 }
 
 /** Half L1 distance between normalised histograms, 0..1. */
