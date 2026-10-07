@@ -1,0 +1,923 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// FSP-Style NQ Reversal Scalper
+// ─────────────────────────────
+// Private research indicator that models the trading approach seen in the public live streams of
+// "Futures Scalper" (FSP, youtube.com/@fspfutures). It is NOT made, endorsed or verified by FSP.
+// Evidence for every rule: research/FSP_STRATEGY_LOG.md · backtest notes: research/BACKTEST.md
+//
+// FSP in one line: "buy dips, sell rips, short pops, cover drops — don't be a hero."
+//   • Levels first: yesterday's close (yellow), prior-day high/low, overnight high/low, yesterday's pre-market
+//     high/low, the prior-close consolidation box, hourly S/R boxes and a Fibonacci retracement of the latest
+//     big swing (NinjaTrader levels incl. 76.4%).
+//   • Entries are counter-move scalps INTO those levels with resting limit orders after a dip (long) or rip (short).
+//   • Exits: 10-20-30 points (more when ATR is high), stop to breakeven after the first target, hold a runner.
+//   • RSI(14) and ATR(14) on the 1-minute chart are context, not triggers — the two indicators FSP says he uses.
+//
+// Educational use only. Not financial advice. Futures trading carries substantial risk.
+
+//@version=6
+indicator("FSP-Style NQ Reversal Scalper", shorttitle = "FSP Scalper", overlay = true, max_boxes_count = 200, max_lines_count = 400, max_labels_count = 400, max_bars_back = 1000)
+
+const string TZ = "America/New_York"
+const string LIMIT = "Limit at level (FSP-style)"
+const string CONFIRM = "Confirmation close"
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Inputs
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const string G_SES = "Session (New York time)"
+string sessRTH    = input.session("0930-1600", "RTH session", group = G_SES)
+string sessTrade  = input.session("0930-1130", "Signal window", group = G_SES, tooltip = "FSP trades the New York open and says he generally avoids entering midday.")
+bool   useTrade2  = input.bool(false, "2nd window", group = G_SES, inline = "w2")
+string sessTrade2 = input.session("1330-1500", "", group = G_SES, inline = "w2")
+string sessPM     = input.session("0400-0930", "Pre-market window", group = G_SES)
+string sessAsia   = input.session("1800-0200", "Asia window", group = G_SES)
+bool   newsPause  = input.bool(true, "Pause signals around 10:00 ET data", group = G_SES, inline = "nw", tooltip = "FSP covers or stands aside into 10:00 releases (ISM, JOLTS, sentiment…).")
+int    newsMins   = input.int(2, "± minutes", minval = 0, maxval = 15, group = G_SES, inline = "nw")
+
+const string G_LVL = "Key levels (✓ = drawn; 'signals' = can trigger an entry)"
+bool   showPDC    = input.bool(true, "Yesterday's close (yellow)", group = G_LVL, inline = "l1")
+bool   showPDHL   = input.bool(true, "Prior-day high/low", group = G_LVL, inline = "l1")
+bool   showON     = input.bool(true, "Overnight high/low", group = G_LVL, inline = "l2")
+bool   showYPM    = input.bool(true, "Yesterday's pre-market high/low", group = G_LVL, inline = "l2")
+bool   showCB     = input.bool(true, "Prior-close box", group = G_LVL, inline = "l3", tooltip = "Consolidation range into yesterday's close — FSP: 'this box is the consolidation zone of the close yesterday'.")
+string sessCB     = input.session("1530-1600", "window", group = G_LVL, inline = "l3")
+bool   showPM     = input.bool(true, "Today's pre-market high/low", group = G_LVL, inline = "l4")
+bool   sigPM      = input.bool(false, "signals", group = G_LVL, inline = "l4", tooltip = "Off by default: in the backtest these levels added trades without adding edge.")
+bool   showOpen   = input.bool(true, "RTH open", group = G_LVL, inline = "l5")
+bool   sigOpen    = input.bool(false, "signals", group = G_LVL, inline = "l5", tooltip = "Off by default: in the backtest the RTH open was a weak reversal level.")
+bool   showAsia   = input.bool(false, "Asia high/low", group = G_LVL, inline = "l6")
+bool   sigAsia    = input.bool(false, "signals", group = G_LVL, inline = "l6")
+color  colPDC     = input.color(color.yellow, "Close", group = G_LVL, inline = "lc")
+color  colLvl     = input.color(color.new(color.orange, 20), "Other levels", group = G_LVL, inline = "lc")
+bool   lvlLabels  = input.bool(true, "Labels", group = G_LVL, inline = "lc")
+
+const string G_Z = "Support & resistance boxes (auto, hourly)"
+bool   showZones  = input.bool(true, "Show boxes", group = G_Z, inline = "z0")
+bool   boxTrig    = input.bool(false, "Boxes trigger signals", group = G_Z, inline = "z0", tooltip = "Off by default: auto-drawn boxes work better as confluence (a level inside a box grades higher) than as stand-alone entries.")
+string zoneTF     = input.timeframe("60", "Box timeframe", group = G_Z, tooltip = "FSP marks hourly support/resistance boxes ('the hourly zone has to hold').")
+int    pivLen     = input.int(3, "Swing strength (bars each side)", minval = 1, maxval = 10, group = G_Z)
+float  zMinATR    = input.float(0.20, "Min box height × box-TF ATR", minval = 0.05, step = 0.05, group = G_Z)
+float  zMaxATR    = input.float(0.55, "Max box height × box-TF ATR", minval = 0.1, step = 0.05, group = G_Z)
+int    maxZones   = input.int(14, "Max boxes kept", minval = 2, maxval = 40, group = G_Z)
+bool   flipZones  = input.bool(true, "Flip broken boxes (support ⇄ resistance)", group = G_Z)
+color  colSup     = input.color(color.new(#2962FF, 82), "Support", group = G_Z, inline = "zc")
+color  colRes     = input.color(color.new(#7E57C2, 82), "Resistance", group = G_Z, inline = "zc")
+
+const string G_F = "Fibonacci (latest major swing)"
+bool   showFib    = input.bool(true, "Show fib", group = G_F, inline = "f0")
+bool   fibSignal  = input.bool(true, "signals", group = G_F, inline = "f0")
+string fibTF      = input.timeframe("60", "Swing timeframe", group = G_F)
+int    fibLen     = input.int(69, "Swing lookback (bars of that timeframe)", minval = 10, maxval = 400, group = G_F, tooltip = "69 hourly bars ≈ 3 sessions. FSP re-draws his fib on the latest big (300-600 pt) swing.")
+bool   fib764     = input.bool(true, "76.4% (NinjaTrader) instead of 78.6%", group = G_F)
+color  colFib     = input.color(color.new(color.aqua, 35), "Fib color", group = G_F)
+
+const string G_SIG = "Entries"
+string entryStyle = input.string(LIMIT, "Entry style", options = [LIMIT, CONFIRM], group = G_SIG, tooltip = "Limit: like FSP, a resting order at the level fills when price trades 1 tick through it after a dip/rip. Confirmation: waits for a rejection / engulf / sweep-and-reclaim close (fewer, later entries — weaker in the backtest).")
+string sideMode   = input.string("Both", "Direction", options = ["Both", "Long only", "Short only"], group = G_SIG)
+int    rsiLen     = input.int(14, "RSI", minval = 2, group = G_SIG, inline = "r")
+int    rsiSmooth  = input.int(3, "smooth", minval = 1, group = G_SIG, inline = "r")
+float  rsiOS      = input.float(30, "Oversold", group = G_SIG, inline = "r2")
+float  rsiOB      = input.float(70, "Overbought", group = G_SIG, inline = "r2")
+int    atrLen     = input.int(14, "ATR length", minval = 2, group = G_SIG)
+float  tolATR     = input.float(0.35, "Level tolerance × ATR", minval = 0, step = 0.05, group = G_SIG, inline = "tol")
+float  tolMin     = input.float(2.0, "min pts", minval = 0, step = 0.25, group = G_SIG, inline = "tol")
+int    dipBars    = input.int(10, "Dip/rip lookback (bars)", minval = 2, maxval = 100, group = G_SIG)
+float  dipATR     = input.float(1.5, "Min dip/rip into the level × ATR", minval = 0, step = 0.1, group = G_SIG, tooltip = "Price must have fallen (risen) at least this much from the recent high (low) to the level — FSP buys dips and sells rips, he does not buy drifts.")
+string minGrade   = input.string("C", "Show grades from", options = ["A", "B", "C"], group = G_SIG, tooltip = "Grade = confluence score: stacked levels (+2, +3), inside an S/R box, RSI extreme, ≥2.5 ATR flush, ES/NQ divergence, prime 9:30-10:30 window, minus 2 against a runaway trend. Informational — it was not consistently predictive in testing.")
+int    cooldown   = input.int(3, "Cooldown bars after a trade closes", minval = 0, group = G_SIG)
+bool   trendGuard = input.bool(true, "Trend-day guard", group = G_SIG, inline = "tg", tooltip = "Flags fades against a runaway move (price pinned at the session extreme and far from the open). FSP's worst days were fading a 'stubborn grind up'.")
+float  trendATR   = input.float(6.0, "move from open × ATR", minval = 1, step = 0.5, group = G_SIG, inline = "tg")
+bool   useDiv     = input.bool(true, "SMT divergence vs", group = G_SIG, inline = "dv", tooltip = "Extra confluence inferred from FSP's 'ES/NQ divergence' video: NQ makes a new low (high) but the comparison symbol does not.")
+string divSym     = input.symbol("CME_MINI:ES1!", "", group = G_SIG, inline = "dv")
+int    divLen     = input.int(20, "Divergence lookback (bars)", minval = 3, group = G_SIG)
+
+const string G_T = "Exits (FSP: 10-20-30 points, stop to breakeven, hold a runner)"
+string tpMode     = input.string("Auto (ATR-scaled, min fixed)", "Targets", options = ["Fixed points", "ATR multiples", "Auto (ATR-scaled, min fixed)"], group = G_T)
+float  tp1Pts     = input.float(10, "TP pts", minval = 0.25, group = G_T, inline = "tp")
+float  tp2Pts     = input.float(20, "", minval = 0.25, group = G_T, inline = "tp")
+float  tp3Pts     = input.float(30, "", minval = 0.25, group = G_T, inline = "tp")
+float  tp1Atr     = input.float(0.7, "TP × ATR", minval = 0.05, step = 0.05, group = G_T, inline = "ta")
+float  tp2Atr     = input.float(1.4, "", minval = 0.05, step = 0.05, group = G_T, inline = "ta")
+float  tp3Atr     = input.float(2.1, "", minval = 0.05, step = 0.05, group = G_T, inline = "ta")
+float  slATR      = input.float(1.0, "Stop × ATR (limit entries)", minval = 0.1, step = 0.05, group = G_T)
+float  slBufATR   = input.float(0.35, "Stop buffer beyond the defended low/high × ATR (confirmation entries)", minval = 0, step = 0.05, group = G_T)
+float  slMin      = input.float(8, "Stop min pts", minval = 0.25, group = G_T, inline = "sl")
+float  slMax      = input.float(30, "max pts", minval = 0.25, group = G_T, inline = "sl")
+bool   beAfter1   = input.bool(true, "Stop to breakeven after TP1", group = G_T)
+int    maxHold    = input.int(45, "Time stop (bars)", minval = 2, maxval = 400, group = G_T)
+float  addATR     = input.float(0.8, "Scale-in (add) level × ATR", minval = 0, step = 0.1, group = G_T, tooltip = "FSP scales in: first order at the level, a second deeper. Shown for reference; stats assume one entry.")
+
+const string G_D = "Display & alerts"
+bool   showDash   = input.bool(true, "Dashboard", group = G_D, inline = "d")
+string dashPos    = input.string("Top right", "", options = ["Top right", "Bottom right", "Top left", "Bottom left"], group = G_D, inline = "d")
+string dashSize   = input.string("Small", "Text", options = ["Tiny", "Small", "Normal"], group = G_D, inline = "d")
+bool   showTrades = input.bool(true, "Draw entry, stop, targets", group = G_D)
+bool   showLadder = input.bool(true, "Draw next buy/sell limit ladder", group = G_D)
+float  apprATR    = input.float(1.0, "'Approaching level' alert within × ATR", minval = 0, step = 0.1, group = G_D)
+bool   showVix    = input.bool(true, "VIX in dashboard", group = G_D)
+bool   bgBias     = input.bool(false, "Tint background by bias", group = G_D)
+float  costPts    = input.float(0.5, "Costs per trade for stats (pts)", minval = 0, step = 0.25, group = G_D, tooltip = "Commission + slippage subtracted from each closed trade in the dashboard stats (0.5 pt ≈ $10 per NQ contract).")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Helpers
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+f_in(string sess) =>
+    not na(time(timeframe.period, sess, TZ))
+
+f_px(float p) =>
+    na(p) ? "–" : str.tostring(math.round_to_mintick(p), format.mintick)
+
+f_pts(float p) =>
+    na(p) ? "–" : str.tostring(p, "#.##")
+
+// na on the bar where the value changes so level plots do not connect across sessions
+f_gap(float v) =>
+    v != v[1] ? na : v
+
+f_gradeOk(string g) =>
+    g == "A" or (g == "B" and minGrade != "A") or (g == "C" and minGrade == "C")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Core series
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+float atr    = ta.atr(atrLen)
+float rsi    = ta.rsi(close, rsiLen)
+float rsiAvg = ta.ema(rsi, rsiSmooth)
+float tol    = math.max(tolMin, nz(atr) * tolATR)
+float atrP   = atr[1]
+float rsiP   = rsi[1]
+float tolP   = math.max(tolMin, nz(atrP) * tolATR)
+float rsiLo3 = ta.lowest(rsi, 3)
+float rsiHi3 = ta.highest(rsi, 3)
+float hiDip  = ta.highest(high, dipBars)
+float loRip  = ta.lowest(low, dipBars)
+float hiPrev = math.max(nz(hiDip[1], open), open)
+float loPrev = math.min(nz(loRip[1], open), open)
+float lo3    = ta.lowest(low, 3)
+float hi3    = ta.highest(high, 3)
+float prevLoDiv = ta.lowest(low, divLen)[1]
+float prevHiDiv = ta.highest(high, divLen)[1]
+
+bool inRTH    = f_in(sessRTH)
+bool rthStart = inRTH and not inRTH[1]
+bool rthEnd   = not inRTH and inRTH[1]
+bool newDay   = timeframe.change("D")
+bool inPM     = f_in(sessPM)
+bool inAsia   = f_in(sessAsia)
+bool inCB     = f_in(sessCB)
+bool inWin    = f_in(sessTrade) or (useTrade2 and f_in(sessTrade2))
+int  mod      = hour(time, TZ) * 60 + minute(time, TZ)
+bool newsBlock = newsPause and math.abs(mod - 600) <= newsMins
+bool prime    = mod >= 570 and mod < 630
+bool intraday = timeframe.isintraday
+bool allowL   = sideMode != "Short only"
+bool allowS   = sideMode != "Long only"
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Session levels
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+var float rthOpen = na
+var float rthHi   = na
+var float rthLo   = na
+var float rthCl   = na
+var float pdh     = na
+var float pdl     = na
+var float pdc     = na
+if rthStart
+    rthOpen := open
+    rthHi   := high
+    rthLo   := low
+else if inRTH
+    rthHi := math.max(rthHi, high)
+    rthLo := math.min(rthLo, low)
+if inRTH
+    rthCl := close
+if rthEnd
+    pdh := rthHi
+    pdl := rthLo
+    pdc := rthCl
+float rthHiP = rthHi[1]
+float rthLoP = rthLo[1]
+
+var float onHi = na
+var float onLo = na
+var bool  onActive = false
+if newDay
+    onActive := true
+    onHi := high
+    onLo := low
+else if onActive and not inRTH
+    onHi := math.max(onHi, high)
+    onLo := math.min(onLo, low)
+if rthStart
+    onActive := false
+
+var float pmHi  = na
+var float pmLo  = na
+var float ypmHi = na
+var float ypmLo = na
+if inPM and not inPM[1]
+    ypmHi := pmHi
+    ypmLo := pmLo
+    pmHi  := high
+    pmLo  := low
+else if inPM
+    pmHi := math.max(pmHi, high)
+    pmLo := math.min(pmLo, low)
+
+var float asHi = na
+var float asLo = na
+if inAsia and not inAsia[1]
+    asHi := high
+    asLo := low
+else if inAsia
+    asHi := math.max(asHi, high)
+    asLo := math.min(asLo, low)
+
+var float cbHi  = na
+var float cbLo  = na
+var float cbTop = na
+var float cbBot = na
+var box   cbBox = na
+if inCB and not inCB[1]
+    cbHi := high
+    cbLo := low
+else if inCB
+    cbHi := math.max(cbHi, high)
+    cbLo := math.min(cbLo, low)
+if not inCB and inCB[1] and not na(cbHi)
+    cbTop := cbHi
+    cbBot := cbLo
+    if showCB and intraday
+        if not na(cbBox)
+            cbBox.set_right(time)
+            cbBox.set_extend(extend.none)
+        cbBox := box.new(time, cbTop, time + 1, cbBot, xloc = xloc.bar_time, extend = extend.right, border_color = color.new(color.yellow, 40), border_style = line.style_dotted, bgcolor = color.new(color.yellow, 90))
+
+var float dOpen = na
+if newDay
+    dOpen := open
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Hourly support & resistance boxes (non-repainting: confirmed higher-timeframe swings only)
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+type Zone
+    float top
+    float bot
+    int   dir      // +1 support, -1 resistance
+    int   t
+    box   bx
+    bool  flipped
+
+var array<Zone> zones = array.new<Zone>()
+
+f_htf(int len) =>
+    float ph = ta.pivothigh(high, len, len)
+    float pl = ta.pivotlow(low, len, len)
+    float bH = math.max(open[len], close[len])
+    float bL = math.min(open[len], close[len])
+    float a  = ta.atr(14)
+    [ph[1], bH[1], pl[1], bL[1], time[len + 1], a[1], close[1]]
+
+[hPH, hPHb, hPL, hPLb, hPT, hATR, hClose] = request.security(syminfo.tickerid, zoneTF, f_htf(pivLen), lookahead = barmerge.lookahead_on)
+
+f_zoneColor(int dir) =>
+    dir == 1 ? colSup : colRes
+
+f_zoneBorder(int dir) =>
+    dir == 1 ? color.new(color.teal, 40) : color.new(color.purple, 40)
+
+f_addZone(float top, float bot, int dir, int t) =>
+    float mid = (top + bot) / 2
+    bool dup = false
+    for z in zones
+        if z.dir == dir and mid <= z.top and mid >= z.bot
+            dup := true
+    if not dup
+        box b = showZones and intraday ? box.new(t, top, time, bot, xloc = xloc.bar_time, extend = extend.right, bgcolor = f_zoneColor(dir), border_color = f_zoneBorder(dir)) : na
+        zones.push(Zone.new(top, bot, dir, t, b, false))
+        if zones.size() > maxZones
+            Zone old = zones.shift()
+            if not na(old.bx)
+                old.bx.delete()
+    dup
+
+var int   lastPHt = 0
+var int   lastPLt = 0
+var float lastSwH = na
+var float prevSwH = na
+var float lastSwL = na
+var float prevSwL = na
+if not na(hPH) and not na(hATR) and hPT != lastPHt
+    lastPHt := hPT
+    prevSwH := lastSwH
+    lastSwH := hPH
+    float hgt = math.max(zMinATR * hATR, math.min(zMaxATR * hATR, hPH - hPHb))
+    f_addZone(hPH, hPH - hgt, -1, hPT)
+if not na(hPL) and not na(hATR) and hPT != lastPLt
+    lastPLt := hPT
+    prevSwL := lastSwL
+    lastSwL := hPL
+    float hgt2 = math.max(zMinATR * hATR, math.min(zMaxATR * hATR, hPLb - hPL))
+    f_addZone(hPL + hgt2, hPL, 1, hPT)
+
+// A box broken on a closed higher-timeframe bar flips role once ("previous support becomes resistance"), then is removed.
+if zones.size() > 0 and not na(hClose)
+    for i = zones.size() - 1 to 0
+        Zone z = zones.get(i)
+        bool broke = (z.dir == 1 and hClose < z.bot) or (z.dir == -1 and hClose > z.top)
+        if broke
+            if flipZones and not z.flipped
+                z.dir := -z.dir
+                z.flipped := true
+                if not na(z.bx)
+                    z.bx.set_bgcolor(f_zoneColor(z.dir))
+                    z.bx.set_border_color(f_zoneBorder(z.dir))
+                    z.bx.set_border_style(line.style_dashed)
+            else
+                if not na(z.bx)
+                    z.bx.delete()
+                zones.remove(i)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Auto Fibonacci of the latest major swing
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+f_fib(int len) =>
+    float hh = ta.highest(high, len)
+    float ll = ta.lowest(low, len)
+    int   ho = ta.highestbars(high, len)
+    int   lo = ta.lowestbars(low, len)
+    [hh[1], ll[1], ho[1], lo[1]]
+
+[fHi, fLo, fHiOff, fLoOff] = request.security(syminfo.tickerid, fibTF, f_fib(fibLen), lookahead = barmerge.lookahead_on)
+bool fibUp = fHiOff > fLoOff   // the high is the more recent extreme → measure the pullback down from it
+array<float> fibR = array.from(0.236, 0.382, 0.5, 0.618, fib764 ? 0.764 : 0.786)
+array<float> fibP = array.new<float>()
+if not na(fHi) and not na(fLo) and fHi > fLo
+    for r in fibR
+        fibP.push(fibUp ? fHi - r * (fHi - fLo) : fLo + r * (fHi - fLo))
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Context: divergence symbol, VIX, trend-day guard
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[dH, dL] = request.security(divSym, timeframe.period, [high, low], ignore_invalid_symbol = true)
+float dPrevLo = ta.lowest(dL, divLen)[1]
+float dPrevHi = ta.highest(dH, divLen)[1]
+bool bullDiv  = useDiv and not na(dL) and low < prevLoDiv and dL > dPrevLo
+bool bearDiv  = useDiv and not na(dH) and high > prevHiDiv and dH < dPrevHi
+bool bullDivP = bullDiv[1]
+bool bearDivP = bearDiv[1]
+
+float vix   = showVix ? request.security("TVC:VIX", "5", close, ignore_invalid_symbol = true) : na
+float vixPc = showVix ? request.security("TVC:VIX", "D", close[1], lookahead = barmerge.lookahead_on, ignore_invalid_symbol = true) : na
+
+float moveATR     = inRTH and not na(rthOpen) and atr > 0 ? (close - rthOpen) / atr : 0.0
+bool  runawayUp   = trendGuard and inRTH and moveATR >= trendATR and high >= rthHi - 0.5 * atr
+bool  runawayDown = trendGuard and inRTH and moveATR <= -trendATR and low <= rthLo + 0.5 * atr
+float moveOpen    = inRTH and not rthStart and not na(rthOpen) and atrP > 0 ? (open - rthOpen) / atrP : 0.0
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Levels FSP watches (lines). lvS = allowed to trigger an entry.
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+array<float>  lvP = array.new<float>()
+array<string> lvN = array.new<string>()
+array<bool>   lvS = array.new<bool>()
+f_add(float p, string n, bool show, bool sig) =>
+    if show and not na(p)
+        lvP.push(p)
+        lvN.push(n)
+        lvS.push(sig)
+f_add(pdc, "Y-Close", showPDC, true)
+f_add(pdh, "PDH", showPDHL, true)
+f_add(pdl, "PDL", showPDHL, true)
+f_add(onHi, "ON High", showON and not onActive, true)
+f_add(onLo, "ON Low", showON and not onActive, true)
+f_add(ypmHi, "Y-PM High", showYPM, true)
+f_add(ypmLo, "Y-PM Low", showYPM, true)
+f_add(pmHi, "PM High", showPM and not inPM, sigPM)
+f_add(pmLo, "PM Low", showPM and not inPM, sigPM)
+f_add(asHi, "Asia High", showAsia and not inAsia, sigAsia)
+f_add(asLo, "Asia Low", showAsia and not inAsia, sigAsia)
+f_add(rthOpen, "RTH Open", showOpen and inRTH, sigOpen)
+if fibP.size() > 0
+    for [i, p] in fibP
+        f_add(p, "Fib " + str.tostring(fibR.get(i) * 100, "#.#") + "%", showFib or fibSignal, fibSignal)
+
+// Count entry-eligible levels stacked within `tl` of price `p` (confluence) on the given side.
+f_conf(float p, int d, float tl) =>
+    int n = 0
+    if lvP.size() > 0
+        for [i, q] in lvP
+            if lvS.get(i) and math.abs(q - p) <= tl
+                n += 1
+    if showCB and not na(cbTop)
+        float e = d == 1 ? cbTop : cbBot
+        if math.abs(e - p) <= tl
+            n += 1
+    if boxTrig
+        for z in zones
+            if z.dir == d and math.abs((d == 1 ? z.top : z.bot) - p) <= tl
+                n += 1
+    math.max(n, 1)
+
+f_inBox(float p, int d, float tl) =>
+    bool hit = false
+    for z in zones
+        if z.dir == d and p >= z.bot - tl and p <= z.top + tl
+            hit := true
+    hit
+
+f_grade(int conf, bool boxHit, bool rsiExt, bool flush, bool dv, bool pen) =>
+    int s = (conf >= 2 ? 2 : 0) + (conf >= 3 ? 1 : 0) + (boxHit ? 1 : 0) + (rsiExt ? 1 : 0) + (flush ? 1 : 0) + (dv ? 1 : 0) + (prime ? 1 : 0) - (pen ? 2 : 0)
+    [s >= 4 ? "A" : s >= 2 ? "B" : "C", s]
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Entry detection
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// (a) LIMIT: the first entry-eligible level hit this bar after a dip (rip), using only what was known at the bar's open.
+float limL = na
+string limLN = ""
+float limS = na
+string limSN = ""
+float mt = syminfo.mintick
+if lvP.size() > 0
+    for [i, p] in lvP
+        if lvS.get(i)
+            if open > p and low <= p - mt and hiPrev - p >= dipATR * atrP and (na(limL) or p > limL)
+                limL := p
+                limLN := lvN.get(i)
+            if open < p and high >= p + mt and p - loPrev >= dipATR * atrP and (na(limS) or p < limS)
+                limS := p
+                limSN := lvN.get(i)
+if showCB and not na(cbTop)
+    if open > cbTop and low <= cbTop - mt and hiPrev - cbTop >= dipATR * atrP and (na(limL) or cbTop > limL)
+        limL := cbTop
+        limLN := "prior-close box"
+    if open < cbBot and high >= cbBot + mt and cbBot - loPrev >= dipATR * atrP and (na(limS) or cbBot < limS)
+        limS := cbBot
+        limSN := "prior-close box"
+if boxTrig
+    for z in zones
+        if z.dir == 1 and open > z.top and low <= z.top - mt and hiPrev - z.top >= dipATR * atrP and (na(limL) or z.top > limL)
+            limL := z.top
+            limLN := z.flipped ? "flipped box" : "hourly box"
+        if z.dir == -1 and open < z.bot and high >= z.bot + mt and z.bot - loPrev >= dipATR * atrP and (na(limS) or z.bot < limS)
+            limS := z.bot
+            limSN := z.flipped ? "flipped box" : "hourly box"
+
+// (b) CONFIRMATION: level touched this bar, defended on the close (rejection wick, engulf, or sweep-and-reclaim).
+float rng = high - low
+bool bullRej = rng > 0 and math.min(open, close) - low >= 0.4 * rng and close >= low + 0.5 * rng
+bool bearRej = rng > 0 and high - math.max(open, close) >= 0.4 * rng and close <= high - 0.5 * rng
+bool bullEng = close > open and close > high[1]
+bool bearEng = close < open and close < low[1]
+bool isDip   = hiDip - low >= dipATR * atr
+bool isRip   = high - loRip >= dipATR * atr
+int    cfLn = 0
+bool   cfLTrap = false
+string cfLName = ""
+int    cfSn = 0
+bool   cfSTrap = false
+string cfSName = ""
+if lvP.size() > 0
+    for [i, p] in lvP
+        if lvS.get(i)
+            if low <= p + tol and close >= p - tol and hiDip > p + tol
+                cfLn += 1
+                cfLTrap := cfLTrap or (low < p - tol and close > p)
+                cfLName := cfLName == "" ? lvN.get(i) : cfLName
+            if high >= p - tol and close <= p + tol and loRip < p - tol
+                cfSn += 1
+                cfSTrap := cfSTrap or (high > p + tol and close < p)
+                cfSName := cfSName == "" ? lvN.get(i) : cfSName
+if showCB and not na(cbTop)
+    if low <= cbTop + tol and close >= cbBot - tol and hiDip > cbTop
+        cfLn += 1
+        cfLTrap := cfLTrap or (low < cbBot and close > cbBot)
+        cfLName := cfLName == "" ? "prior-close box" : cfLName
+    if high >= cbBot - tol and close <= cbTop + tol and loRip < cbBot
+        cfSn += 1
+        cfSTrap := cfSTrap or (high > cbTop and close < cbTop)
+        cfSName := cfSName == "" ? "prior-close box" : cfSName
+if boxTrig
+    for z in zones
+        if z.dir == 1 and low <= z.top + tol and close >= z.bot - tol and hiDip > z.top
+            cfLn += 1
+            cfLTrap := cfLTrap or (low < z.bot and close > z.bot)
+            cfLName := cfLName == "" ? "hourly box" : cfLName
+        if z.dir == -1 and high >= z.bot - tol and close <= z.top + tol and loRip < z.bot
+            cfSn += 1
+            cfSTrap := cfSTrap or (high > z.top and close < z.top)
+            cfSName := cfSName == "" ? "hourly box" : cfSName
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Virtual trade management + stats
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+type Trade
+    int    dir
+    float  entry
+    float  sl
+    float  tp1
+    float  tp2
+    float  tp3
+    float  add
+    int    bar0
+    bool   hit1
+    bool   hit2
+    bool   active
+    float  pts
+    float  rem
+    string grade
+    string why
+    line   lE
+    line   lS
+    line   l1
+    line   l2
+    line   l3
+    line   lA
+
+var Trade tr       = na
+var int   lastExit = -1000
+var int   nTr      = 0
+var int   nTp1     = 0
+var int   nStop    = 0
+var float sumPts   = 0.0
+var string lastTxt = "–"
+
+f_targets(float a) =>
+    float t1 = tpMode == "Fixed points" ? tp1Pts : tpMode == "ATR multiples" ? tp1Atr * a : math.max(tp1Pts, tp1Atr * a)
+    float t2 = tpMode == "Fixed points" ? tp2Pts : tpMode == "ATR multiples" ? tp2Atr * a : math.max(tp2Pts, tp2Atr * a)
+    float t3 = tpMode == "Fixed points" ? tp3Pts : tpMode == "ATR multiples" ? tp3Atr * a : math.max(tp3Pts, tp3Atr * a)
+    [t1, t2, t3]
+
+// nearest level of any kind above / below a price (dashboard)
+f_nextAbove(float px) =>
+    float best = na
+    for z in zones
+        if z.dir == -1 and z.bot > px
+            best := na(best) ? z.bot : math.min(best, z.bot)
+    if lvP.size() > 0
+        for p in lvP
+            if p > px
+                best := na(best) ? p : math.min(best, p)
+    if not na(cbBot) and cbBot > px
+        best := na(best) ? cbBot : math.min(best, cbBot)
+    best
+
+f_nextBelow(float px) =>
+    float best = na
+    for z in zones
+        if z.dir == 1 and z.top < px
+            best := na(best) ? z.top : math.max(best, z.top)
+    if lvP.size() > 0
+        for p in lvP
+            if p < px
+                best := na(best) ? p : math.max(best, p)
+    if not na(cbTop) and cbTop < px
+        best := na(best) ? cbTop : math.max(best, cbTop)
+    best
+
+f_closeLines(Trade t) =>
+    for ln in array.from(t.lE, t.lS, t.l1, t.l2, t.l3, t.lA)
+        if not na(ln)
+            ln.set_x2(bar_index)
+
+// 1) manage the open trade on bars after entry (stop assumed first when a bar touches both)
+bool closedNow = false
+if not na(tr) and tr.active and bar_index > tr.bar0
+    int d = tr.dir
+    string tag = ""
+    float exitPx = na
+    if d == 1 ? low <= tr.sl : high >= tr.sl
+        exitPx := tr.sl
+        tag := tr.hit1 ? "BE" : "SL"
+    else
+        if not tr.hit1 and (d == 1 ? high >= tr.tp1 : low <= tr.tp1)
+            tr.hit1 := true
+            tr.pts += (tr.tp1 - tr.entry) * d / 3
+            tr.rem -= 1.0 / 3
+            if beAfter1
+                tr.sl := tr.entry
+        if tr.hit1 and not tr.hit2 and (d == 1 ? high >= tr.tp2 : low <= tr.tp2)
+            tr.hit2 := true
+            tr.pts += (tr.tp2 - tr.entry) * d / 3
+            tr.rem -= 1.0 / 3
+        if tr.hit2 and (d == 1 ? high >= tr.tp3 : low <= tr.tp3)
+            exitPx := tr.tp3
+            tag := "TP3"
+        else if bar_index - tr.bar0 >= maxHold or not inRTH
+            exitPx := close
+            tag := "TIME"
+    if not na(exitPx)
+        tr.pts += (exitPx - tr.entry) * d * tr.rem
+        tr.rem := 0
+        tr.active := false
+        closedNow := true
+        lastExit := bar_index
+        nTr += 1
+        nTp1 += tr.hit1 ? 1 : 0
+        nStop += tag == "SL" ? 1 : 0
+        sumPts += tr.pts - costPts
+        lastTxt := (d == 1 ? "LONG " : "SHORT ") + tr.grade + " @ " + f_px(tr.entry) + " → " + (tr.hit2 ? (tag == "TP3" ? "TP3 ✓" : "TP2 ✓") : tr.hit1 ? "TP1 ✓" : tag) + " (" + f_pts(tr.pts) + " pts)"
+        if showTrades
+            f_closeLines(tr)
+            label.new(bar_index, exitPx, (tr.pts > 0 ? "✓ " : "✗ ") + f_pts(tr.pts), color = color.new(color.black, 100), textcolor = tr.pts > 0 ? color.lime : tr.pts < 0 ? color.red : color.gray, style = label.style_label_left, size = size.tiny)
+    else if showTrades and not na(tr.lS)
+        tr.lS.set_y1(tr.sl)
+        tr.lS.set_y2(tr.sl)
+
+bool flat = na(tr) or not tr.active
+bool canSignal = intraday and barstate.isconfirmed and inWin and not newsBlock and flat and not closedNow and bar_index - lastExit > cooldown
+
+// 2) decide entries
+int    sigDir = 0
+float  sigPx  = na
+string sigWhy = ""
+string sigG   = ""
+float  sigSL  = na
+float  sigAtr = na
+if canSignal
+    if entryStyle == LIMIT
+        string gL = ""
+        string gS = ""
+        int scL = -99
+        int scS = -99
+        if allowL and not na(limL)
+            bool penL = trendGuard and moveOpen <= -trendATR and limL <= rthLoP + 0.5 * atrP
+            [g, s] = f_grade(f_conf(limL, 1, tolP), f_inBox(limL, 1, tolP), rsiP <= rsiOS, hiPrev - limL >= 2.5 * atrP, bullDivP, penL)
+            gL := g
+            scL := s
+        if allowS and not na(limS)
+            bool penS = trendGuard and moveOpen >= trendATR and limS >= rthHiP - 0.5 * atrP
+            [g, s] = f_grade(f_conf(limS, -1, tolP), f_inBox(limS, -1, tolP), rsiP >= rsiOB, limS - loPrev >= 2.5 * atrP, bearDivP, penS)
+            gS := g
+            scS := s
+        bool okL = gL != "" and f_gradeOk(gL)
+        bool okS = gS != "" and f_gradeOk(gS)
+        if okL and okS   // both sides hit in one wide bar: keep the better score
+            okL := scL >= scS
+            okS := not okL
+        if okL
+            sigDir := 1
+            sigPx := limL
+            sigWhy := limLN
+            sigG := gL
+        else if okS
+            sigDir := -1
+            sigPx := limS
+            sigWhy := limSN
+            sigG := gS
+        sigAtr := atrP
+        if sigDir != 0
+            float slDist = math.max(slMin, math.min(slMax, slATR * atrP))
+            sigSL := sigPx - sigDir * slDist
+    else
+        bool trigL = allowL and cfLn > 0 and isDip and (bullRej or bullEng or cfLTrap)
+        bool trigS = allowS and cfSn > 0 and isRip and (bearRej or bearEng or cfSTrap)
+        [gL, scL] = f_grade(cfLn, f_inBox(close, 1, tol), rsiLo3 <= rsiOS, hiDip - low >= 2.5 * atr, bullDiv, runawayDown)
+        [gS, scS] = f_grade(cfSn, f_inBox(close, -1, tol), rsiHi3 >= rsiOB, high - loRip >= 2.5 * atr, bearDiv, runawayUp)
+        trigL := trigL and f_gradeOk(gL)
+        trigS := trigS and f_gradeOk(gS)
+        if trigL and trigS
+            trigL := scL >= scS
+            trigS := not trigL
+        if trigL or trigS
+            sigDir := trigL ? 1 : -1
+            sigPx := close
+            sigWhy := trigL ? cfLName : cfSName
+            sigG := trigL ? gL : gS
+            sigAtr := atr
+            float defLvl = trigL ? lo3 : hi3
+            float slDist = math.max(slMin, math.min(slMax, math.abs(close - defLvl) + slBufATR * atr))
+            sigSL := sigPx - sigDir * slDist
+
+bool longSig  = sigDir == 1
+bool shortSig = sigDir == -1
+
+// 3) open the virtual trade
+if sigDir != 0
+    int d = sigDir
+    [t1, t2, t3] = f_targets(sigAtr)
+    float e   = sigPx
+    float tp1 = e + d * t1
+    float tp2 = e + d * t2
+    float tp3 = e + d * t3
+    float addLvl = e - d * addATR * sigAtr
+    tr := Trade.new(d, e, sigSL, tp1, tp2, tp3, addLvl, bar_index, false, false, true, 0.0, 1.0, sigG, sigWhy, na, na, na, na, na, na)
+    string head = (d == 1 ? "LONG " : "SHORT ") + sigG
+    string tip = head + " — " + sigWhy + (entryStyle == LIMIT ? " (limit filled)" : " (confirmed close)") + "\nEntry " + f_px(e) + "   add " + f_px(addLvl) + "\nStop " + f_px(sigSL) + "  (" + f_pts(math.abs(e - sigSL)) + " pts)\nTP1 " + f_px(tp1) + " · TP2 " + f_px(tp2) + " · TP3 " + f_px(tp3) + "\nRSI " + f_pts(rsi) + " · ATR " + f_pts(atr) + (beAfter1 ? "\nAfter TP1: stop → breakeven" : "")
+    if showTrades
+        int x2 = bar_index + maxHold
+        tr.lE := line.new(bar_index, e, x2, e, color = color.new(color.white, 30), style = line.style_dotted)
+        tr.lS := line.new(bar_index, sigSL, x2, sigSL, color = color.new(color.red, 10), width = 2)
+        tr.l1 := line.new(bar_index, tp1, x2, tp1, color = color.new(color.lime, 30))
+        tr.l2 := line.new(bar_index, tp2, x2, tp2, color = color.new(color.lime, 20))
+        tr.l3 := line.new(bar_index, tp3, x2, tp3, color = color.new(color.lime, 0), width = 2)
+        tr.lA := addATR > 0 ? line.new(bar_index, addLvl, x2, addLvl, color = color.new(color.blue, 20), style = line.style_dashed) : na
+        label.new(bar_index, d == 1 ? math.min(low, e) : math.max(high, e), head, style = d == 1 ? label.style_label_up : label.style_label_down, color = d == 1 ? color.new(color.lime, 10) : color.new(color.red, 10), textcolor = color.black, size = size.small, tooltip = tip)
+    alert("FSP " + head + " " + syminfo.ticker + " @ " + f_px(e) + " | SL " + f_px(sigSL) + " | TP " + f_px(tp1) + "/" + f_px(tp2) + "/" + f_px(tp3) + " | " + sigWhy, alert.freq_once_per_bar_close)
+    // a limit fill whose stop sits inside the same bar is closed at the stop immediately (conservative)
+    if entryStyle == LIMIT and (d == 1 ? low <= sigSL : high >= sigSL)
+        tr.pts := (sigSL - e) * d
+        tr.rem := 0
+        tr.active := false
+        lastExit := bar_index
+        nTr += 1
+        nStop += 1
+        sumPts += tr.pts - costPts
+        lastTxt := head + " @ " + f_px(e) + " → SL same bar (" + f_pts(tr.pts) + " pts)"
+        if showTrades
+            f_closeLines(tr)
+            label.new(bar_index, sigSL, "✗ " + f_pts(tr.pts), color = color.new(color.black, 100), textcolor = color.red, style = label.style_label_left, size = size.tiny)
+
+alertcondition(longSig, "FSP LONG entry", "FSP-style LONG entry on {{ticker}} — see the label for entry/stop/targets")
+alertcondition(shortSig, "FSP SHORT entry", "FSP-style SHORT entry on {{ticker}} — see the label for entry/stop/targets")
+alertcondition(longSig or shortSig, "FSP any entry", "FSP-style entry on {{ticker}}")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Next limit ladder: the first entry-eligible level price would hit next, already "armed" by a big enough dip/rip
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+float ladL = na
+string ladLN = ""
+float ladS = na
+string ladSN = ""
+if intraday and inRTH
+    if lvP.size() > 0
+        for [i, p] in lvP
+            if lvS.get(i)
+                if p < close - tol and hiDip - p >= dipATR * atr and (na(ladL) or p > ladL)
+                    ladL := p
+                    ladLN := lvN.get(i)
+                if p > close + tol and p - loRip >= dipATR * atr and (na(ladS) or p < ladS)
+                    ladS := p
+                    ladSN := lvN.get(i)
+    if showCB and not na(cbTop)
+        if cbTop < close - tol and hiDip - cbTop >= dipATR * atr and (na(ladL) or cbTop > ladL)
+            ladL := cbTop
+            ladLN := "prior-close box"
+        if cbBot > close + tol and cbBot - loRip >= dipATR * atr and (na(ladS) or cbBot < ladS)
+            ladS := cbBot
+            ladSN := "prior-close box"
+if not allowL
+    ladL := na
+if not allowS
+    ladS := na
+
+bool nearL = flat and inWin and not na(ladL) and close - ladL <= apprATR * atr
+bool nearS = flat and inWin and not na(ladS) and ladS - close <= apprATR * atr
+if barstate.isconfirmed and nearL and (not nearL[1] or ladL != ladL[1])
+    alert("FSP: price approaching LONG level " + f_px(ladL) + " (" + ladLN + ") on " + syminfo.ticker, alert.freq_once_per_bar_close)
+if barstate.isconfirmed and nearS and (not nearS[1] or ladS != ladS[1])
+    alert("FSP: price approaching SHORT level " + f_px(ladS) + " (" + ladSN + ") on " + syminfo.ticker, alert.freq_once_per_bar_close)
+alertcondition(nearL and not nearL[1], "FSP approaching long level", "Price is approaching an FSP long level on {{ticker}}")
+alertcondition(nearS and not nearS[1], "FSP approaching short level", "Price is approaching an FSP short level on {{ticker}}")
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Level plots
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+float gPDC  = f_gap(pdc)
+float gPDH  = f_gap(pdh)
+float gPDL  = f_gap(pdl)
+float gONH  = f_gap(onHi)
+float gONL  = f_gap(onLo)
+float gPMH  = f_gap(pmHi)
+float gPML  = f_gap(pmLo)
+float gYPMH = f_gap(ypmHi)
+float gYPML = f_gap(ypmLo)
+float gASH  = f_gap(asHi)
+float gASL  = f_gap(asLo)
+float gOPN  = f_gap(rthOpen)
+plot(intraday and showPDC ? gPDC : na, "Yesterday's close", colPDC, 2, plot.style_linebr)
+plot(intraday and showPDHL ? gPDH : na, "Prior-day high", colLvl, 1, plot.style_linebr)
+plot(intraday and showPDHL ? gPDL : na, "Prior-day low", colLvl, 1, plot.style_linebr)
+plot(intraday and showON and not onActive ? gONH : na, "Overnight high", color.new(color.silver, 20), 1, plot.style_linebr)
+plot(intraday and showON and not onActive ? gONL : na, "Overnight low", color.new(color.silver, 20), 1, plot.style_linebr)
+plot(intraday and showYPM ? gYPMH : na, "Yesterday's pre-market high", color.new(color.fuchsia, 50), 1, plot.style_linebr)
+plot(intraday and showYPM ? gYPML : na, "Yesterday's pre-market low", color.new(color.fuchsia, 50), 1, plot.style_linebr)
+plot(intraday and showPM and not inPM ? gPMH : na, "Pre-market high", color.new(color.fuchsia, 75), 1, plot.style_linebr)
+plot(intraday and showPM and not inPM ? gPML : na, "Pre-market low", color.new(color.fuchsia, 75), 1, plot.style_linebr)
+plot(intraday and showAsia and not inAsia ? gASH : na, "Asia high", color.new(color.green, 40), 1, plot.style_linebr)
+plot(intraday and showAsia and not inAsia ? gASL : na, "Asia low", color.new(color.green, 40), 1, plot.style_linebr)
+plot(intraday and showOpen and inRTH ? gOPN : na, "RTH open", color.new(color.white, 50), 1, plot.style_linebr)
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Fib lines, level labels and the limit ladder (redrawn on the last bar only)
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+var array<line>  lastLines  = array.new<line>()
+var array<label> lastLabels = array.new<label>()
+if barstate.islast and intraday
+    for ln in lastLines
+        ln.delete()
+    for lb in lastLabels
+        lb.delete()
+    lastLines.clear()
+    lastLabels.clear()
+    if showFib and fibP.size() > 0
+        int x1 = math.max(0, bar_index - 300)
+        array<float> allR = array.from(0.0, 0.236, 0.382, 0.5, 0.618, fib764 ? 0.764 : 0.786, 1.0)
+        for r in allR
+            float p = fibUp ? fHi - r * (fHi - fLo) : fLo + r * (fHi - fLo)
+            lastLines.push(line.new(x1, p, bar_index + 15, p, color = colFib, style = r == 0.5 ? line.style_solid : line.style_dashed))
+            lastLabels.push(label.new(bar_index + 15, p, str.tostring(r * 100, "#.0") + "% (" + f_px(p) + ")", style = label.style_label_left, color = color.new(color.black, 100), textcolor = colFib, size = size.tiny))
+    if lvlLabels and lvP.size() > 0
+        for [i, p] in lvP
+            string n = lvN.get(i)
+            if not str.startswith(n, "Fib")
+                lastLabels.push(label.new(bar_index + 3, p, n + " " + f_px(p), style = label.style_label_left, color = color.new(color.black, 100), textcolor = n == "Y-Close" ? colPDC : colLvl, size = size.tiny))
+    if showLadder and flat
+        [t1, t2, t3] = f_targets(atr)
+        float sd = math.max(slMin, math.min(slMax, slATR * atr))
+        if not na(ladL)
+            lastLines.push(line.new(bar_index, ladL, bar_index + 25, ladL, color = color.new(color.lime, 0), style = line.style_dashed, width = 2))
+            lastLines.push(line.new(bar_index + 5, ladL - sd, bar_index + 25, ladL - sd, color = color.new(color.red, 30), style = line.style_dotted))
+            lastLines.push(line.new(bar_index + 5, ladL + t1, bar_index + 25, ladL + t1, color = color.new(color.lime, 50), style = line.style_dotted))
+            lastLabels.push(label.new(bar_index + 25, ladL, "BUY LMT " + f_px(ladL) + " · " + ladLN + " · SL " + f_px(ladL - sd) + " · TP1 " + f_px(ladL + t1), style = label.style_label_left, color = color.new(color.lime, 75), textcolor = color.white, size = size.tiny))
+        if not na(ladS)
+            lastLines.push(line.new(bar_index, ladS, bar_index + 25, ladS, color = color.new(color.red, 0), style = line.style_dashed, width = 2))
+            lastLines.push(line.new(bar_index + 5, ladS + sd, bar_index + 25, ladS + sd, color = color.new(color.red, 30), style = line.style_dotted))
+            lastLines.push(line.new(bar_index + 5, ladS - t1, bar_index + 25, ladS - t1, color = color.new(color.lime, 50), style = line.style_dotted))
+            lastLabels.push(label.new(bar_index + 25, ladS, "SELL LMT " + f_px(ladS) + " · " + ladSN + " · SL " + f_px(ladS + sd) + " · TP1 " + f_px(ladS - t1), style = label.style_label_left, color = color.new(color.red, 75), textcolor = color.white, size = size.tiny))
+
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Bias + dashboard
+//━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+float nS = f_nextBelow(close)
+float nR = f_nextAbove(close)
+float distL = na(ladL) ? na : close - ladL
+float distS = na(ladS) ? na : ladS - close
+bool  lookL = not na(distL) and distL <= 1.5 * atr and rsi < 55
+bool  lookS = not na(distS) and distS <= 1.5 * atr and rsi > 45
+if lookL and lookS
+    lookL := distL <= distS
+    lookS := not lookL
+
+string biasTxt = "WAIT — between levels"
+color  biasCol = color.gray
+if not flat
+    biasTxt := tr.dir == 1 ? "IN LONG — TP1 then stop to BE" : "IN SHORT — TP1 then stop to BE"
+    biasCol := tr.dir == 1 ? color.lime : color.red
+else if not inWin
+    biasTxt := "Outside signal window"
+else if lookL
+    biasTxt := runawayDown ? "Long level near — but trend day ↓ (size down)" : "LOOK LONG — buy limit " + f_px(ladL)
+    biasCol := runawayDown ? color.orange : color.lime
+else if lookS
+    biasTxt := runawayUp ? "Short level near — but trend day ↑ (size down)" : "LOOK SHORT — sell limit " + f_px(ladS)
+    biasCol := runawayUp ? color.orange : color.red
+else if rsi <= rsiOS
+    biasTxt := "Oversold — wait for a support level"
+    biasCol := color.new(color.lime, 40)
+else if rsi >= rsiOB
+    biasTxt := "Overbought — wait for a resistance level"
+    biasCol := color.new(color.red, 40)
+
+bgcolor(bgBias and intraday and flat and lookL ? color.new(color.lime, 94) : bgBias and intraday and flat and lookS ? color.new(color.red, 94) : na)
+
+f_pos(string s) =>
+    s == "Top right" ? position.top_right : s == "Bottom right" ? position.bottom_right : s == "Top left" ? position.top_left : position.bottom_left
+
+f_size(string s) =>
+    s == "Tiny" ? size.tiny : s == "Normal" ? size.normal : size.small
+
+var table dash = table.new(f_pos(dashPos), 2, 13, bgcolor = color.new(#0b0f19, 10), border_color = color.new(color.gray, 70), border_width = 1)
+
+f_row(int r, string k, string v, color vc) =>
+    table.cell(dash, 0, r, k, text_color = color.silver, text_size = f_size(dashSize), text_halign = text.align_left)
+    table.cell(dash, 1, r, v, text_color = vc, text_size = f_size(dashSize), text_halign = text.align_left)
+
+if showDash and barstate.islast
+    if not intraday
+        f_row(0, "FSP Scalper", "Use an intraday chart (1-minute, like FSP)", color.orange)
+    else
+        [t1, t2, t3] = f_targets(atr)
+        float sd = math.max(slMin, math.min(slMax, slATR * atr))
+        string gLtxt = ""
+        string gStxt = ""
+        if not na(ladL)
+            [g, s] = f_grade(f_conf(ladL, 1, tol), f_inBox(ladL, 1, tol), rsi <= rsiOS, hiDip - ladL >= 2.5 * atr, false, runawayDown)
+            gLtxt := " [" + g + "]"
+        if not na(ladS)
+            [g, s] = f_grade(f_conf(ladS, -1, tol), f_inBox(ladS, -1, tol), rsi >= rsiOB, ladS - loRip >= 2.5 * atr, false, runawayUp)
+            gStxt := " [" + g + "]"
+        string rsiState = rsi <= rsiOS ? "oversold" : rsi >= rsiOB ? "overbought" : "neutral"
+        string atrState = atr < 10 ? "quiet" : atr < 20 ? "normal" : atr < 35 ? "high" : "extreme"
+        float gap = not na(rthOpen) and not na(pdc) ? rthOpen - pdc : na
+        string dayTxt = (na(gap) ? "" : "Gap " + (gap >= 0 ? "+" : "") + f_pts(gap) + " · ") + (na(pdc) ? "" : close >= pdc ? "above Y-close" : "below Y-close") + (na(dOpen) ? "" : close >= dOpen ? " · daily candle green" : " · daily candle red")
+        string structTxt = na(prevSwH) or na(prevSwL) ? "building…" : lastSwH > prevSwH and lastSwL > prevSwL ? "HH / HL — bullish" : lastSwH < prevSwH and lastSwL < prevSwL ? "LH / LL — bearish" : "mixed / range"
+        string winTxt = newsBlock ? "News pause (10:00)" : inWin ? (prime ? "Prime: NY open" : "Signal window") : "Outside signal window"
+        string trendTxt = runawayUp ? "Runaway UP — don't fade" : runawayDown ? "Runaway DOWN — don't catch" : "normal (" + f_pts(moveATR) + " ATR from open)"
+        f_row(0, "FSP bias", biasTxt, biasCol)
+        f_row(1, "Levels", "S " + f_px(nS) + " (" + f_pts(close - nS) + ") · R " + f_px(nR) + " (" + f_pts(nR - close) + ")", color.white)
+        f_row(2, "Long ladder", na(ladL) ? "none armed" : "BUY " + f_px(ladL) + gLtxt + " " + ladLN + " · add " + f_px(ladL - addATR * atr) + " · SL " + f_px(ladL - sd) + " · TP " + f_px(ladL + t1) + "/" + f_px(ladL + t2) + "/" + f_px(ladL + t3), color.new(color.lime, 10))
+        f_row(3, "Short ladder", na(ladS) ? "none armed" : "SELL " + f_px(ladS) + gStxt + " " + ladSN + " · add " + f_px(ladS + addATR * atr) + " · SL " + f_px(ladS + sd) + " · TP " + f_px(ladS - t1) + "/" + f_px(ladS - t2) + "/" + f_px(ladS - t3), color.new(color.red, 10))
+        f_row(4, "RSI(" + str.tostring(rsiLen) + ")", f_pts(rsi) + " " + rsiState + (rsi > rsiAvg ? " ↑" : " ↓"), rsi <= rsiOS ? color.lime : rsi >= rsiOB ? color.red : color.white)
+        f_row(5, "ATR(" + str.tostring(atrLen) + ")", f_pts(atr) + " " + atrState + " → TP " + f_pts(t1) + "/" + f_pts(t2) + "/" + f_pts(t3) + " · SL " + f_pts(sd), color.white)
+        f_row(6, "Day", dayTxt, color.white)
+        f_row(7, "Trend guard", trendTxt, runawayUp or runawayDown ? color.orange : color.white)
+        f_row(8, "Structure (" + zoneTF + ")", structTxt, color.white)
+        f_row(9, "Window", winTxt, newsBlock ? color.orange : inWin ? color.lime : color.gray)
+        f_row(10, "VIX", na(vix) ? "–" : f_pts(vix) + (na(vixPc) or vixPc == 0 ? "" : " (" + (vix >= vixPc ? "+" : "") + f_pts((vix / vixPc - 1) * 100) + "%)"), not na(vix) and not na(vixPc) and vix > vixPc * 1.05 ? color.orange : color.white)
+        f_row(11, "Last trade", lastTxt, color.white)
+        f_row(12, "On this chart", nTr == 0 ? "no closed trades yet" : str.tostring(nTr) + " trades · TP1 " + str.tostring(math.round(100.0 * nTp1 / nTr)) + "% · stopped " + str.tostring(math.round(100.0 * nStop / nTr)) + "% · avg " + f_pts(sumPts / nTr) + " pts", color.white)
