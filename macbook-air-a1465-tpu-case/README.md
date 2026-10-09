@@ -19,9 +19,17 @@ Bambu Lab printer.
 * The texture is on the face that prints against the bed. The scale tops
   pick up the plate's surface finish (textured PEI gives a matte, leathery
   grain). No supports are needed anywhere.
-* **Clips:** the lid and base clips are staggered, so only one 0.6 mm
-  lip ever sits in the gap between lid and keyboard. The laptop still
-  closes.
+* **Clips:** each clip is a *wedge clip*. A lip overhangs the screen bezel or
+  palm rest, with a 45° ramp under it. The edge of the laptop wedges onto
+  that ramp anywhere across about a 0.9 mm height range while the TPU wall
+  flexes outwards, so the clip grips snugly even if the real laptop is a bit
+  thicker or thinner than my measurements. The lid and base clips are
+  staggered, so only one 0.6 mm lip sits in the lid/keyboard gap at any
+  point and the laptop still closes.
+* **Fit backtested virtually** before printing. The design was checked
+  against a 3D model of the A1465 for fit, closing, hinge swing, rubber
+  feet and port plugs, plus a Monte-Carlo tolerance analysis. See
+  [Fit backtest](#fit-backtest).
 
 ## Which files to print
 
@@ -31,48 +39,58 @@ is split into **LEFT** and **RIGHT** halves. The split runs along the
 scale grooves, and four dovetail-shaped scales lock the halves together.
 If you have an H2D or H2S, you can print the one-piece versions instead.
 
-| Folder (in `3mf/`, same names in `stl/`) | What | Each | ~TPU |
-|---|---|---|---|
-| `1_fit_tests/` | 3 lid-corner and 3 base-strip test pieces | 44×44 / 40×107 mm | 5 g / 9 g |
-| `2_lid_shell/` | `lid_shell_<A/B/C>_LEFT` + `_RIGHT` | ~163 × 187 mm | ~65 g |
-| `3_base_shell/` | `base_shell_<A/B/C>_LEFT` + `_RIGHT` | ~164 × 192 mm | ~63 g |
-| `4_one_piece_for_big_beds/` | one-piece lid and base (B sizes) | 303 × 192 mm | ~128 g |
+| Folder (in `3mf/`) | What | ~TPU each |
+|---|---|---|
+| `1_fit_tests/` | 5 lid front-corner sizes, 1 lid rear-corner hinge check, 3 base front strips (A/B/C), 3 base rear strips (A/B/C) | 5–10 g |
+| `2_lid_shell/` | `lid_shell_lid-<size>mm_LEFT` + `_RIGHT` for lids 4.40 / 4.65 / 4.90 / 5.15 / 5.40 mm | ~64 g |
+| `3_base_shell/` | `base_shell_front-<A/B/C>_rear-<A/B/C>_LEFT` + `_RIGHT` (all 9 combinations) | ~62 g |
+| `4_one_piece_for_big_beds/` | one-piece lid and base in the nominal sizes (lid 4.90, front-B rear-B) | ~126 g |
 
-The **B** files are the nominal size. Print A or C only if a fit test tells
-you to. The 3MF and STL files contain the same meshes; the 3MF files are
-about 4× smaller and open directly in Bambu Studio. STL copies of the fit tests
-and B-size shells are written to `stl/` when you run `generate_case.py`. They
-aren't stored in git, to keep the repo small. Every A/B/C size is in `3mf/`. Leave every part in its
-exported orientation, textured face down.
+The nominal sizes are **lid 4.90 mm** and base **front-B rear-B**. The 3MF
+files open directly in Bambu Studio. The generator also writes STL copies
+of the fit tests and nominal shells to `stl/` (not stored in git). Leave
+every part in its exported orientation, textured face down.
 
-## Step 1: print the fit tests (about 1 hour, about 40 g)
+## Step 1: print the fit tests (about 1.5 h, about 100 g for all 12)
 
 Apple publishes the outside footprint but not the lid thickness or the
-base's wedge profile. I measured those from photos, so they could be off by
-a few tenths of a millimetre. A full case uses about 260 g of TPU, so check
-the fit with these small pieces first.
+base's wedge profile. I estimated those, and the backtest shows that
+printing blind at the nominal size fits well only about 6 times in 10.
+Printing these small pieces first and picking the matching size raises that
+to about 9 in 10. A full case is about 250 g of TPU, so the tests are worth
+the hour.
 
-1. **Lid corner A/B/C** (for lids 4.5 / 4.9 / 5.3 mm thick). Close the
-   laptop and snap each one onto the **front-left corner of the lid**.
-   * The right one hooks over the screen bezel with a small click and
-     doesn't rattle.
-   * If **B** rattles or its lip floats above the bezel, use **A**.
-   * If **B** won't snap over the edge, or bows, use **C**.
-2. **Base strip A/B/C** (deck edge −0.5 / nominal / +0.5 mm). Slide the
-   laptop's **left rear corner** into the strip.
-   * The rear-left rubber foot should drop into the hole.
-   * The clip at the front end of the strip should hook over the edge of
-     the palm rest.
-   * Pick the one whose clip hooks cleanly without lifting the laptop.
-   * Also check that the window clears MagSafe, USB and the headphone
-     jack. If the foot or the ports don't line up, measure and ask me for
-     a tweak (see the last section).
+**Print the fit tests and the final shells with exactly the same filament,
+plate, layer height and first-layer height.** Clip heights are counted in
+layers, so a different layer height gives a slightly different fit.
+
+1. **Lid front corner, 5 sizes.** Close the laptop and press each one onto
+   the **front-left corner of the lid**.
+   * The right size clicks over the screen edge, sits flat on the back of
+     the lid, and doesn't rattle when you tap it.
+   * Too thin a size won't seat, or bows up. Too thick a size wobbles, or
+     its lip floats above the bezel.
+   * If two sizes feel equally good, pick the thicker one.
+2. **Base front strip A/B/C.** Lay the laptop's **front-left corner** in
+   the strip; the front rubber foot drops into the hole. The right one's
+   side clip (30–58 mm from the front) snaps over the palm-rest edge, and
+   the laptop sits flat on the strip.
+3. **Base rear strip A/B/C.** Same test at the **rear-left corner**, using
+   the side clip at 94–113 mm. Also check that the rear foot drops into its
+   hole, and that MagSafe, USB and the headphone jack are inside the
+   window.
+4. **Lid rear-corner hinge check.** Clip it onto the rear-left corner of
+   the lid and **open the lid all the way**. It must not touch the base or
+   the table edge behind it.
+
+Your picks give the files to print, e.g. lid **4.90 mm** plus base
+**front-B rear-A**.
 
 ## Step 2: print the shells
 
-Print four plates, one half each: lid LEFT, lid RIGHT, base LEFT and base
-RIGHT, in the A/B/C size you picked for each shell. The base **LEFT** half
-is the one with the long port window, on the MagSafe side.
+Print four plates, one half each: `lid_shell_lid-<your size>_LEFT`, its
+`_RIGHT`, and `base_shell_front-<X>_rear-<Y>_LEFT` and `_RIGHT`. The base
+**LEFT** half is the one with the long port window, on the MagSafe side.
 
 ### Bambu Studio settings (P1S/X1C/P2S, 0.4 mm nozzle)
 
@@ -116,6 +134,47 @@ the grooves and wipe the scale tops clean.
   down until the clips catch the palm-rest edge. The feet sit in their
   holes.
 * To take it off, peel one side clip outwards first.
+
+## Fit backtest
+
+`fit_backtest.py` builds a 3D stand-in of the A1465 from the measurements
+below: a wedge base with rolled edges and rubber feet, the curved lid, the
+lid/keyboard gap, the hinge axis and port plugs. It then puts the generated
+shells on it and checks them with exact mesh booleans.
+
+**Geometry checks** (all pass at the nominal size, and under each stress
+case: tighter or looser edge rolls, thin or thick lid edges, a laptop 0.5 mm
+wider, feet 3 mm off, ports 5 mm off either way, a 0.6 mm lid gap):
+
+* Nothing pushes into the laptop except the intended clip wedges, about
+  0.75 mm of wall flex.
+* Both shells on and the laptop closed: no collisions.
+* Lid opened 0→135° with the hinge axis anywhere within ±1.5 mm of the
+  estimate: the lid shell's back edge never touches the base or base shell.
+* All four rubber feet sit inside their Ø25 mm holes, and every plug body
+  (MagSafe 2, USB-A, Thunderbolt, 3.5 mm) clears its window.
+
+![sections](backtest_sections.png)
+![hinge](backtest_hinge.png)
+![ports](backtest_ports.png)
+
+**Tolerance analysis.** 40,000 simulated laptops, with every uncertain
+dimension (lid thickness, wedge profile, width, gap, foot and port
+positions) varied by its estimated uncertainty, plus printer shrink and Z
+error:
+
+| | Snug fit | Fits (maybe a bit tight or loose) |
+|---|---|---|
+| Whole case, print nominal sizes blind | 59.6 % | 85.1 % |
+| **Whole case, fit tests first, then matching sizes** | **92.8 %** | **95.9 %** |
+| Lid shell with fit test | 96.2 % | 96.3 % |
+| Base shell with fit tests | 95.8 % | 96.1 % |
+
+"Snug" means each clip either wedges onto its ramp with no free play, or
+bends at most 0.45 mm; the width is within the range TPU stretches over;
+the laptop closes; and the feet land in their holes. The remaining misses
+are mostly simulated laptops whose lid or wedge falls outside every printed
+size. `fit_backtest_results.json` has the full numbers.
 
 ## Measurements used
 

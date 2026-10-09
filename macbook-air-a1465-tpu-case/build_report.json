@@ -31,7 +31,7 @@
     ],
     "port_window_right": [
       -5.0,
-      47.0
+      51.0
     ]
   },
   "case": {
@@ -39,18 +39,19 @@
     "wall": 1.6,
     "plate": 2.0,
     "chamfer": 0.8,
-    "inner_fillet": 1.2,
-    "lip_reach": 1.6,
+    "inner_fillet": 0.8,
+    "lip_reach": 2.0,
     "lip_t": 0.6,
-    "lip_gap": 0.1,
-    "lip_ramp": 0.5,
+    "lip_gap": 0.0,
+    "lip_ramp": 1.0,
     "wall_drop": 0.1,
-    "top_back_trim": 7.0,
+    "top_back_trim": 10.0,
+    "top_back_chamfer": 1.4,
     "top_wall_end": 12.0,
     "bottom_back_trim": 1.5,
     "port_cut_in": 0.6,
     "port_floor_cut": 1.0,
-    "foot_hole_d": 22.0,
+    "foot_hole_d": 25.0,
     "kerf": 0.2,
     "grid": 0.3,
     "tex_depth": 0.75,
@@ -65,8 +66,22 @@
   },
   "files": [
     {
-      "file": "fit_lid_corner_A_4.5mm",
-      "tris": 23070,
+      "file": "fit_lid_front-corner_lid-4.40mm",
+      "tris": 23520,
+      "size_mm": [
+        43.9,
+        43.9,
+        7.0
+      ],
+      "volume_cm3": 4.0,
+      "weight_g_tpu": 5,
+      "clean": true,
+      "mb_3mf": 0.3,
+      "mb_stl": 1.2
+    },
+    {
+      "file": "fit_lid_front-corner_lid-4.65mm",
+      "tris": 23544,
       "size_mm": [
         43.9,
         43.9,
@@ -79,12 +94,12 @@
       "mb_stl": 1.2
     },
     {
-      "file": "fit_lid_corner_B_4.9mm",
-      "tris": 23082,
+      "file": "fit_lid_front-corner_lid-4.90mm",
+      "tris": 23512,
       "size_mm": [
         43.9,
         43.9,
-        7.6
+        7.5
       ],
       "volume_cm3": 4.0,
       "weight_g_tpu": 5,
@@ -93,8 +108,22 @@
       "mb_stl": 1.2
     },
     {
-      "file": "fit_lid_corner_C_5.3mm",
-      "tris": 23068,
+      "file": "fit_lid_front-corner_lid-5.15mm",
+      "tris": 23512,
+      "size_mm": [
+        43.9,
+        43.9,
+        7.8
+      ],
+      "volume_cm3": 4.1,
+      "weight_g_tpu": 5,
+      "clean": true,
+      "mb_3mf": 0.3,
+      "mb_stl": 1.2
+    },
+    {
+      "file": "fit_lid_front-corner_lid-5.40mm",
+      "tris": 23526,
       "size_mm": [
         43.9,
         43.9,
@@ -107,148 +136,415 @@
       "mb_stl": 1.2
     },
     {
-      "file": "fit_base_left_rear_A_low",
-      "tris": 26160,
+      "file": "fit_lid_rear-corner_hinge-check_lid-4.90mm",
+      "tris": 20768,
       "size_mm": [
-        39.9,
-        106.5,
-        8.4
+        41.9,
+        50.0,
+        7.5
       ],
-      "volume_cm3": 7.1,
+      "volume_cm3": 4.0,
+      "weight_g_tpu": 5,
+      "clean": true,
+      "mb_3mf": 0.2,
+      "mb_stl": 1.0
+    },
+    {
+      "file": "fit_base_front-strip_A",
+      "tris": 40682,
+      "size_mm": [
+        73.9,
+        65.9,
+        6.1
+      ],
+      "volume_cm3": 8.0,
+      "weight_g_tpu": 10,
+      "clean": true,
+      "mb_3mf": 0.5,
+      "mb_stl": 2.0
+    },
+    {
+      "file": "fit_base_front-strip_B",
+      "tris": 40770,
+      "size_mm": [
+        73.9,
+        65.9,
+        6.4
+      ],
+      "volume_cm3": 8.1,
+      "weight_g_tpu": 10,
+      "clean": true,
+      "mb_3mf": 0.5,
+      "mb_stl": 2.0
+    },
+    {
+      "file": "fit_base_front-strip_C",
+      "tris": 40770,
+      "size_mm": [
+        73.9,
+        65.9,
+        6.7
+      ],
+      "volume_cm3": 8.3,
+      "weight_g_tpu": 10,
+      "clean": true,
+      "mb_3mf": 0.5,
+      "mb_stl": 2.0
+    },
+    {
+      "file": "fit_base_rear-strip_A",
+      "tris": 27364,
+      "size_mm": [
+        41.9,
+        106.5,
+        8.2
+      ],
+      "volume_cm3": 7.2,
       "weight_g_tpu": 9,
       "clean": true,
       "mb_3mf": 0.3,
-      "mb_stl": 1.3
+      "mb_stl": 1.4
     },
     {
-      "file": "fit_base_left_rear_B_nominal",
-      "tris": 26170,
+      "file": "fit_base_rear-strip_B",
+      "tris": 27362,
       "size_mm": [
-        39.9,
+        41.9,
         106.5,
-        8.9
+        8.8
       ],
-      "volume_cm3": 7.1,
+      "volume_cm3": 7.3,
       "weight_g_tpu": 9,
       "clean": true,
       "mb_3mf": 0.3,
-      "mb_stl": 1.3
+      "mb_stl": 1.4
     },
     {
-      "file": "fit_base_left_rear_C_high",
-      "tris": 26156,
+      "file": "fit_base_rear-strip_C",
+      "tris": 27358,
       "size_mm": [
-        39.9,
+        41.9,
         106.5,
         9.4
       ],
-      "volume_cm3": 7.1,
+      "volume_cm3": 7.3,
       "weight_g_tpu": 9,
       "clean": true,
       "mb_3mf": 0.3,
-      "mb_stl": 1.3
+      "mb_stl": 1.4
     },
     {
-      "file": "lid_shell_A_4.5mm_LEFT",
-      "tris": 239408,
+      "file": "lid_shell_lid-4.40mm_LEFT",
+      "tris": 235056,
       "size_mm": [
         162.4,
-        186.9,
-        7.2
+        183.9,
+        7.0
       ],
-      "volume_cm3": 52.5,
-      "weight_g_tpu": 64,
+      "volume_cm3": 51.8,
+      "weight_g_tpu": 63,
       "clean": true,
       "mb_3mf": 2.9
     },
     {
-      "file": "lid_shell_A_4.5mm_RIGHT",
-      "tris": 241472,
+      "file": "lid_shell_lid-4.40mm_RIGHT",
+      "tris": 236946,
       "size_mm": [
         162.5,
-        186.9,
-        7.2
+        183.9,
+        7.0
       ],
-      "volume_cm3": 53.0,
-      "weight_g_tpu": 65,
+      "volume_cm3": 51.7,
+      "weight_g_tpu": 63,
       "clean": true,
-      "mb_3mf": 3.0
+      "mb_3mf": 2.9
     },
     {
-      "file": "lid_shell_B_4.9mm_LEFT",
-      "tris": 239424,
+      "file": "lid_shell_lid-4.65mm_LEFT",
+      "tris": 235080,
       "size_mm": [
         162.4,
-        186.9,
-        7.6
+        183.9,
+        7.2
       ],
-      "volume_cm3": 52.7,
+      "volume_cm3": 51.9,
+      "weight_g_tpu": 63,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "lid_shell_lid-4.65mm_RIGHT",
+      "tris": 236946,
+      "size_mm": [
+        162.5,
+        183.9,
+        7.2
+      ],
+      "volume_cm3": 51.9,
+      "weight_g_tpu": 63,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "lid_shell_lid-4.90mm_LEFT",
+      "tris": 235052,
+      "size_mm": [
+        162.4,
+        183.9,
+        7.5
+      ],
+      "volume_cm3": 52.1,
       "weight_g_tpu": 64,
       "clean": true,
       "mb_3mf": 2.9,
-      "mb_stl": 12.0
+      "mb_stl": 11.8
     },
     {
-      "file": "lid_shell_B_4.9mm_RIGHT",
-      "tris": 241464,
+      "file": "lid_shell_lid-4.90mm_RIGHT",
+      "tris": 236946,
       "size_mm": [
         162.5,
-        186.9,
-        7.6
+        183.9,
+        7.5
       ],
-      "volume_cm3": 53.2,
-      "weight_g_tpu": 65,
+      "volume_cm3": 52.0,
+      "weight_g_tpu": 63,
       "clean": true,
-      "mb_3mf": 3.0,
-      "mb_stl": 12.1
+      "mb_3mf": 2.9,
+      "mb_stl": 11.8
     },
     {
-      "file": "lid_shell_B_4.9mm_ONE-PIECE_big-bed",
-      "tris": 481300,
+      "file": "lid_shell_lid-4.90mm_ONE-PIECE_big-bed",
+      "tris": 473128,
       "size_mm": [
         303.2,
-        186.9,
-        7.6
+        183.9,
+        7.5
       ],
-      "volume_cm3": 106.0,
-      "weight_g_tpu": 129,
+      "volume_cm3": 104.1,
+      "weight_g_tpu": 127,
       "clean": true,
-      "mb_3mf": 5.9,
-      "mb_stl": 24.1
+      "mb_3mf": 5.8,
+      "mb_stl": 23.7
     },
     {
-      "file": "lid_shell_C_5.3mm_LEFT",
-      "tris": 239428,
+      "file": "lid_shell_lid-5.15mm_LEFT",
+      "tris": 235008,
       "size_mm": [
         162.4,
-        186.9,
-        8.0
+        183.9,
+        7.8
       ],
-      "volume_cm3": 52.9,
-      "weight_g_tpu": 65,
+      "volume_cm3": 52.2,
+      "weight_g_tpu": 64,
       "clean": true,
       "mb_3mf": 2.9
     },
     {
-      "file": "lid_shell_C_5.3mm_RIGHT",
-      "tris": 241472,
+      "file": "lid_shell_lid-5.15mm_RIGHT",
+      "tris": 236892,
       "size_mm": [
         162.5,
-        186.9,
-        8.0
+        183.9,
+        7.8
       ],
-      "volume_cm3": 53.4,
-      "weight_g_tpu": 65,
+      "volume_cm3": 52.1,
+      "weight_g_tpu": 64,
       "clean": true,
-      "mb_3mf": 3.0
+      "mb_3mf": 2.9
     },
     {
-      "file": "base_shell_A_low_LEFT",
-      "tris": 238096,
+      "file": "lid_shell_lid-5.40mm_LEFT",
+      "tris": 235042,
+      "size_mm": [
+        162.4,
+        183.9,
+        8.0
+      ],
+      "volume_cm3": 52.3,
+      "weight_g_tpu": 64,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "lid_shell_lid-5.40mm_RIGHT",
+      "tris": 236896,
+      "size_mm": [
+        162.5,
+        183.9,
+        8.0
+      ],
+      "volume_cm3": 52.2,
+      "weight_g_tpu": 64,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-A_rear-A_LEFT",
+      "tris": 235686,
       "size_mm": [
         164.4,
         192.4,
-        8.4
+        8.3
+      ],
+      "volume_cm3": 50.7,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-A_rear-A_RIGHT",
+      "tris": 234534,
+      "size_mm": [
+        163.1,
+        192.4,
+        8.9
+      ],
+      "volume_cm3": 51.1,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-A_rear-B_LEFT",
+      "tris": 235590,
+      "size_mm": [
+        164.4,
+        192.4,
+        8.9
+      ],
+      "volume_cm3": 50.7,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-A_rear-B_RIGHT",
+      "tris": 234442,
+      "size_mm": [
+        163.1,
+        192.4,
+        9.6
+      ],
+      "volume_cm3": 51.0,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-A_rear-C_LEFT",
+      "tris": 235140,
+      "size_mm": [
+        164.4,
+        192.4,
+        9.4
+      ],
+      "volume_cm3": 50.6,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-A_rear-C_RIGHT",
+      "tris": 234018,
+      "size_mm": [
+        163.1,
+        192.4,
+        10.4
+      ],
+      "volume_cm3": 51.0,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-B_rear-A_LEFT",
+      "tris": 235700,
+      "size_mm": [
+        164.4,
+        192.4,
+        8.2
+      ],
+      "volume_cm3": 50.9,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-B_rear-A_RIGHT",
+      "tris": 234550,
+      "size_mm": [
+        163.1,
+        192.4,
+        8.8
+      ],
+      "volume_cm3": 51.2,
+      "weight_g_tpu": 63,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-B_rear-B_LEFT",
+      "tris": 235694,
+      "size_mm": [
+        164.4,
+        192.4,
+        8.8
+      ],
+      "volume_cm3": 50.9,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9,
+      "mb_stl": 11.8
+    },
+    {
+      "file": "base_shell_front-B_rear-B_RIGHT",
+      "tris": 234500,
+      "size_mm": [
+        163.1,
+        192.4,
+        9.4
+      ],
+      "volume_cm3": 51.2,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9,
+      "mb_stl": 11.7
+    },
+    {
+      "file": "base_shell_front-B_rear-B_ONE-PIECE_big-bed",
+      "tris": 469224,
+      "size_mm": [
+        303.2,
+        192.4,
+        9.4
+      ],
+      "volume_cm3": 102.2,
+      "weight_g_tpu": 125,
+      "clean": true,
+      "mb_3mf": 5.8,
+      "mb_stl": 23.5
+    },
+    {
+      "file": "base_shell_front-B_rear-C_LEFT",
+      "tris": 235646,
+      "size_mm": [
+        164.4,
+        192.4,
+        9.4
+      ],
+      "volume_cm3": 50.8,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-B_rear-C_RIGHT",
+      "tris": 234522,
+      "size_mm": [
+        163.1,
+        192.4,
+        10.1
       ],
       "volume_cm3": 51.2,
       "weight_g_tpu": 62,
@@ -256,82 +552,79 @@
       "mb_3mf": 2.9
     },
     {
-      "file": "base_shell_A_low_RIGHT",
-      "tris": 237376,
+      "file": "base_shell_front-C_rear-A_LEFT",
+      "tris": 235708,
       "size_mm": [
-        163.1,
+        164.4,
         192.4,
-        9.0
+        8.2
       ],
-      "volume_cm3": 51.6,
-      "weight_g_tpu": 63,
+      "volume_cm3": 51.1,
+      "weight_g_tpu": 62,
       "clean": true,
       "mb_3mf": 2.9
     },
     {
-      "file": "base_shell_B_nominal_LEFT",
-      "tris": 238352,
+      "file": "base_shell_front-C_rear-A_RIGHT",
+      "tris": 234508,
       "size_mm": [
-        164.4,
+        163.1,
         192.4,
-        8.9
+        8.6
       ],
       "volume_cm3": 51.4,
       "weight_g_tpu": 63,
       "clean": true,
-      "mb_3mf": 2.9,
-      "mb_stl": 11.9
+      "mb_3mf": 2.9
     },
     {
-      "file": "base_shell_B_nominal_RIGHT",
-      "tris": 237588,
-      "size_mm": [
-        163.1,
-        192.4,
-        9.5
-      ],
-      "volume_cm3": 51.8,
-      "weight_g_tpu": 63,
-      "clean": true,
-      "mb_3mf": 2.9,
-      "mb_stl": 11.9
-    },
-    {
-      "file": "base_shell_B_nominal_ONE-PIECE_big-bed",
-      "tris": 475054,
-      "size_mm": [
-        303.2,
-        192.4,
-        9.5
-      ],
-      "volume_cm3": 103.3,
-      "weight_g_tpu": 126,
-      "clean": true,
-      "mb_3mf": 5.9,
-      "mb_stl": 23.8
-    },
-    {
-      "file": "base_shell_C_high_LEFT",
-      "tris": 238314,
+      "file": "base_shell_front-C_rear-B_LEFT",
+      "tris": 235702,
       "size_mm": [
         164.4,
         192.4,
-        9.4
+        8.7
       ],
-      "volume_cm3": 51.6,
+      "volume_cm3": 51.1,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-C_rear-B_RIGHT",
+      "tris": 234550,
+      "size_mm": [
+        163.1,
+        192.4,
+        9.3
+      ],
+      "volume_cm3": 51.4,
       "weight_g_tpu": 63,
       "clean": true,
       "mb_3mf": 2.9
     },
     {
-      "file": "base_shell_C_high_RIGHT",
-      "tris": 237632,
+      "file": "base_shell_front-C_rear-C_LEFT",
+      "tris": 235696,
+      "size_mm": [
+        164.4,
+        192.4,
+        9.3
+      ],
+      "volume_cm3": 51.0,
+      "weight_g_tpu": 62,
+      "clean": true,
+      "mb_3mf": 2.9
+    },
+    {
+      "file": "base_shell_front-C_rear-C_RIGHT",
+      "tris": 234534,
       "size_mm": [
         163.1,
         192.4,
         10.0
       ],
-      "volume_cm3": 52.0,
+      "volume_cm3": 51.4,
       "weight_g_tpu": 63,
       "clean": true,
       "mb_3mf": 2.9

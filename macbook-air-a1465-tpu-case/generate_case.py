@@ -60,7 +60,7 @@ LAPTOP = dict(
     #  behind the MagSafe port)
     port_window_left=(-5.0, 77.0),
     # right side: Thunderbolt (~9-19), USB 3 (~27-42)
-    port_window_right=(-5.0, 47.0),
+    port_window_right=(-5.0, 51.0),
 )
 
 CASE = dict(
@@ -68,18 +68,22 @@ CASE = dict(
     wall=1.6,          # side wall thickness (4 x 0.4 mm lines)
     plate=2.0,         # outer face (scale tops) -> inner floor
     chamfer=0.8,       # 45 deg chamfer on the bed-side outer edge (no elephant foot)
-    inner_fillet=1.2,  # 45 deg fill where floor meets wall (laptop edges are rolled)
-    lip_reach=1.6,     # clip lip reach, measured inward from the pocket wall
+    inner_fillet=0.8,  # 45 deg fill where floor meets wall (laptop edges are rolled)
+    lip_reach=2.0,     # clip lip reach, measured inward from the pocket wall
     lip_t=0.6,         # clip lip thickness (sits in the ~0.9 mm lid/base gap)
-    lip_gap=0.1,       # display-face / deck -> lip underside
-    lip_ramp=0.5,      # 45 deg support ramp under the lip (prints without supports)
+    lip_gap=0.0,       # display-face / deck -> lip underside (0 = nominal surface)
+    lip_ramp=1.0,      # 45 deg wedge ramp under the lip: the edge of the lid / palm
+                       # rest wedges onto it anywhere over ~0.9 mm of height while
+                       # the TPU wall flexes out, so the clip grips across the
+                       # whole tolerance range (and it prints without supports)
     wall_drop=0.1,     # plain walls stop this far below the display face / deck
-    top_back_trim=7.0,     # lid shell stops short of the hinge
+    top_back_trim=10.0,    # lid shell stops short of the hinge (hinge-sweep backtest)
+    top_back_chamfer=1.4,  # bed-side 45 deg chamfer on the lid shell back edge
     top_wall_end=12.0,     # lid shell side walls end this far from the back edge
     bottom_back_trim=1.5,  # base shell floor stops short of the back edge
     port_cut_in=0.6,     # port windows reach this far under the laptop edge
     port_floor_cut=1.0,  # ... and dip this far into the floor for plug overmolds
-    foot_hole_d=22.0,  # holes for the 18 mm rubber feet (+/-2 mm position tolerance)
+    foot_hole_d=25.0,  # holes for the 18 mm rubber feet (+/-3.5 mm position tolerance)
     kerf=0.2,          # gap between the two halves
     # texture
     grid=0.3,          # heightfield resolution
@@ -111,8 +115,7 @@ def clip_zones(kind, L):
         for y0, y1 in [(68, 90), (140, 165)]:
             zones += [(-6, 5, y0, y1), (W - 5, W + 6, y0, y1)]
     else:
-        for x0, x1 in [(34, 66), (116, 128)]:
-            zones += [(x0, x1, -6, 5), (*mirror_x(x0, x1), -6, 5)]
+        # (no clips on the base's front edge: it is only ~1.4 mm tall there)
         zones += [(-6, 5, 30, 58), (W - 5, W + 6, 30, 58)]
         zones += [(-6, 5, 94, 113), (W - 5, W + 6, 94, 128)]
     return zones
@@ -568,7 +571,7 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
     # sits 0.02 mm under the riser top so no two top faces coincide.
     parts = [slab_rel(o_cs - pocket.cs(), -P["wall_drop"] - 0.3, g + t, base, slope),
              slab_rel(mid_cs - pocket.inset(P["lip_reach"]).cs(), g, g + t - 0.02, base, slope)]
-    nr = 5
+    nr = max(5, int(round(rr / 0.1)))
     for k in range(1, nr):
         u = rr * k / nr
         parts.append(slab_rel(mid_cs - pocket.inset(u).cs(), g - rr + u, g + t / 2 + 0.01 * k, base, slope))
@@ -580,6 +583,12 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
     if kind == "top":
         # side walls stop before the hinge
         cuts.append(box(-20, W + 20, D - P["top_wall_end"], D + 20, T + 0.4, 80))
+        # big 45 deg chamfer on the bed side of the back edge: keeps the edge
+        # inside the hinge's swing when the lid opens (prints like any chamfer)
+        y0 = D - P["top_back_trim"] - P["top_back_chamfer"]
+        tri = [(y0, -1.0), (D + 5, -1.0), (D + 5, D + 5 - y0), (y0, 0.0)]
+        cuts.append(m3d.Manifold.extrude(m3d.CrossSection([np.array(tri)]), W + 40)
+                    .rotate((90, 0, 90)).translate((-20, 0, 0)))
         # finger notch, front centre
         cuts.append(u_notch_x(W / 2, 15, T + 1.5, 3.0, -10, -P["clear"] + 0.3))
     else:
@@ -707,8 +716,30 @@ def save(man, name, mf_dir, stl_dir=None, log=print, center=True):
     return info
 
 
-LID_VARIANTS = (("A_4.5mm", -0.4), ("B_4.9mm", 0.0), ("C_5.3mm", +0.4))
-BASE_VARIANTS = (("A_low", -0.5), ("B_nominal", 0.0), ("C_high", +0.5))
+# Fit sizes. The lid has one thickness; the base is a wedge, so its clip
+# height is set independently at the front clips (y = 44 mm) and the rear
+# clips (y = 104 mm), each picked with its own fit-test strip.
+LID_SIZES = (-0.50, -0.25, 0.0, +0.25, +0.50)     # offsets from LAPTOP["lid_t"]
+BASE_FRONT = (-0.40, 0.0, +0.40)                  # deck-height offsets at y = 44
+BASE_REAR = (-0.50, 0.0, +0.50)                   # deck-height offsets at y = 104
+Y_FRONT_CLIP, Y_REAR_CLIP = 44.0, 104.0
+
+
+def lid_tag(L, d):
+    return f"lid-{L['lid_t'] + d:.2f}mm"
+
+
+def base_heights(L, dF, dR):
+    """Deck line through the nominal heights +dF at the front clip, +dR at the rear clip."""
+    D = L["D"]
+    k = (L["base_h_back"] - L["base_h_front"]) / D
+    k2 = k + (dR - dF) / (Y_REAR_CLIP - Y_FRONT_CLIP)
+    hf2 = L["base_h_front"] + dF - (k2 - k) * Y_FRONT_CLIP
+    return hf2, hf2 + k2 * D
+
+
+def base_tag(i, j):
+    return f"front-{'ABC'[i]}_rear-{'ABC'[j]}"
 
 
 def main():
@@ -734,43 +765,59 @@ def main():
     report = dict(laptop=L, case=P, files=[])
     W, D = L["W"], L["D"]
 
-    # 1) fit tests
-    for tag, dl in LID_VARIANTS:
-        print(f"[fit] lid corner {tag}")
-        s, *_ = build_shell("top", dict(L, lid_t=L["lid_t"] + dl), P, args.seed_top, crop=(-3, 42, -3, 42))
-        report["files"].append(save(s, f"fit_lid_corner_{tag}", os.path.join(mf, "1_fit_tests"),
-                                    os.path.join(st, "1_fit_tests")))
-    for tag, dl in BASE_VARIANTS:
-        print(f"[fit] base left-rear strip {tag}")
-        L2 = dict(L, base_h_front=L["base_h_front"] + dl, base_h_back=L["base_h_back"] + dl)
-        s, *_ = build_shell("bottom", L2, P, args.seed_bottom, crop=(-3, 38, 84, D))
-        report["files"].append(save(s, f"fit_base_left_rear_{tag}", os.path.join(mf, "1_fit_tests"),
-                                    os.path.join(st, "1_fit_tests")))
+    nl = len(LID_SIZES) // 2
+    fit_mf, fit_st = os.path.join(mf, "1_fit_tests"), os.path.join(st, "1_fit_tests")
 
-    # 2) shells: halves for a 256 mm bed in every fit variant, one-piece for nominal
-    for kind, variants, seed, folder, label in (
-            ("top", LID_VARIANTS, args.seed_top, "2_lid_shell", "lid_shell"),
-            ("bottom", BASE_VARIANTS, args.seed_bottom, "3_base_shell", "base_shell")):
-        for tag, dl in variants:
-            nominal = dl == 0.0
+    # 1) fit tests
+    for d in LID_SIZES:
+        tag = lid_tag(L, d)
+        print(f"[fit] lid front corner {tag}")
+        s, *_ = build_shell("top", dict(L, lid_t=L["lid_t"] + d), P, args.seed_top, crop=(-3, 42, -3, 42))
+        report["files"].append(save(s, f"fit_lid_front-corner_{tag}", fit_mf, fit_st))
+    print("[fit] lid rear corner (hinge clearance)")
+    s, *_ = build_shell("top", L, P, args.seed_top, crop=(-3, 40, D - 60, D))
+    report["files"].append(save(s, f"fit_lid_rear-corner_hinge-check_{lid_tag(L, 0)}", fit_mf, fit_st))
+    for i, dF in enumerate(BASE_FRONT):
+        hf, hb = base_heights(L, dF, 0.0)
+        print(f"[fit] base front strip {'ABC'[i]}")
+        s, *_ = build_shell("bottom", dict(L, base_h_front=hf, base_h_back=hb), P, args.seed_bottom,
+                            crop=(-3, 72, -3, 64))
+        report["files"].append(save(s, f"fit_base_front-strip_{'ABC'[i]}", fit_mf, fit_st))
+    for j, dR in enumerate(BASE_REAR):
+        hf, hb = base_heights(L, 0.0, dR)
+        print(f"[fit] base rear strip {'ABC'[j]}")
+        s, *_ = build_shell("bottom", dict(L, base_h_front=hf, base_h_back=hb), P, args.seed_bottom,
+                            crop=(-3, 40, 84, D))
+        report["files"].append(save(s, f"fit_base_rear-strip_{'ABC'[j]}", fit_mf, fit_st))
+
+    # 2) shells: LEFT/RIGHT halves (256 mm bed) for every size, one-piece for nominal
+    jobs = []
+    for d in LID_SIZES:
+        if args.nominal_only and d != 0.0:
+            continue
+        jobs.append(("top", dict(L, lid_t=L["lid_t"] + d), args.seed_top, "2_lid_shell",
+                     f"lid_shell_{lid_tag(L, d)}", d == 0.0))
+    for i, dF in enumerate(BASE_FRONT):
+        for j, dR in enumerate(BASE_REAR):
+            nominal = dF == 0.0 and dR == 0.0
             if args.nominal_only and not nominal:
                 continue
-            if kind == "top":
-                L2 = dict(L, lid_t=L["lid_t"] + dl)
-            else:
-                L2 = dict(L, base_h_front=L["base_h_front"] + dl, base_h_back=L["base_h_back"] + dl)
-            t0 = time.time()
-            print(f"[{label} {tag}] building ...")
-            shell, croc, outer, hf = build_shell(kind, L2, P, seed)
-            left, right = split_halves(shell, croc, outer, P)
-            sdir = os.path.join(st, folder) if nominal else None
-            for half, man in (("LEFT", left), ("RIGHT", right)):
-                report["files"].append(save(man, f"{label}_{tag}_{half}", os.path.join(mf, folder), sdir))
-            if nominal:
-                report["files"].append(save(shell, f"{label}_{tag}_ONE-PIECE_big-bed",
-                                            os.path.join(mf, "4_one_piece_for_big_beds"),
-                                            os.path.join(st, "4_one_piece_for_big_beds")))
-            print(f"[{label} {tag}] done in {time.time() - t0:.1f}s")
+            hf, hb = base_heights(L, dF, dR)
+            jobs.append(("bottom", dict(L, base_h_front=hf, base_h_back=hb), args.seed_bottom,
+                         "3_base_shell", f"base_shell_{base_tag(i, j)}", nominal))
+    for kind, L2, seed, folder, name, nominal in jobs:
+        t0 = time.time()
+        print(f"[{name}] building ...")
+        shell, croc, outer, hf = build_shell(kind, L2, P, seed)
+        left, right = split_halves(shell, croc, outer, P)
+        sdir = os.path.join(st, folder) if nominal else None
+        for half, man in (("LEFT", left), ("RIGHT", right)):
+            report["files"].append(save(man, f"{name}_{half}", os.path.join(mf, folder), sdir))
+        if nominal:
+            report["files"].append(save(shell, f"{name}_ONE-PIECE_big-bed",
+                                        os.path.join(mf, "4_one_piece_for_big_beds"),
+                                        os.path.join(st, "4_one_piece_for_big_beds")))
+        print(f"[{name}] done in {time.time() - t0:.1f}s")
 
     with open(os.path.join(out, "build_report.json"), "w") as f:
         json.dump(report, f, indent=2)

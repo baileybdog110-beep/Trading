@@ -1,0 +1,425 @@
+{
+ "geometry": {
+  "lid_vs_lidshell": [
+   {
+    "vol": 11.599,
+    "bbox": [
+     0.0,
+     0.0,
+     0.0,
+     26.0,
+     26.0,
+     0.7
+    ],
+    "depth": 0.7
+   },
+   {
+    "vol": 5.39,
+    "bbox": [
+     0.0,
+     68.0,
+     0.0,
+     0.65,
+     90.0,
+     0.7
+    ],
+    "depth": 0.65
+   },
+   {
+    "vol": 6.86,
+    "bbox": [
+     80.0,
+     0.0,
+     0.0,
+     108.0,
+     1.17,
+     0.7
+    ],
+    "depth": 0.7
+   },
+   {
+    "vol": 6.125,
+    "bbox": [
+     0.0,
+     140.0,
+     0.0,
+     0.65,
+     165.0,
+     0.7
+    ],
+    "depth": 0.65
+   },
+   {
+    "vol": 6.86,
+    "bbox": [
+     191.5,
+     0.0,
+     0.0,
+     219.5,
+     1.2,
+     0.7
+    ],
+    "depth": 0.7
+   },
+   {
+    "vol": 11.599,
+    "bbox": [
+     273.5,
+     0.0,
+     0.0,
+     299.5,
+     26.0,
+     0.7
+    ],
+    "depth": 0.7
+   },
+   {
+    "vol": 5.39,
+    "bbox": [
+     298.85,
+     68.0,
+     0.0,
+     299.5,
+     90.0,
+     0.7
+    ],
+    "depth": 0.65
+   },
+   {
+    "vol": 6.125,
+    "bbox": [
+     298.85,
+     140.0,
+     0.0,
+     299.5,
+     165.0,
+     0.7
+    ],
+    "depth": 0.65
+   }
+  ],
+  "lid_lip_vertical_play": 0.0,
+  "lid_lip_overlap_side": 1.75,
+  "base_vs_baseshell": [
+   {
+    "vol": 6.8593,
+    "bbox": [
+     0.0,
+     30.0,
+     3.94,
+     0.65,
+     58.0,
+     5.84
+    ],
+    "depth": 0.65
+   },
+   {
+    "vol": 4.655,
+    "bbox": [
+     0.0,
+     94.0,
+     6.69,
+     0.65,
+     113.0,
+     8.21
+    ],
+    "depth": 0.65
+   },
+   {
+    "vol": 6.8593,
+    "bbox": [
+     298.85,
+     30.0,
+     3.94,
+     299.5,
+     58.0,
+     5.84
+    ],
+    "depth": 0.65
+   },
+   {
+    "vol": 8.33,
+    "bbox": [
+     298.85,
+     94.0,
+     6.69,
+     299.5,
+     128.0,
+     8.85
+    ],
+    "depth": 0.65
+   }
+  ],
+  "feet_vs_baseshell": [],
+  "base_lip_vertical_play": {
+   "side clip y=44": 0.0,
+   "side clip y=104": 0.0,
+   "side clip y=111 (right)": 0.0
+  },
+  "plugs_vs_baseshell": [],
+  "closed_lidshell_vs_base": [],
+  "closed_lidshell_vs_baseshell": [],
+  "closed_lid_vs_baseshell": [],
+  "hinge_sweep_lidshell": [
+   {
+    "axis_offset_mm": [
+     0,
+     0
+    ],
+    "worst_overlap_mm3": 0.0
+   },
+   {
+    "axis_offset_mm": [
+     -1.5,
+     0
+    ],
+    "worst_overlap_mm3": 0.0
+   },
+   {
+    "axis_offset_mm": [
+     1.5,
+     0
+    ],
+    "worst_overlap_mm3": 0.0
+   },
+   {
+    "axis_offset_mm": [
+     0,
+     -1.5
+    ],
+    "worst_overlap_mm3": 0.0
+   },
+   {
+    "axis_offset_mm": [
+     0,
+     1.5
+    ],
+    "worst_overlap_mm3": 0.0
+   }
+  ],
+  "seconds": 0.5
+ },
+ "stress": [
+  {
+   "case": "nominal laptop",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "tightly rolled edges (base r 0.8 mm, lid roll 3 mm)",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "thin lid edge (1.0 mm)",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "thick lid edge (2.2 mm)",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "laptop 0.5 mm wider",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "rubber feet 3 mm off",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "ports 5 mm further forward",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "ports 5 mm further back",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  },
+  {
+   "case": "lid/deck gap only 0.6 mm",
+   "feet": 0,
+   "plugs": 0,
+   "closed": 0,
+   "hinge_mm3": 0.0,
+   "passed": true
+  }
+ ],
+ "monte_carlo": {
+  "n": 40000,
+  "lid_each_size": {
+   "lid-4.40mm": {
+    "good": 41.7,
+    "usable": 71.7
+   },
+   "lid-4.65mm": {
+    "good": 70.6,
+    "usable": 89.3
+   },
+   "lid-4.90mm": {
+    "good": 82.9,
+    "usable": 92.8
+   },
+   "lid-5.15mm": {
+    "good": 70.7,
+    "usable": 84.2
+   },
+   "lid-5.40mm": {
+    "good": 42.0,
+    "usable": 60.7
+   }
+  },
+  "lid_blind_nominal": {
+   "good": 82.9,
+   "usable": 92.8
+  },
+  "lid_with_fit_tests": {
+   "good": 96.2,
+   "usable": 96.3
+  },
+  "base_blind_nominal": {
+   "good": 77.0,
+   "usable": 91.1
+  },
+  "base_with_fit_tests": {
+   "good": 95.8,
+   "usable": 96.1
+  },
+  "width": {
+   "good": 96.4,
+   "usable": 96.4
+  },
+  "feet_in_holes": {
+   "good": 99.8,
+   "usable": 99.8
+  },
+  "closing_blind": {
+   "good": 79.9,
+   "usable": 93.4
+  },
+  "closing_with_fit_tests": {
+   "good": 96.9,
+   "usable": 99.8
+  },
+  "whole_case_blind_nominal": {
+   "good": 59.6,
+   "usable": 85.1
+  },
+  "whole_case_with_fit_tests": {
+   "good": 92.8,
+   "usable": 95.9
+  },
+  "lid_pick_histogram": {
+   "lid-4.40mm": 10.9,
+   "lid-4.65mm": 23.1,
+   "lid-4.90mm": 32.0,
+   "lid-5.15mm": 23.0,
+   "lid-5.40mm": 10.9
+  }
+ },
+ "priors": {
+  "W": [
+   299.5,
+   0.2,
+   "Apple: 29.95 cm"
+  ],
+  "R_front": [
+   10.0,
+   0.6,
+   "rectified bottom photo"
+  ],
+  "lid_t": [
+   4.9,
+   0.3,
+   "derived; not published"
+  ],
+  "lid_edge_t": [
+   1.6,
+   0.3,
+   "side photo"
+  ],
+  "lid_roll_w": [
+   6.0,
+   1.5,
+   "side photo (curved lid back)"
+  ],
+  "base_h_front": [
+   1.35,
+   0.35,
+   "side photo + Apple 3 mm front"
+  ],
+  "base_h_back": [
+   9.6,
+   0.45,
+   "side photo"
+  ],
+  "base_roll_r": [
+   2.0,
+   0.6,
+   "side photo (rolled bottom case)"
+  ],
+  "gap": [
+   0.9,
+   0.15,
+   "side photo"
+  ],
+  "foot_dx": [
+   0.0,
+   1.0,
+   "photo rectification error"
+  ],
+  "foot_dy": [
+   0.0,
+   1.0,
+   "photo rectification error"
+  ],
+  "foot_p": [
+   1.2,
+   0.4,
+   "foot protrusion below bottom"
+  ],
+  "port_ds": [
+   0.0,
+   2.0,
+   "port position error along the side"
+  ],
+  "shrink": [
+   0.003,
+   0.0015,
+   "TPU in-plane shrink after cooling (fraction)"
+  ],
+  "z_err": [
+   0.0,
+   0.06,
+   "Z dimension error (mm)"
+  ]
+ }
+}
