@@ -1,0 +1,4 @@
+# regenerable with generate_case.py / duplicates of 3mf/
+stl/
+*.zip
+__pycache__/
