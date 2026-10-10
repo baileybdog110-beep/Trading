@@ -52,7 +52,7 @@ LAPTOP = dict(
     R_front=10.0,
     R_back=4.0,
     lid_t=4.9,
-    base_h_front=1.35,
+    base_h_front=1.10,   # re-centred by the published-thickness check (fit_backtest.py)
     base_h_back=9.6,
     feet=[(24.4, 26.0), (275.1, 26.0), (24.4, 171.8), (275.1, 171.8)],
     # left side : MagSafe 2 (~7-25), USB 3 (~29-43), headphone (~57), mics (~71)
@@ -64,13 +64,14 @@ LAPTOP = dict(
 )
 
 CASE = dict(
-    clear=0.25,        # laptop outline -> pocket wall, per side
+    clear=0.30,        # laptop outline -> pocket wall, per side (0.25 + 0.05 for the
+                       # 0.2 mm seam kerf that closes up when the halves are glued)
     wall=1.6,          # side wall thickness (4 x 0.4 mm lines)
     plate=2.0,         # outer face (scale tops) -> inner floor
     chamfer=0.8,       # 45 deg chamfer on the bed-side outer edge (no elephant foot)
     inner_fillet=0.8,  # 45 deg fill where floor meets wall (laptop edges are rolled)
     lip_reach=2.0,     # clip lip reach, measured inward from the pocket wall
-    lip_t=0.6,         # clip lip thickness (sits in the ~0.9 mm lid/base gap)
+    lip_t=0.5,         # clip lip thickness (sits in the ~0.86 mm lid/base gap)
     lip_gap=0.0,       # display-face / deck -> lip underside (0 = nominal surface)
     lip_ramp=1.0,      # 45 deg wedge ramp under the lip: the edge of the lid / palm
                        # rest wedges onto it anywhere over ~0.9 mm of height while

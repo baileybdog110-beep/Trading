@@ -2,159 +2,159 @@
  "geometry": {
   "lid_vs_lidshell": [
    {
-    "vol": 11.599,
+    "vol": 10.4925,
     "bbox": [
      0.0,
      0.0,
      0.0,
      26.0,
      26.0,
-     0.7
+     0.71
     ],
-    "depth": 0.7
+    "depth": 0.707
    },
    {
-    "vol": 5.39,
+    "vol": 4.8788,
     "bbox": [
      0.0,
      68.0,
      0.0,
-     0.65,
+     1.7,
      90.0,
-     0.7
+     0.71
     ],
-    "depth": 0.65
+    "depth": 0.707
    },
    {
-    "vol": 6.86,
+    "vol": 6.2094,
     "bbox": [
      80.0,
      0.0,
      0.0,
      108.0,
-     1.17,
-     0.7
+     1.7,
+     0.61
     ],
-    "depth": 0.7
+    "depth": 0.607
    },
    {
-    "vol": 6.125,
+    "vol": 5.5441,
     "bbox": [
      0.0,
      140.0,
      0.0,
-     0.65,
+     1.7,
      165.0,
-     0.7
+     0.61
     ],
-    "depth": 0.65
+    "depth": 0.607
    },
    {
-    "vol": 6.86,
+    "vol": 6.2094,
     "bbox": [
      191.5,
      0.0,
      0.0,
      219.5,
-     1.2,
-     0.7
+     1.7,
+     0.61
     ],
-    "depth": 0.7
+    "depth": 0.607
    },
    {
-    "vol": 11.599,
+    "vol": 10.4925,
     "bbox": [
      273.5,
      0.0,
      0.0,
      299.5,
      26.0,
-     0.7
+     0.71
     ],
-    "depth": 0.7
+    "depth": 0.707
    },
    {
-    "vol": 5.39,
+    "vol": 4.8788,
     "bbox": [
-     298.85,
+     297.8,
      68.0,
      0.0,
      299.5,
      90.0,
-     0.7
+     0.61
     ],
-    "depth": 0.65
+    "depth": 0.607
    },
    {
-    "vol": 6.125,
+    "vol": 5.5441,
     "bbox": [
-     298.85,
+     297.8,
      140.0,
      0.0,
      299.5,
      165.0,
-     0.7
+     0.61
     ],
-    "depth": 0.65
+    "depth": 0.607
    }
   ],
-  "lid_lip_vertical_play": 0.0,
-  "lid_lip_overlap_side": 1.75,
+  "lid_lip_vertical_play": -0.007,
+  "lid_lip_overlap_side": 1.7,
   "base_vs_baseshell": [
    {
-    "vol": 6.8593,
+    "vol": 6.4227,
     "bbox": [
      0.0,
      30.0,
-     3.94,
-     0.65,
+     3.83,
+     1.7,
      58.0,
-     5.84
+     5.68
     ],
-    "depth": 0.65
+    "depth": 1.7
    },
    {
-    "vol": 4.655,
+    "vol": 4.4105,
     "bbox": [
      0.0,
      94.0,
-     6.69,
-     0.65,
+     6.66,
+     1.7,
      113.0,
-     8.21
+     8.12
     ],
-    "depth": 0.65
+    "depth": 1.454
    },
    {
-    "vol": 6.8593,
+    "vol": 6.4227,
     "bbox": [
-     298.85,
+     297.8,
      30.0,
-     3.94,
+     3.83,
      299.5,
      58.0,
-     5.84
+     5.68
     ],
-    "depth": 0.65
+    "depth": 1.7
    },
    {
-    "vol": 8.33,
+    "vol": 7.9035,
     "bbox": [
-     298.85,
+     297.8,
      94.0,
-     6.69,
+     6.56,
      299.5,
      128.0,
-     8.85
+     8.78
     ],
-    "depth": 0.65
+    "depth": 1.7
    }
   ],
   "feet_vs_baseshell": [],
   "base_lip_vertical_play": {
-   "side clip y=44": 0.0,
-   "side clip y=104": 0.0,
-   "side clip y=111 (right)": 0.0
+   "side clip y=44": -0.012,
+   "side clip y=104": -0.013,
+   "side clip y=111 (right)": -0.013
   },
   "plugs_vs_baseshell": [],
   "closed_lidshell_vs_base": [],
@@ -197,7 +197,7 @@
     "worst_overlap_mm3": 0.0
    }
   ],
-  "seconds": 0.5
+  "seconds": 0.6
  },
  "stress": [
   {
@@ -273,77 +273,188 @@
    "passed": true
   }
  ],
+ "exported_files": [
+  {
+   "case": "exported LEFT+RIGHT halves (assembled, seam gap included)",
+   "unintended_contacts": 0,
+   "hinge_mm3": 0.0,
+   "lid_wedge_mm3": 54.2,
+   "base_wedge_mm3": 25.2,
+   "passed": true
+  },
+  {
+   "case": "exported one-piece files",
+   "unintended_contacts": 0,
+   "hinge_mm3": 0.0,
+   "lid_wedge_mm3": 54.2,
+   "base_wedge_mm3": 25.2,
+   "passed": true
+  }
+ ],
  "monte_carlo": {
-  "n": 40000,
+  "n": 200000,
   "lid_each_size": {
    "lid-4.40mm": {
-    "good": 41.7,
-    "usable": 71.7
+    "good": 41.6,
+    "usable": 74.8
    },
    "lid-4.65mm": {
-    "good": 70.6,
-    "usable": 89.3
+    "good": 74.2,
+    "usable": 93.5
    },
    "lid-4.90mm": {
-    "good": 82.9,
-    "usable": 92.8
+    "good": 88.2,
+    "usable": 97.2
    },
    "lid-5.15mm": {
-    "good": 70.7,
-    "usable": 84.2
+    "good": 75.7,
+    "usable": 89.1
    },
    "lid-5.40mm": {
-    "good": 42.0,
-    "usable": 60.7
+    "good": 43.6,
+    "usable": 64.5
    }
   },
   "lid_blind_nominal": {
-   "good": 82.9,
-   "usable": 92.8
+   "good": 88.2,
+   "usable": 97.2
   },
   "lid_with_fit_tests": {
-   "good": 96.2,
-   "usable": 96.3
+   "good": 99.4,
+   "usable": 99.5
   },
   "base_blind_nominal": {
-   "good": 77.0,
-   "usable": 91.1
+   "good": 87.2,
+   "usable": 97.4
   },
   "base_with_fit_tests": {
-   "good": 95.8,
-   "usable": 96.1
+   "good": 99.2,
+   "usable": 99.3
   },
   "width": {
-   "good": 96.4,
-   "usable": 96.4
+   "good": 99.5,
+   "usable": 99.5
   },
   "feet_in_holes": {
    "good": 99.8,
    "usable": 99.8
   },
   "closing_blind": {
-   "good": 79.9,
-   "usable": 93.4
+   "good": 91.0,
+   "usable": 98.4
   },
   "closing_with_fit_tests": {
-   "good": 96.9,
-   "usable": 99.8
+   "good": 99.2,
+   "usable": 100.0
   },
   "whole_case_blind_nominal": {
-   "good": 59.6,
-   "usable": 85.1
+   "good": 74.7,
+   "usable": 94.5
   },
   "whole_case_with_fit_tests": {
-   "good": 92.8,
-   "usable": 95.9
+   "good": 98.3,
+   "usable": 99.3
   },
   "lid_pick_histogram": {
-   "lid-4.40mm": 10.9,
+   "lid-4.40mm": 8.9,
    "lid-4.65mm": 23.1,
-   "lid-4.90mm": 32.0,
-   "lid-5.15mm": 23.0,
-   "lid-5.40mm": 10.9
-  }
+   "lid-4.90mm": 34.2,
+   "lid-5.15mm": 24.0,
+   "lid-5.40mm": 9.8
+  },
+  "base_pick_histogram": {
+   "front-A_rear-A": 11.4,
+   "front-A_rear-B": 9.3,
+   "front-A_rear-C": 0.0,
+   "front-B_rear-A": 3.6,
+   "front-B_rear-B": 48.6,
+   "front-B_rear-C": 4.0,
+   "front-C_rear-A": 0.0,
+   "front-C_rear-B": 9.7,
+   "front-C_rear-C": 13.3
+  },
+  "effective_samples": 71197
+ },
+ "posterior": {
+  "lid_t": {
+   "prior": [
+    4.9,
+    0.3
+   ],
+   "posterior": [
+    4.907,
+    0.277
+   ]
+  },
+  "lid_edge_t": {
+   "prior": [
+    1.6,
+    0.3
+   ],
+   "posterior": [
+    1.422,
+    0.271
+   ]
+  },
+  "base_h_front": {
+   "prior": [
+    1.35,
+    0.35
+   ],
+   "posterior": [
+    1.11,
+    0.302
+   ]
+  },
+  "base_h_back": {
+   "prior": [
+    9.6,
+    0.45
+   ],
+   "posterior": [
+    9.615,
+    0.367
+   ]
+  },
+  "gap": {
+   "prior": [
+    0.9,
+    0.15
+   ],
+   "posterior": [
+    0.858,
+    0.144
+   ]
+  },
+  "foot_p": {
+   "prior": [
+    2.0,
+    0.3
+   ],
+   "posterior": [
+    2.006,
+    0.278
+   ]
+  },
+  "deck height at y=44": {
+   "prior": [
+    3.241
+   ],
+   "posterior": [
+    3.059,
+    0.249
+   ]
+  },
+  "deck height at y=104": {
+   "prior": [
+    5.819
+   ],
+   "posterior": [
+    5.717,
+    0.244
+   ]
+  },
+  "effective_samples": 71066
  },
  "priors": {
   "W": [
@@ -374,7 +485,7 @@
   "base_h_front": [
    1.35,
    0.35,
-   "side photo + Apple 3 mm front"
+   "side-photo extrapolation"
   ],
   "base_h_back": [
    9.6,
@@ -402,9 +513,9 @@
    "photo rectification error"
   ],
   "foot_p": [
-   1.2,
-   0.4,
-   "foot protrusion below bottom"
+   2.0,
+   0.3,
+   "A1465 replacement-foot design: 18 mm dia, 2.0 mm proud"
   ],
   "port_ds": [
    0.0,

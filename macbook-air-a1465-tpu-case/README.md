@@ -19,17 +19,17 @@ Bambu Lab printer.
 * The texture is on the face that prints against the bed. The scale tops
   pick up the plate's surface finish (textured PEI gives a matte, leathery
   grain). No supports are needed anywhere.
-* **Clips:** each clip is a *wedge clip*. A lip overhangs the screen bezel or
-  palm rest, with a 45° ramp under it. The edge of the laptop wedges onto
-  that ramp anywhere across about a 0.9 mm height range while the TPU wall
-  flexes outwards, so the clip grips snugly even if the real laptop is a bit
-  thicker or thinner than my measurements. The lid and base clips are
-  staggered, so only one 0.6 mm lip sits in the lid/keyboard gap at any
-  point and the laptop still closes.
-* **Fit backtested virtually** before printing. The design was checked
-  against a 3D model of the A1465 for fit, closing, hinge swing, rubber
-  feet and port plugs, plus a Monte-Carlo tolerance analysis. See
-  [Fit backtest](#fit-backtest).
+* **Clips:** each clip is a *wedge clip*: a 0.5 mm lip that overhangs the
+  screen bezel or palm rest, with a 1 mm 45° ramp under it. The edge of the
+  laptop wedges onto that ramp anywhere across about a 0.9 mm height range
+  while the TPU wall flexes outwards. So the clip grips snugly even if the
+  real laptop is a bit thicker or thinner than my measurements. The lid and
+  base clips are staggered, so only one lip sits in the lid/keyboard gap at
+  any point and the laptop still closes.
+* **Backtested before printing.** The design was checked against a 3D model
+  of the A1465 for fit, closing, hinge swing, rubber feet and port plugs,
+  and the exact print files were checked too. A tolerance analysis covers
+  every dimension I'm unsure of. See [Fit backtest](#fit-backtest).
 
 ## Which files to print
 
@@ -51,14 +51,15 @@ files open directly in Bambu Studio. The generator also writes STL copies
 of the fit tests and nominal shells to `stl/` (not stored in git). Leave
 every part in its exported orientation, textured face down.
 
-## Step 1: print the fit tests (about 1.5 h, about 100 g for all 12)
+## Step 1: pick your sizes
 
 Apple publishes the outside footprint but not the lid thickness or the
-base's wedge profile. I estimated those, and the backtest shows that
-printing blind at the nominal size fits well only about 6 times in 10.
-Printing these small pieces first and picking the matching size raises that
-to about 9 in 10. A full case is about 250 g of TPU, so the tests are worth
-the hour.
+base's wedge profile. My estimates for those come from photos plus Apple's
+published front and back thicknesses. According to the backtest, printing
+the nominal sizes blind gives a snug fit about 3 times in 4. Picking sizes
+first raises that to about **98 in 100**.
+
+### Option A: fit tests (about 1.5 h, about 100 g for all 12 pieces)
 
 **Print the fit tests and the final shells with exactly the same filament,
 plate, layer height and first-layer height.** Clip heights are counted in
@@ -83,6 +84,20 @@ layers, so a different layer height gives a slightly different fit.
    the lid and **open the lid all the way**. It must not touch the base or
    the table edge behind it.
 
+### Option B: measure with calipers
+
+Pick the size closest to each reading:
+
+| Measure | Where | Sizes |
+|---|---|---|
+| Lid thickness | Back of the lid to the flat screen bezel (not on a rubber bumper), about 15 mm in from the left edge | **4.40** (under 4.52) · **4.65** (4.52–4.77) · **4.90** (4.77–5.02) · **5.15** (5.02–5.27) · **5.40** (over 5.27) |
+| Base, front | Bottom case to palm-rest top, on the left side, **44 mm back** from the front edge, about 5 mm in from the side. Measure the bottom case, not a rubber foot. | **A** 2.65 (under 2.85) · **B** 3.05 (2.85–3.25) · **C** 3.45 (over 3.25) |
+| Base, rear | Same, **104 mm back** from the front edge | **A** 5.20 (under 5.45) · **B** 5.70 (5.45–5.95) · **C** 6.20 (over 5.95) |
+
+Even with calipers, it's worth printing the one matching test piece of each
+kind, since printers differ slightly in calibration. If you send me your
+readings, I can also centre the files on them exactly.
+
 Your picks give the files to print, e.g. lid **4.90 mm** plus base
 **front-B rear-A**.
 
@@ -99,7 +114,7 @@ Print four plates, one half each: `lid_shell_lid-<your size>_LEFT`, its
 | Filament feed | **External spool holder.** The AMS can't feed ordinary TPU; only Bambu's "TPU for AMS" is AMS-compatible. |
 | Filament profile | Bambu TPU 95A HF (or Generic TPU). Dry the spool first: 4–6 h at 65–70 °C. |
 | Plate | Textured PEI (leather grain); bed 35–40 °C |
-| Layer height | 0.16 mm (0.12 for crisper scales, 0.20 for speed) |
+| Layer height | 0.16 mm (0.12 for crisper scales, 0.20 for speed). Use the same one as the fit tests. |
 | Wall loops | 4 |
 | Infill | 100 % (the parts are thin, so it is almost all walls and solid layers anyway) |
 | Supports | **Off.** Lips and grooves are designed to print without them. |
@@ -139,15 +154,19 @@ the grooves and wipe the scale tops clean.
 
 `fit_backtest.py` builds a 3D stand-in of the A1465 from the measurements
 below: a wedge base with rolled edges and rubber feet, the curved lid, the
-lid/keyboard gap, the hinge axis and port plugs. It then puts the generated
-shells on it and checks them with exact mesh booleans.
+lid/keyboard gap, the hinge axis and the port plugs. It then puts the
+shells on it and checks them with exact mesh booleans. Run it yourself with
+`python3 fit_backtest.py`.
 
-**Geometry checks** (all pass at the nominal size, and under each stress
-case: tighter or looser edge rolls, thin or thick lid edges, a laptop 0.5 mm
-wider, feet 3 mm off, ports 5 mm off either way, a 0.6 mm lid gap):
+**Geometry checks.** These pass for the nominal laptop and for 9 stress
+cases: tighter or looser edge rolls, thin or thick lid edges, a laptop
+0.5 mm wider, feet 3 mm off, ports 5 mm off either way, and a 0.6 mm lid
+gap. They also pass for **the exact exported print files**, with the
+LEFT/RIGHT halves re-assembled including their seam gap, and for the
+one-piece files.
 
 * Nothing pushes into the laptop except the intended clip wedges, about
-  0.75 mm of wall flex.
+  0.7 mm of wall flex.
 * Both shells on and the laptop closed: no collisions.
 * Lid opened 0→135° with the hinge axis anywhere within ±1.5 mm of the
   estimate: the lid shell's back edge never touches the base or base shell.
@@ -158,45 +177,66 @@ wider, feet 3 mm off, ports 5 mm off either way, a 0.6 mm lid gap):
 ![hinge](backtest_hinge.png)
 ![ports](backtest_ports.png)
 
-**Tolerance analysis.** 40,000 simulated laptops, with every uncertain
+**Checking my estimates against published numbers.** Every simulated
+laptop is weighted by how well it matches Apple's front thickness (0.11 in,
+2.8 mm) and back thickness (0.68 in, 17.3 mm, including the feet; a stand
+designer's caliper reading was 17.8 mm). My photo-based estimates already
+add up to 17.4 mm at the back, so the lid estimate held (4.91 ± 0.28 mm).
+The front check lowered the base's front deck height from 1.35 to 1.10 mm,
+and the shells are centred on that.
+
+**Tolerance analysis.** 200,000 simulated laptops. Every uncertain
 dimension (lid thickness, wedge profile, width, gap, foot and port
-positions) varied by its estimated uncertainty, plus printer shrink and Z
-error:
+positions) is varied by its estimated uncertainty, plus printer shrinkage
+and Z error:
 
 | | Snug fit | Fits (maybe a bit tight or loose) |
 |---|---|---|
-| Whole case, print nominal sizes blind | 59.6 % | 85.1 % |
-| **Whole case, fit tests first, then matching sizes** | **92.8 %** | **95.9 %** |
-| Lid shell with fit test | 96.2 % | 96.3 % |
-| Base shell with fit tests | 95.8 % | 96.1 % |
+| Whole case, print nominal sizes blind | 74.7 % | 94.5 % |
+| **Whole case, fit tests first, then matching sizes** | **98.3 %** | **99.3 %** |
+| Lid shell with fit test | 99.4 % | 99.5 % |
+| Base shell with fit tests | 99.2 % | 99.3 % |
+| Laptop closes fully with both shells on | 99.2 % | 100 % |
 
-"Snug" means each clip either wedges onto its ramp with no free play, or
-bends at most 0.45 mm; the width is within the range TPU stretches over;
-the laptop closes; and the feet land in their holes. The remaining misses
-are mostly simulated laptops whose lid or wedge falls outside every printed
-size. `fit_backtest_results.json` has the full numbers.
+"Snug" means:
+* each clip either wedges onto its ramp with no free play, or bends at most
+  0.45 mm;
+* the width is within what TPU stretches over (at most 2.5 mm narrower,
+  0.8 mm wider);
+* the laptop closes, propped open by no more than 0.15 mm at a clip;
+* the feet land in their holes.
+
+These percentages are only as good as my uncertainty estimates, which is
+why the fit tests stay in the plan. `fit_backtest_results.json` has every
+number.
 
 ## Measurements used
 
 | Feature | Value | Source |
 |---|---|---|
 | Width × depth | 299.5 × 192.0 mm | Apple tech specs (29.95 × 19.2 cm) |
-| Closed height | 3 mm front → 17 mm back (incl. feet) | Apple / iFixit |
+| Closed thickness | 0.11 in front, 0.68 in back incl. feet | Apple; 17.8 mm measured by a stand designer |
 | Front corner radius | 10 mm | measured from a rectified photo of the bottom case |
-| Rubber feet | Ø 18 mm, centres 24.4 mm from the sides, 26.0 mm from the front, 20.2 mm from the back | same photo; Ø matches a published 17.85 mm figure |
-| Base deck-edge height | 1.35 mm front → 9.6 mm back | side photo, scaled by the USB-A and 3.5 mm jack openings |
-| Lid thickness | 4.9 mm (A/B/C test 4.5–5.3) | estimate (panel < 3 mm + housing); not published by Apple |
+| Rubber feet | Ø 18 mm, 2.0 mm proud; centres 24.4 mm from the sides, 26.0 mm from the front, 20.2 mm from the back | positions from the photo (it measures Ø18.1 vs 18 published, a 0.6 % check); Ø and height from an A1465 replacement-foot design |
+| Base deck height (bottom to palm rest) | 1.10 mm at the front → 9.6 mm at the back; 3.05 mm at the front clips, 5.70 mm at the rear clips | side photo scaled by the USB-A and 3.5 mm jack openings, re-centred by the published front thickness |
+| Lid thickness | 4.90 mm (sizes 4.40–5.40) | not published by Apple; derived and cross-checked with the 17.3 mm back thickness |
+| Lid/keyboard gap | 0.86 mm | side photo + published thicknesses |
 | Ports (from back edge) | L: MagSafe 2 ~7–25, USB ~29–43, headphone ~57, mics ~71 · R: Thunderbolt ~9–19, USB ~27–42 | side photos |
 
-Case design: 0.25 mm clearance per side (the pocket is exactly 300.0 mm
-wide), 1.6 mm walls, a 2.0 mm floor including 0.75 mm-deep grooves, and
-0.6 mm clip lips reaching 1.35 mm over the screen bezel / palm rest.
-[`cross_section.png`](cross_section.png) shows the clip profile against
-the laptop.
+**Case design:**
+* 0.30 mm clearance per side (0.25 mm, plus 0.05 mm to make up for the
+  seam gap that closes when the halves are glued);
+* 1.6 mm walls;
+* a 2.0 mm floor including the 0.75 mm-deep grooves;
+* wedge clips: 0.5 mm lip reaching 2.0 mm in from the wall (1.7 mm over the
+  laptop's edge), with a 1.0 mm 45° ramp.
+
+`backtest_sections.png` shows the clip profiles against the laptop.
 
 ## Changing the design
 
-`generate_case.py` rebuilds everything in about a minute:
+`generate_case.py` rebuilds everything in about 5 minutes, and
+`fit_backtest.py` re-runs the checks in about a minute:
 
 ```bash
 pip install -r requirements.txt
@@ -204,13 +244,13 @@ python3 generate_case.py                    # rebuild all files
 python3 generate_case.py --lid-t 5.1        # new nominal lid thickness
 python3 generate_case.py --base-offset 0.3  # raise the base clips 0.3 mm
 python3 generate_case.py --clear 0.35       # looser side fit
+python3 fit_backtest.py                     # re-run the virtual fit checks
 ```
 
 You can change everything else at the top of the script: the clip
 positions, lip thickness, groove depth, scale size, stitching and port
 window positions. If you'd rather not run Python, send me your caliper
-readings (lid thickness at the front edge, deck-edge height at the back)
-and I'll regenerate the files.
+readings and I'll regenerate the files.
 
 Every exported part was checked to be watertight and manifold after
 vertex merging, with consistent normals, so Bambu Studio shouldn't report
@@ -224,4 +264,6 @@ any mesh errors.
 * [Wikimedia Commons: MacBook Air 11 inch side view](https://commons.wikimedia.org/wiki/File:MacBook_Air_11_inch_side_view.jpg)
 * [Beetstech: A1465 bottom case 923-0436 (photo)](https://beetstech.com/product/macbook-air-11-inch-a1465-bottom-case-923-0436)
 * [LaptopMag: MacBook Air 11 (2015) review (port photos)](https://www.laptopmag.com/reviews/laptops/macbook-air-11-2015)
+* [Printables: MacBook Air feet for A1465 (Ø18 mm, 2 mm)](https://www.printables.com/model/905180)
+* [MyMiniFactory: MacBook Air 11" (2013) vertical stand, 17.8 mm thickness](https://www.myminifactory.com/object/3d-print-141070)
 * [Bambu Lab printer build volumes](https://blog.printpal.io/which-bambu-lab-printer-is-right-for-you-a-2026-buyers-guide/)

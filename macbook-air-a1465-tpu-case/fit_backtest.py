@@ -42,13 +42,13 @@ PRIORS = {
     "lid_t":        (4.9, 0.30, "derived; not published"),
     "lid_edge_t":   (1.6, 0.3, "side photo"),
     "lid_roll_w":   (6.0, 1.5, "side photo (curved lid back)"),
-    "base_h_front": (1.35, 0.35, "side photo + Apple 3 mm front"),
+    "base_h_front": (1.35, 0.35, "side-photo extrapolation"),
     "base_h_back":  (9.6, 0.45, "side photo"),
     "base_roll_r":  (2.0, 0.6, "side photo (rolled bottom case)"),
     "gap":          (0.90, 0.15, "side photo"),
     "foot_dx":      (0.0, 1.0, "photo rectification error"),
     "foot_dy":      (0.0, 1.0, "photo rectification error"),
-    "foot_p":       (1.2, 0.4, "foot protrusion below bottom"),
+    "foot_p":       (2.0, 0.3, "A1465 replacement-foot design: 18 mm dia, 2.0 mm proud"),
     "port_ds":      (0.0, 2.0, "port position error along the side"),
     # printer / material
     "shrink":       (0.003, 0.0015, "TPU in-plane shrink after cooling (fraction)"),
@@ -56,8 +56,19 @@ PRIORS = {
 }
 
 
+_POST = {}
+
+
 def nominal():
-    return {k: v[0] for k, v in PRIORS.items()}
+    """Best-estimate laptop: prior means, updated by the published thicknesses."""
+    s = {k: v[0] for k, v in PRIORS.items()}
+    if not _POST:
+        S = sample(200000, np.random.default_rng(7))
+        w = obs_weights(S)
+        for k in ("lid_t", "lid_edge_t", "base_h_front", "base_h_back", "gap", "foot_p"):
+            _POST[k] = float((w * S[k]).sum())
+    s.update(_POST)
+    return s
 
 
 # port plugs: (side, centre distance from back edge, plug body width along
@@ -176,13 +187,15 @@ def pieces(m, min_vol=1e-4):
 # --------------------------------------------------------------------------
 # Geometric backtest for one case size against one laptop sample
 # --------------------------------------------------------------------------
-def geometric_backtest(s, L_case, P, log=print):
+def geometric_backtest(s, L_case, P, log=print, lid_shell=None, base_shell=None):
     T = P["plate"]
     W, D = s["W"], G.LAPTOP["D"]
     res = {}
     t0 = time.time()
-    lid_shell, *_ = G.build_shell("top", L_case, P, 11, with_texture=False, log=lambda *a: None)
-    base_shell, *_ = G.build_shell("bottom", L_case, P, 23, with_texture=False, log=lambda *a: None)
+    if lid_shell is None:
+        lid_shell, *_ = G.build_shell("top", L_case, P, 11, with_texture=False, log=lambda *a: None)
+    if base_shell is None:
+        base_shell, *_ = G.build_shell("bottom", L_case, P, 23, with_texture=False, log=lambda *a: None)
     base = base_solid(s, T)
     feet = feet_solid(s, T)
     lid_lf = lid_solid_lidframe(s)
@@ -245,7 +258,10 @@ def geometric_backtest(s, L_case, P, log=print):
 LIP_GOOD = (-0.45, 0.45)    # wedged snug (<= 0.45 mm lip bend, or wedge with flex)
 LIP_OK = (-0.70, 0.60)      # still holds, but tight or with a little free play
 LIP_TARGET = 0.0            # what you pick from the fit tests: "snug, clicks on"
-WIDTH_GOOD = (-1.50, 0.80)  # TPU stretches easily; > 0.8 mm is loose side to side
+# Width: a narrower pocket just stretches the TPU (2.5 mm over 300 mm is 0.8 %
+# strain; TPU 95A takes > 300 %) and is equivalent to zero side clearance for
+# the clips; a pocket > 0.8 mm too wide weakens the clip wedges.
+WIDTH_GOOD = (-2.50, 0.80)
 BASE_CLIP_YS = (44.0, 104.0, 111.0)
 
 
@@ -261,9 +277,49 @@ def sample(n, rng, scale=1.0):
     return {k: rng.normal(v[0], v[1] * scale, n) for k, v in PRIORS.items()}
 
 
-def monte_carlo(P, n=40000, seed=1, priors_scale=1.0):
+# Published whole-laptop thicknesses used to check (and weight) every
+# simulated laptop: (name, model, observed, sigma incl. model error, source)
+OBSERVATIONS = [
+    ("closed thickness at the front edge",
+     lambda S: S["base_h_front"] + S["gap"] + S["lid_edge_t"], 2.9, 0.5,
+     "Apple: 0.11 in (2.8 mm) / 0.3 cm; edge rounding adds model error"),
+    ("closed thickness at the back incl. feet",
+     lambda S: S["base_h_back"] + S["gap"] + S["lid_t"] + S["foot_p"], 17.4, 0.45,
+     "Apple: 0.68 in (17.3 mm); stand designer's caliper reading 17.8 mm"),
+]
+
+
+def obs_weights(S):
+    w = np.ones_like(S["W"])
+    for _, f, mu, sd, _ in OBSERVATIONS:
+        w *= np.exp(-0.5 * ((f(S) - mu) / sd) ** 2)
+    return w / w.sum()
+
+
+def posterior_summary(n=200000, seed=7):
+    """Prior vs. posterior (after the published-thickness check) of the key dims."""
+    S = sample(n, np.random.default_rng(seed))
+    w = obs_weights(S)
+    out = {}
+    for k in ("lid_t", "lid_edge_t", "base_h_front", "base_h_back", "gap", "foot_p"):
+        m = float((w * S[k]).sum())
+        sd = float(np.sqrt((w * (S[k] - m) ** 2).sum()))
+        out[k] = dict(prior=[PRIORS[k][0], PRIORS[k][1]], posterior=[round(m, 3), round(sd, 3)])
+    D = G.LAPTOP["D"]
+    for y in (G.Y_FRONT_CLIP, G.Y_REAR_CLIP):
+        h = S["base_h_front"] + (S["base_h_back"] - S["base_h_front"]) / D * y
+        m = float((w * h).sum())
+        out[f"deck height at y={y:g}"] = dict(
+            prior=[round(PRIORS["base_h_front"][0] + (PRIORS["base_h_back"][0] - PRIORS["base_h_front"][0]) / D * y, 3)],
+            posterior=[round(m, 3), round(float(np.sqrt((w * (h - m) ** 2).sum())), 3)])
+    out["effective_samples"] = int(1.0 / (w ** 2).sum())
+    return out
+
+
+def monte_carlo(P, n=200000, seed=1, priors_scale=1.0, use_observations=True):
     rng = np.random.default_rng(seed)
     S = sample(n, rng, priors_scale)
+    wts = obs_weights(S) if use_observations else np.full(n, 1.0 / n)
     L = dict(G.LAPTOP)
     D = L["D"]
     g = P["lip_gap"]
@@ -318,7 +374,8 @@ def monte_carlo(P, n=40000, seed=1, priors_scale=1.0):
     fq = np.where(np.hypot(S["foot_dx"], S["foot_dy"]) <= hole_tol, 2, 0)
 
     def pct(q):
-        return dict(good=round(float((q == 2).mean()) * 100, 1), usable=round(float((q >= 1).mean()) * 100, 1))
+        return dict(good=round(float(wts[q == 2].sum()) * 100, 1),
+                    usable=round(float(wts[q >= 1].sum()) * 100, 1))
 
     out = dict(
         n=n,
@@ -331,8 +388,11 @@ def monte_carlo(P, n=40000, seed=1, priors_scale=1.0):
         closing_blind=pct(cq_blind), closing_with_fit_tests=pct(cq_tested),
         whole_case_blind_nominal=pct(np.minimum.reduce([lid_blind, base_blind, wq, cq_blind, fq])),
         whole_case_with_fit_tests=pct(np.minimum.reduce([lid_tested, base_tested, wq, cq_tested, fq])),
-        lid_pick_histogram={G.lid_tag(L, d): round(float((pick == k).mean()) * 100, 1)
+        lid_pick_histogram={G.lid_tag(L, d): round(float(wts[pick == k].sum()) * 100, 1)
                             for k, d in enumerate(G.LID_SIZES)},
+        base_pick_histogram={G.base_tag(i, j): round(float(wts[sel == i * len(G.BASE_REAR) + j].sum()) * 100, 1)
+                             for i in range(len(G.BASE_FRONT)) for j in range(len(G.BASE_REAR))},
+        effective_samples=int(1.0 / (wts ** 2).sum()),
     )
     return out
 
@@ -349,6 +409,38 @@ def stress_cases():
         "ports 5 mm further back": dict(port_ds=-5.0),
         "lid/deck gap only 0.6 mm": dict(gap=0.6),
     }
+
+
+def _load_mesh(path):
+    import trimesh
+    m = trimesh.load(path)
+    m = m.to_geometry() if hasattr(m, "to_geometry") else m
+    m.merge_vertices()
+    return m3d.Manifold(m3d.Mesh(vert_properties=np.asarray(m.vertices, np.float32),
+                                 tri_verts=np.asarray(m.faces, np.uint32)))
+
+
+def exported_shells(L, P, folder):
+    """Re-assemble the exported LEFT/RIGHT halves (and one-piece files) in the
+    laptop frame, using the in-memory pieces only to undo the bed centring."""
+    out = {}
+    for kind, seed, sub, name in (("top", 11, "2_lid_shell", "lid_shell_" + G.lid_tag(L, 0)),
+                                  ("bottom", 23, "3_base_shell", "base_shell_" + G.base_tag(1, 1))):
+        ref, croc, outer, _ = G.build_shell(kind, L, P, seed, with_texture=False, log=lambda *a: None)
+        halves = G.split_halves(ref, croc, outer, P)
+        parts = []
+        for half, refp in zip(("LEFT", "RIGHT"), halves):
+            b = refp.bounding_box()
+            m = _load_mesh(os.path.join(folder, sub, f"{name}_{half}.3mf"))
+            mb = m.bounding_box()
+            parts.append(m.translate(((b[0] + b[3]) / 2 - (mb[0] + mb[3]) / 2,
+                                      (b[1] + b[4]) / 2 - (mb[1] + mb[4]) / 2, 0)))
+        b = ref.bounding_box()
+        one = _load_mesh(os.path.join(folder, "4_one_piece_for_big_beds", f"{name}_ONE-PIECE_big-bed.3mf"))
+        ob = one.bounding_box()
+        one = one.translate(((b[0] + b[3]) / 2 - (ob[0] + ob[3]) / 2, (b[1] + b[4]) / 2 - (ob[1] + ob[4]) / 2, 0))
+        out[kind] = dict(halves=parts[0] + parts[1], one_piece=one)
+    return out
 
 
 def main():
@@ -375,10 +467,28 @@ def main():
         print(f"  {name:52s} {'PASS' if rows[-1]['passed'] else 'FAIL'}")
     s = nominal()
     render_pictures(s, L, P, nominal_parts, os.path.join(HERE, "backtest_"))
+    exported = []
+    mf = os.path.join(HERE, "3mf")
+    if os.path.isdir(mf):
+        ex = exported_shells(L, P, mf)
+        for label, key in (("exported LEFT+RIGHT halves (assembled, seam gap included)", "halves"),
+                           ("exported one-piece files", "one_piece")):
+            r, _ = geometric_backtest(s, L, P, lid_shell=ex["top"][key], base_shell=ex["bottom"][key])
+            unintended = sum(len(r[k]) for k in ("feet_vs_baseshell", "plugs_vs_baseshell", "closed_lidshell_vs_base",
+                                                  "closed_lidshell_vs_baseshell", "closed_lid_vs_baseshell"))
+            hinge = max(d["worst_overlap_mm3"] for d in r["hinge_sweep_lidshell"])
+            lidc = sum(p["vol"] for p in r["lid_vs_lidshell"])
+            basec = sum(p["vol"] for p in r["base_vs_baseshell"])
+            exported.append(dict(case=label, unintended_contacts=unintended, hinge_mm3=hinge,
+                                 lid_wedge_mm3=round(lidc, 1), base_wedge_mm3=round(basec, 1),
+                                 passed=unintended == 0 and hinge < 0.01))
+            print(f"  {label:52s} {'PASS' if exported[-1]['passed'] else 'FAIL'}  "
+                  f"(clip wedge contact: lid {lidc:.0f} mm3, base {basec:.0f} mm3)")
     mc = monte_carlo(P)
     print(json.dumps(mc, indent=1))
     with open(os.path.join(HERE, "fit_backtest_results.json"), "w") as f:
-        json.dump(dict(geometry=nominal_res, stress=rows, monte_carlo=mc,
+        json.dump(dict(geometry=nominal_res, stress=rows, exported_files=exported, monte_carlo=mc,
+                       posterior=posterior_summary(),
                        priors={k: list(v) for k, v in PRIORS.items()}), f, indent=1)
     print(f"done in {time.time() - t0:.0f}s")
 
