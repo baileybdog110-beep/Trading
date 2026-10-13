@@ -111,7 +111,26 @@ CASE = dict(
     stitch_len=2.4,
     stitch_w=0.9,
     stitch_depth=0.5,
+    # window in the lid shell so the Apple logo shows (lid frame: y from the
+    # lid's front edge). Logo ~35 x 43 mm, centred on the lid; the window
+    # leaves ~6-7 mm around it for placement error, framed by a smooth
+    # stitched band like the outer border.
+    logo_window=dict(cy=93.0, w=50.0, h=58.0, band=5.5, stitch=2.8, chamfer=0.6),
 )
+
+
+# scale-pattern seeds (the lid seed leaves room for dovetails around the window)
+SEED_TOP, SEED_BOTTOM = 94, 23
+
+
+def logo_window(L, P):
+    """Stadium-shaped window around the Apple logo (lid shell only)."""
+    lw = P.get("logo_window")
+    if not lw:
+        return None
+    cx = L["W"] / 2
+    r = lw["w"] / 2 - 0.01
+    return RRect(cx - lw["w"] / 2, lw["cy"] - lw["h"] / 2, cx + lw["w"] / 2, lw["cy"] + lw["h"] / 2, r, r)
 
 # Clip (lip) zones: (x0, x1, y0, y1, wall) with wall "side" (wall runs along y,
 # relief slots at y0/y1) or "front" (wall runs along x, slots at x0/x1).
@@ -261,7 +280,7 @@ class CrocPattern:
     dovetails so the halves interlock.
     """
 
-    def __init__(self, xmin, xmax, ymin, ymax, x_seam, seed):
+    def __init__(self, xmin, xmax, ymin, ymax, x_seam, seed, keep_out=None):
         rng = np.random.default_rng(seed)
         self.x_seam = x_seam
         self.ymin, self.ymax = ymin, ymax
@@ -346,6 +365,8 @@ class CrocPattern:
                 lo = ya + s_lo * (ends - row["xm"])
                 hi = yb + s_hi * (ends - row["xm"])
                 if (lo < self.fb_y(0, ends) + 2.5).any() or (hi > self.fb_y(1, ends) - 2.5).any():
+                    continue
+                if keep_out is not None and min(hi) > keep_out[0] and max(lo) < keep_out[1]:
                     continue
                 cands.append((row_i, k, sign, lo[0], hi[0]))
         best, best_score = [], -1
@@ -441,28 +462,11 @@ class CrocPattern:
         return np.array(pts)
 
 
-def texture_relief(kind, outer, croc, X, Y, P):
-    """Recess depth r(x,y) of the outer face (0 = scale top, touches the bed)."""
-    sd = outer.sdf(X, Y)
-    inset = -sd
-    r = np.zeros_like(X)
-
-    # alligator panel + crease around it
-    dpanel = inset - P["border"]
-    inside = dpanel > 0
-    dc = np.full(X.shape, np.inf)
-    if inside.any():
-        dc[inside] = croc.distance(X[inside], Y[inside])
-    dtot = np.minimum(dc, np.abs(dpanel))
-    # the centre seam groove continues through the border band
-    band = (inset > 0.9) & ~inside
-    dtot[band] = np.minimum(dtot[band], np.abs(X[band] - croc.x_seam))
-    r = P["tex_depth"] * (1 - smoothstep(P["groove_g0"], P["groove_g1"], dtot))
-
-    # stitching along the border band
-    m = (np.abs(inset - P["stitch_inset"]) < 1.5)
+def _stitches(r, X, Y, dist, path, offset, P, x_seam):
+    """Embossed stitch dashes along `path`; dist = signed distance field whose
+    level `offset` is the path."""
+    m = (np.abs(dist - offset) < 1.5)
     if m.any():
-        path = outer.inset(P["stitch_inset"]).pts()
         # densify the path and parametrise by arc length
         seg = np.diff(np.vstack([path, path[:1]]), axis=0)
         L = np.hypot(seg[:, 0], seg[:, 1])
@@ -480,26 +484,52 @@ def texture_relief(kind, outer, croc, X, Y, P):
         pitch = s0 / n_st
         _, idx = cKDTree(dense).query(np.column_stack([X[m], Y[m]]))
         a = (s_acc[idx] % pitch) - pitch / 2
-        across = inset[m] - P["stitch_inset"]
+        across = dist[m] - offset
         q = np.maximum(np.abs(a) - (P["stitch_len"] - P["stitch_w"]) / 2, 0)
-        dist = np.hypot(q, across) - P["stitch_w"] / 2
-        rs = P["stitch_depth"] * (1 - smoothstep(-0.12, 0.12, dist))
+        dd = np.hypot(q, across) - P["stitch_w"] / 2
+        rs = P["stitch_depth"] * (1 - smoothstep(-0.12, 0.12, dd))
         # no stitches across the centre seam groove
-        rs[np.abs(X[m] - croc.x_seam) < 1.6] = 0
+        rs[np.abs(X[m] - x_seam) < 1.6] = 0
         r[m] = np.maximum(r[m], rs)
 
-    r[inset < 0.9] = 0.0  # keep the chamfer region clean
+
+def texture_relief(kind, outer, croc, X, Y, P, window=None):
+    """Recess depth r(x,y) of the outer face (0 = scale top, touches the bed)."""
+    sd = outer.sdf(X, Y)
+    inset = -sd
+    dw = window.sdf(X, Y) if window is not None else np.full(X.shape, np.inf)
+    wband = P["logo_window"]["band"] if window is not None else 0.0
+
+    # alligator panel + crease around it (and around the logo window's frame)
+    dpanel = np.minimum(inset - P["border"], dw - wband)
+    inside = dpanel > 0
+    dc = np.full(X.shape, np.inf)
+    if inside.any():
+        dc[inside] = croc.distance(X[inside], Y[inside])
+    dtot = np.minimum(dc, np.abs(dpanel))
+    # the centre seam groove continues through the smooth bands
+    band = (inset > 0.9) & (dw > 0.9) & ~inside
+    dtot[band] = np.minimum(dtot[band], np.abs(X[band] - croc.x_seam))
+    r = P["tex_depth"] * (1 - smoothstep(P["groove_g0"], P["groove_g1"], dtot))
+
+    # stitching along the border band and around the window
+    _stitches(r, X, Y, inset, outer.inset(P["stitch_inset"]).pts(), P["stitch_inset"], P, croc.x_seam)
+    if window is not None:
+        so = P["logo_window"]["stitch"]
+        _stitches(r, X, Y, dw, window.inset(-so).pts(), so, P, croc.x_seam)
+
+    r[(inset < 0.9) | (dw < 0.9)] = 0.0  # keep the chamfer regions clean
     return r
 
 
-def texture_cutter(kind, outer, croc, P, bbox):
+def texture_cutter(kind, outer, croc, P, bbox, window=None):
     """Watertight heightfield solid {z < r(x,y)} over bbox, adaptive mesh."""
     x0, x1, y0, y1 = bbox
     g = P["grid"]
     xs = np.arange(x0, x1 + g / 2, g)
     ys = np.arange(y0, y1 + g / 2, g)
     X, Y = np.meshgrid(xs, ys)
-    r = texture_relief(kind, outer, croc, X.ravel(), Y.ravel(), P).reshape(X.shape)
+    r = texture_relief(kind, outer, croc, X.ravel(), Y.ravel(), P, window).reshape(X.shape)
     r[:2, :] = r[-2:, :] = 0
     r[:, :2] = r[:, -2:] = 0
     keep = binary_dilation(r > 1e-4, iterations=2)
@@ -555,6 +585,7 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
     W, D = L["W"], L["D"]
     T = P["plate"]
     outer, pocket = geometry(kind, L, P)
+    window = logo_window(L, P) if kind == "top" else None
     if kind == "top":
         base, slope = T + L["lid_t"], 0.0
         H = base + P["lip_gap"] + P["lip_t"] + 1
@@ -620,6 +651,11 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
                     .rotate((90, 0, 90)).translate((-20, 0, 0)))
         # finger notch, front centre
         cuts.append(u_notch_x(W / 2, 15, T + 1.5, 3.0, -10, -P["clear"] + 0.3))
+        # logo window, with a 45 deg chamfer on the bed side
+        if window is not None:
+            wc = P["logo_window"]["chamfer"]
+            cuts.append(m3d.Manifold.batch_hull([prism(window.inset(-wc - 0.3).cs(), -1.0, -0.3),
+                                                 prism(window.cs(), wc, H + 5)]))
         # plug relief: raise the side walls between the rear clips and the
         # hinge end, with a 45 deg lead-in (YZ profile, extruded along x)
         y_s = max(z[3] for z in zones if z[4] == "side") + P["slot_w"]
@@ -669,11 +705,15 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
         tex_box = (max(cx0 - 2, tex_box[0]), min(cx1 + 2, tex_box[1]),
                    max(cy0 - 2, tex_box[2]), min(cy1 + 2, tex_box[3]))
 
-    croc = CrocPattern(bb.x0, bb.x1, bb.y0 + P["border"], bb.y1 - P["border"], W / 2, seed)
+    keep_out = None
+    if window is not None:   # no dovetails where the window and its frame are
+        e = P["logo_window"]["band"] + 2.0
+        keep_out = (window.y0 - e, window.y1 + e)
+    croc = CrocPattern(bb.x0, bb.x1, bb.y0 + P["border"], bb.y1 - P["border"], W / 2, seed, keep_out)
     hf = None
     if with_texture:
         t0 = time.time()
-        cutter, hf = texture_cutter(kind, outer, croc, P, tex_box)
+        cutter, hf = texture_cutter(kind, outer, croc, P, tex_box, window)
         log(f"    texture heightfield: {cutter.num_tri():,} tris ({time.time() - t0:.1f}s)")
         shell = shell - cutter
     else:
@@ -780,8 +820,8 @@ def main():
     ap.add_argument("--lid-t", type=float, default=LAPTOP["lid_t"], help="lid-clip height above the floor (mm)")
     ap.add_argument("--base-offset", type=float, default=0.0, help="raise (+) / lower (-) the base clips (mm)")
     ap.add_argument("--clear", type=float, default=CASE["clear"], help="side clearance per side (mm)")
-    ap.add_argument("--seed-top", type=int, default=11)
-    ap.add_argument("--seed-bottom", type=int, default=23)
+    ap.add_argument("--seed-top", type=int, default=SEED_TOP)
+    ap.add_argument("--seed-bottom", type=int, default=SEED_BOTTOM)
     args = ap.parse_args()
 
     L = dict(LAPTOP)

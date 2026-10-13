@@ -68,50 +68,58 @@
     "stitch_pitch": 4.0,
     "stitch_len": 2.4,
     "stitch_w": 0.9,
-    "stitch_depth": 0.5
+    "stitch_depth": 0.5,
+    "logo_window": {
+      "cy": 93.0,
+      "w": 50.0,
+      "h": 58.0,
+      "band": 5.5,
+      "stitch": 2.8,
+      "chamfer": 0.6
+    }
   },
   "files": [
     {
       "file": "lid_shell_LEFT",
-      "tris": 234390,
+      "tris": 240716,
       "size_mm": [
-        162.6,
+        163.0,
         184.0,
         7.4
       ],
-      "volume_cm3": 51.8,
-      "weight_g_tpu": 63,
+      "volume_cm3": 49.3,
+      "weight_g_tpu": 60,
+      "clean": true,
+      "mb_3mf": 2.9,
+      "mb_stl": 12.0
+    },
+    {
+      "file": "lid_shell_RIGHT",
+      "tris": 234178,
+      "size_mm": [
+        163.9,
+        184.0,
+        7.4
+      ],
+      "volume_cm3": 49.5,
+      "weight_g_tpu": 60,
       "clean": true,
       "mb_3mf": 2.9,
       "mb_stl": 11.7
     },
     {
-      "file": "lid_shell_RIGHT",
-      "tris": 235646,
-      "size_mm": [
-        162.7,
-        184.0,
-        7.4
-      ],
-      "volume_cm3": 51.7,
-      "weight_g_tpu": 63,
-      "clean": true,
-      "mb_3mf": 2.9,
-      "mb_stl": 11.8
-    },
-    {
       "file": "lid_shell_ONE-PIECE_big-bed",
-      "tris": 470054,
+      "tris": 474996,
       "size_mm": [
         303.6,
         184.0,
         7.4
       ],
-      "volume_cm3": 103.6,
-      "weight_g_tpu": 126,
+      "volume_cm3": 98.9,
+      "weight_g_tpu": 121,
       "clean": true,
-      "mb_3mf": 5.8,
-      "mb_stl": 23.5
+      "mb_3mf": 5.9,
+      "mb_stl": 23.7
     },
     {
       "file": "base_shell_LEFT",

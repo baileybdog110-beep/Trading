@@ -200,9 +200,9 @@ def geometric_backtest(s, L_case, P, log=print, lid_shell=None, base_shell=None,
     res = {}
     t0 = time.time()
     if lid_shell is None:
-        lid_shell, *_ = G.build_shell("top", L_case, P, 11, with_texture=False, log=lambda *a: None)
+        lid_shell, *_ = G.build_shell("top", L_case, P, G.SEED_TOP, with_texture=False, log=lambda *a: None)
     if base_shell is None:
-        base_shell, *_ = G.build_shell("bottom", L_case, P, 23, with_texture=False, log=lambda *a: None)
+        base_shell, *_ = G.build_shell("bottom", L_case, P, G.SEED_BOTTOM, with_texture=False, log=lambda *a: None)
     base = base_solid(s, T)
     feet = feet_solid(s, T)
     plugs = plugs_solid(s, T)
@@ -292,7 +292,7 @@ def exported_shells(L, P, folder):
     """Re-assemble the exported LEFT/RIGHT halves (and one-piece files) in the
     laptop frame, using the in-memory pieces only to undo the bed centring."""
     out = {}
-    for kind, seed, name in (("top", 11, "lid_shell"), ("bottom", 23, "base_shell")):
+    for kind, seed, name in (("top", G.SEED_TOP, "lid_shell"), ("bottom", G.SEED_BOTTOM, "base_shell")):
         ref, croc, outer, _ = G.build_shell(kind, L, P, seed, with_texture=False, log=lambda *a: None)
         halves = G.split_halves(ref, croc, outer, P)
         parts = []

@@ -8,7 +8,8 @@ shell, sized to the best estimate of every dimension.
 
 ![preview](preview.png)
 
-* **Lid shell** clips onto the back of the screen.
+* **Lid shell** clips onto the back of the screen. A stitched, framed
+  window in the middle lets the Apple logo show (and glow) through.
 * **Base shell** clips onto the bottom. It has an open window over the
   MagSafe 2, USB 3, headphone and mic ports on the left, another over the
   Thunderbolt and USB 3 ports on the right, holes for the four rubber feet,
@@ -47,9 +48,9 @@ scale grooves, and four dovetail-shaped scales lock the halves together.
 
 | File (in `3mf/`) | What | TPU |
 |---|---|---|
-| `lid_shell_LEFT.3mf` + `lid_shell_RIGHT.3mf` | lid shell, two halves | ~63 g each |
+| `lid_shell_LEFT.3mf` + `lid_shell_RIGHT.3mf` | lid shell, two halves | ~60 g each |
 | `base_shell_LEFT.3mf` + `base_shell_RIGHT.3mf` | base shell, two halves (LEFT has the long MagSafe-side port window) | ~62 g each |
-| `one_piece_for_big_beds/` | the same two shells in one piece each, for an H2D/H2S | ~126 g / ~124 g |
+| `one_piece_for_big_beds/` | the same two shells in one piece each, for an H2D/H2S | ~121 g / ~124 g |
 
 That's four plates on a 256 mm bed. The 3MF files open directly in Bambu
 Studio. Leave every part in its exported orientation, textured face down.
@@ -83,10 +84,24 @@ Colour ideas: black, dark brown or deep olive TPU looks most like real
 gator. To make the scales pop, wipe a little darker shoe or leather dye into
 the grooves and wipe the scale tops clean.
 
+### Logo window
+
+The window is a rounded oval 50 mm wide and 58 mm tall, centred side to
+side. It runs from **64 mm to 122 mm back from the lid's front edge** (the
+edge opposite the hinge). The logo measured from a photo is about 35 mm
+wide and 43 mm tall, centred about 92 mm back, so there are about 6 mm of
+margin all round. To check before printing, lay a ruler on the closed lid
+from the front edge: the top of the leaf and the bottom of the apple should
+both fall between 64 and 122 mm.
+
+The lid shell also stops about 10 mm short of the hinge on purpose, so the
+screen can open fully; a strip of aluminium shows there.
+
 ## Join the halves
 
 1. Lay both halves textured face down on a flat surface. Push the dovetail
-   scales together so the seam closes. It sits in the bottom of a groove,
+   scales together so the seam closes (the lid has one dovetail above and
+   one below the logo window). It sits in the bottom of a groove,
    so it mostly disappears.
 2. Glue from the **inside** of the case with flexible CA gel (Loctite Super
    Glue Gel Control or similar) or a flexible adhesive such as E6000. Or
@@ -235,7 +250,10 @@ down well, which is why it's the caliper reading worth taking if you can.
   * two per side, at 62–82 and 110–124 mm from the front;
 * **base clips** at 38–56 and 88–104 mm from the front on each side. The
   lip underside is 3.91 mm above the floor at 44 mm and 6.05 mm at 104 mm;
-* 0.7 mm relief slots either side of every clip.
+* 0.7 mm relief slots either side of every clip;
+* a 50 × 58 mm logo window in the lid shell, centred 93 mm from the lid's
+  front edge, with a 0.6 mm chamfer and a stitched frame (`logo_window` in
+  `generate_case.py`; set it to `None` for a closed lid shell).
 
 ## Changing the design
 
