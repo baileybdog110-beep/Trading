@@ -8,13 +8,16 @@ Two shells:
   * BOTTOM shell - clips onto the base, with port windows, rubber-foot holes
                    and a finger notch at the front.
 
-Outputs (3mf/ always, stl/ for the nominal "B" size):
-  1_fit_tests/               small corner / strip pieces in sizes A, B, C
-  2_lid_shell/, 3_base_shell/  LEFT + RIGHT halves (fit a 256 x 256 mm bed,
-                             e.g. Bambu P1S / X1C / P2S / A1) in sizes A, B, C.
-                             The split runs along the alligator-scale grooves
-                             and interlocks with dovetail-shaped scales.
-  4_one_piece_for_big_beds/  one-piece shells (>= 310 x 200 mm bed, H2D/H2S)
+Outputs (3mf/ and the same meshes as stl/):
+  lid_shell_LEFT / _RIGHT, base_shell_LEFT / _RIGHT
+      halves that fit a 256 x 256 mm bed (Bambu P1S / X1C / P2S / A1). The
+      split runs along the alligator-scale grooves and interlocks with
+      dovetail-shaped scales.
+  one_piece_for_big_beds/   one-piece shells (>= 310 x 200 mm bed, H2D/H2S)
+
+The clip heights are chosen by blind_fit.py for a first-time fit without
+test prints; fit_backtest.py checks the exported files against a 3D
+stand-in of the laptop.
 
 Coordinates (laptop frame): x = left->right across the width, y = front->back,
 z = up from the outer (textured) face, which is also the print bed side.
@@ -51,9 +54,12 @@ LAPTOP = dict(
     D=192.0,
     R_front=10.0,
     R_back=4.0,
-    lid_t=4.9,
-    base_h_front=1.10,   # re-centred by the published-thickness check (fit_backtest.py)
-    base_h_back=9.6,
+    # Clip heights chosen by blind_fit.py for a no-test-print fit (design
+    # values, slightly biased above the expected laptop so the wedge clips
+    # absorb the uncertainty; lid value sits on the 0.12 mm layer grid):
+    lid_t=5.04,          # lid-clip underside above the floor (lid ~5.0 +/- 0.3)
+    base_h_front=2.3407, # base-clip line: 3.91 mm at y=44, 6.05 mm at y=104
+    base_h_back=9.1887,  # (deck ~3.72 / ~5.91 there, from the camera-model fit)
     feet=[(24.4, 26.0), (275.1, 26.0), (24.4, 171.8), (275.1, 171.8)],
     # left side : MagSafe 2 (~7-25), USB 3 (~29-43), headphone (~57), mics (~71)
     # (windows run out through the back edge so no thin wall stub is left
@@ -64,23 +70,31 @@ LAPTOP = dict(
 )
 
 CASE = dict(
-    clear=0.30,        # laptop outline -> pocket wall, per side (0.25 + 0.05 for the
-                       # 0.2 mm seam kerf that closes up when the halves are glued)
+    clear=0.45,        # laptop outline -> pocket wall, per side. The 0.2 mm seam kerf
+                       # closes 0.1 mm per side when glued and TPU shrinks ~0.3 %,
+                       # so the printed pocket ends up close to the laptop width.
     wall=1.6,          # side wall thickness (4 x 0.4 mm lines)
     plate=2.0,         # outer face (scale tops) -> inner floor
     chamfer=0.8,       # 45 deg chamfer on the bed-side outer edge (no elephant foot)
     inner_fillet=0.8,  # 45 deg fill where floor meets wall (laptop edges are rolled)
-    lip_reach=2.0,     # clip lip reach, measured inward from the pocket wall
-    lip_t=0.5,         # clip lip thickness (sits in the ~0.86 mm lid/base gap)
-    lip_gap=0.0,       # display-face / deck -> lip underside (0 = nominal surface)
-    lip_ramp=1.0,      # 45 deg wedge ramp under the lip: the edge of the lid / palm
-                       # rest wedges onto it anywhere over ~0.9 mm of height while
-                       # the TPU wall flexes out, so the clip grips across the
-                       # whole tolerance range (and it prints without supports)
-    wall_drop=0.1,     # plain walls stop this far below the display face / deck
+    lip_reach=1.6,     # clip lip reach, measured inward from the pocket wall
+    lip_t=0.36,        # clip lip thickness = 3 layers of 0.12 mm (sits in the gap)
+    lip_lead=0.24,     # stepped lead-in on the lip's top inner edge (2 layers)
+    lip_gap=0.0,       # (clip heights are set directly by lid_t / base_h_*)
+    lip_ramp=1.65,     # wedge ramp under the lip: 1.65 mm tall at 57 deg from horizontal.
+    ramp_deg=57.0,     # The laptop's edge wedges onto it anywhere over ~1 mm of height
+                       # while the slotted TPU clip flexes out (prints unsupported).
+    wall_drop=0.6,     # plain walls stop this far below the clip height, so they
+                       # never get between the lid and the keyboard
+    slot_w=0.7,        # relief slots at both ends of every clip: each clip is a tab
+    slot_root=1.3,     # slot bottom above the floor (clear of the inner fillet)
+    base_front_cap=0.8,  # base wall height at the front edge (the front is a rounded
+                         # taper), rising to the plain-wall height at y = 30
     top_back_trim=10.0,    # lid shell stops short of the hinge (hinge-sweep backtest)
     top_back_chamfer=1.4,  # bed-side 45 deg chamfer on the lid shell back edge
     top_wall_end=12.0,     # lid shell side walls end this far from the back edge
+    top_port_relief=1.2,   # lid shell side walls behind the rear clips sit this much
+                           # higher, so fat plug bodies (headphone, USB) clear them
     bottom_back_trim=1.5,  # base shell floor stops short of the back edge
     port_cut_in=0.6,     # port windows reach this far under the laptop edge
     port_floor_cut=1.0,  # ... and dip this far into the floor for plug overmolds
@@ -99,26 +113,30 @@ CASE = dict(
     stitch_depth=0.5,
 )
 
-# Clip (lip) zones. Top-shell and bottom-shell clips never overlap, so the
-# laptop still closes: only one 0.6 mm lip sits in the lid/base gap anywhere.
+# Clip (lip) zones: (x0, x1, y0, y1, wall) with wall "side" (wall runs along y,
+# relief slots at y0/y1) or "front" (wall runs along x, slots at x0/x1).
+# Top-shell and bottom-shell clips never overlap in y, so only one lip sits in
+# the lid/keyboard gap anywhere. The lid's rear clips stay clear of the port
+# plugs (y > ~128) and close to the front (small lever about the hinge); the
+# corners hook with two straight legs each, not on the arc, so the fit does
+# not depend on the exact corner radius.
 def clip_zones(kind, L):
-    W, D = L["W"], L["D"]
+    W = L["W"]
     zones = []
-    def mirror_x(x0, x1):
-        return (W - x1, W - x0)
+
+    def both_sides(y0, y1):
+        return [(-6, 5, y0, y1, "side"), (W - 5, W + 6, y0, y1, "side")]
+
+    def both_front(x0, x1):
+        return [(x0, x1, -6, 5, "front"), (W - x1, W - x0, -6, 5, "front")]
+
     if kind == "top":
-        # front corner pockets
-        zones += [(-6, 26, -6, 26), (W - 26, W + 6, -6, 26)]
-        # front edge
-        for x0, x1 in [(80, 108)]:
-            zones += [(x0, x1, -6, 5), (*mirror_x(x0, x1), -6, 5)]
-        # sides
-        for y0, y1 in [(68, 90), (140, 165)]:
-            zones += [(-6, 5, y0, y1), (W - 5, W + 6, y0, y1)]
+        zones += both_front(11, 26) + both_sides(11, 26)      # corner legs
+        zones += both_front(80, 108)                          # front edge
+        zones += both_sides(62, 82) + both_sides(110, 124)    # sides
     else:
-        # (no clips on the base's front edge: it is only ~1.4 mm tall there)
-        zones += [(-6, 5, 30, 58), (W - 5, W + 6, 30, 58)]
-        zones += [(-6, 5, 94, 113), (W - 5, W + 6, 94, 128)]
+        # (no clips on the base's front edge: it is a thin rounded taper)
+        zones += both_sides(38, 56) + both_sides(88, 104)
     return zones
 
 
@@ -565,17 +583,27 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
     # clip lips
     zones = clip_zones(kind, L)
     zone_cs = m3d.CrossSection.batch_boolean(
-        [m3d.CrossSection.square((x1 - x0, y1 - y0)).translate((x0, y0)) for x0, x1, y0, y1 in zones],
+        [m3d.CrossSection.square((x1 - x0, y1 - y0)).translate((x0, y0)) for x0, x1, y0, y1, _ in zones],
         m3d.OpType.Add)
-    g, t, rr = P["lip_gap"], P["lip_t"], P["lip_ramp"]
-    # wall riser (overlaps the trimmed wall) + lip + 45 deg ramp. The lip top
-    # sits 0.02 mm under the riser top so no two top faces coincide.
+    g, t, rv = P["lip_gap"], P["lip_t"], P["lip_ramp"]
+    ta = math.tan(math.radians(P["ramp_deg"]))
+    rh = rv / ta                                  # horizontal reach of the ramp
+    reach, lead = P["lip_reach"], P["lip_lead"]
+    # wall riser (overlaps the trimmed wall), lip with a stepped lead-in on its
+    # top inner edge, and the wedge ramp under it as layer-high stairs centred
+    # on the ideal ramp. Slabs overlap instead of touching (no coplanar faces).
     parts = [slab_rel(o_cs - pocket.cs(), -P["wall_drop"] - 0.3, g + t, base, slope),
-             slab_rel(mid_cs - pocket.inset(P["lip_reach"]).cs(), g, g + t - 0.02, base, slope)]
-    nr = max(5, int(round(rr / 0.1)))
-    for k in range(1, nr):
-        u = rr * k / nr
-        parts.append(slab_rel(mid_cs - pocket.inset(u).cs(), g - rr + u, g + t / 2 + 0.01 * k, base, slope))
+             slab_rel(mid_cs - pocket.inset(reach).cs(), g, g + t - lead, base, slope)]
+    nl = 2
+    for j in range(1, nl + 1):
+        top = g + t - lead + lead * j / nl - (0.02 if j == nl else 0.0)
+        parts.append(slab_rel(mid_cs - pocket.inset(reach - lead * j / nl).cs(),
+                              g + 0.01 * j, top, base, slope))
+    nr = max(6, int(round(rv / 0.12)))
+    for k in range(1, nr + 1):
+        u = rh * k / nr
+        parts.append(slab_rel(mid_cs - pocket.inset(u).cs(), g - rv + u * ta - 0.5 * rv / nr,
+                              g + t / 2 + 0.005 * k, base, slope))
     lips = m3d.Manifold.batch_boolean(parts, m3d.OpType.Add) ^ prism(zone_cs, -20, 80)
     shell = tray + lips
 
@@ -592,6 +620,15 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
                     .rotate((90, 0, 90)).translate((-20, 0, 0)))
         # finger notch, front centre
         cuts.append(u_notch_x(W / 2, 15, T + 1.5, 3.0, -10, -P["clear"] + 0.3))
+        # plug relief: raise the side walls between the rear clips and the
+        # hinge end, with a 45 deg lead-in (YZ profile, extruded along x)
+        y_s = max(z[3] for z in zones if z[4] == "side") + P["slot_w"]
+        z_hi = base - P["wall_drop"]
+        rl = P["top_port_relief"]
+        prof = m3d.CrossSection([np.array([(y_s - 0.5, z_hi + 0.5), (y_s + rl, z_hi - rl), (D + 5, z_hi - rl),
+                                           (D + 5, 80.0), (y_s - 0.5, 80.0)])])
+        for xa, xb in ((-20.0, -P["clear"] + 1.0), (W + P["clear"] - 1.0, W + 20.0)):
+            cuts.append(m3d.Manifold.extrude(prof, xb - xa).rotate((90, 0, 90)).translate((xa, 0, 0)))
     else:
         cuts.append(u_notch_x(W / 2, 20, T + 0.3, 3.0, -10, -P["clear"] + 0.3))
         yl0, yl1 = L["port_window_left"]
@@ -602,6 +639,26 @@ def build_shell(kind, L, P, seed, crop=None, with_texture=True, log=print):
         for fx, fy in L["feet"]:
             cuts.append(m3d.Manifold.cylinder(T + 10, P["foot_hole_d"] / 2,
                                               circular_segments=96).translate((fx, fy, -2)))
+    # relief slots at both ends of every clip: each clip becomes a tab that
+    # flexes on its own instead of dragging the whole wall with it
+    c, w, sw, r = P["clear"], P["wall"], P["slot_w"], P["slot_w"] / 2 - 0.01
+    zb = T + P["slot_root"]
+    for x0, x1, y0, y1, wall in zones:
+        if wall == "side":
+            xa, xb = ((-c - w - 1, -c + reach + 0.3) if x1 < W / 2 else (W + c - reach - 0.3, W + c + w + 1))
+            for ya, yb in ((y0 - sw, y0), (y1, y1 + sw)):
+                cuts.append(u_notch_y(ya, yb, zb, r, xa, xb))
+        else:
+            for xc in (x0 - sw / 2, x1 + sw / 2):
+                cuts.append(u_notch_x(xc, sw / 2, zb, r, -c - w - 1, -c + reach + 0.3))
+    if kind == "bottom":
+        # the laptop's front ~30-45 mm is a rounded taper: keep the base walls
+        # low there so they never sit under the lid
+        h30 = L["base_h_front"] + slope * 30.0 - P["wall_drop"]
+        cap0 = P["base_front_cap"]
+        cuts.append(_zwarp(m3d.CrossSection.square((W + 40, 40)).translate((-20, -10)),
+                           lambda y, top: np.full_like(y, 80.0) if top
+                           else T + cap0 + (y / 30.0) * (h30 - cap0)))
     shell = shell - m3d.Manifold.batch_boolean(cuts, m3d.OpType.Add)
 
     bb = outer
@@ -717,42 +774,14 @@ def save(man, name, mf_dir, stl_dir=None, log=print, center=True):
     return info
 
 
-# Fit sizes. The lid has one thickness; the base is a wedge, so its clip
-# height is set independently at the front clips (y = 44 mm) and the rear
-# clips (y = 104 mm), each picked with its own fit-test strip.
-LID_SIZES = (-0.50, -0.25, 0.0, +0.25, +0.50)     # offsets from LAPTOP["lid_t"]
-BASE_FRONT = (-0.40, 0.0, +0.40)                  # deck-height offsets at y = 44
-BASE_REAR = (-0.50, 0.0, +0.50)                   # deck-height offsets at y = 104
-Y_FRONT_CLIP, Y_REAR_CLIP = 44.0, 104.0
-
-
-def lid_tag(L, d):
-    return f"lid-{L['lid_t'] + d:.2f}mm"
-
-
-def base_heights(L, dF, dR):
-    """Deck line through the nominal heights +dF at the front clip, +dR at the rear clip."""
-    D = L["D"]
-    k = (L["base_h_back"] - L["base_h_front"]) / D
-    k2 = k + (dR - dF) / (Y_REAR_CLIP - Y_FRONT_CLIP)
-    hf2 = L["base_h_front"] + dF - (k2 - k) * Y_FRONT_CLIP
-    return hf2, hf2 + k2 * D
-
-
-def base_tag(i, j):
-    return f"front-{'ABC'[i]}_rear-{'ABC'[j]}"
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default=os.path.dirname(os.path.abspath(__file__)))
-    ap.add_argument("--lid-t", type=float, default=LAPTOP["lid_t"], help="nominal lid thickness (mm)")
-    ap.add_argument("--base-offset", type=float, default=0.0,
-                    help="raise (+) / lower (-) the nominal base-shell clip height (mm)")
+    ap.add_argument("--lid-t", type=float, default=LAPTOP["lid_t"], help="lid-clip height above the floor (mm)")
+    ap.add_argument("--base-offset", type=float, default=0.0, help="raise (+) / lower (-) the base clips (mm)")
     ap.add_argument("--clear", type=float, default=CASE["clear"], help="side clearance per side (mm)")
     ap.add_argument("--seed-top", type=int, default=11)
     ap.add_argument("--seed-bottom", type=int, default=23)
-    ap.add_argument("--nominal-only", action="store_true", help="skip the A/C fit variants")
     args = ap.parse_args()
 
     L = dict(LAPTOP)
@@ -761,66 +790,20 @@ def main():
     L["base_h_front"] += args.base_offset
     L["base_h_back"] += args.base_offset
     P["clear"] = args.clear
-    out = args.out
-    mf, st = os.path.join(out, "3mf"), os.path.join(out, "stl")
+    mf, st = os.path.join(args.out, "3mf"), os.path.join(args.out, "stl")
     report = dict(laptop=L, case=P, files=[])
-    W, D = L["W"], L["D"]
-
-    nl = len(LID_SIZES) // 2
-    fit_mf, fit_st = os.path.join(mf, "1_fit_tests"), os.path.join(st, "1_fit_tests")
-
-    # 1) fit tests
-    for d in LID_SIZES:
-        tag = lid_tag(L, d)
-        print(f"[fit] lid front corner {tag}")
-        s, *_ = build_shell("top", dict(L, lid_t=L["lid_t"] + d), P, args.seed_top, crop=(-3, 42, -3, 42))
-        report["files"].append(save(s, f"fit_lid_front-corner_{tag}", fit_mf, fit_st))
-    print("[fit] lid rear corner (hinge clearance)")
-    s, *_ = build_shell("top", L, P, args.seed_top, crop=(-3, 40, D - 60, D))
-    report["files"].append(save(s, f"fit_lid_rear-corner_hinge-check_{lid_tag(L, 0)}", fit_mf, fit_st))
-    for i, dF in enumerate(BASE_FRONT):
-        hf, hb = base_heights(L, dF, 0.0)
-        print(f"[fit] base front strip {'ABC'[i]}")
-        s, *_ = build_shell("bottom", dict(L, base_h_front=hf, base_h_back=hb), P, args.seed_bottom,
-                            crop=(-3, 72, -3, 64))
-        report["files"].append(save(s, f"fit_base_front-strip_{'ABC'[i]}", fit_mf, fit_st))
-    for j, dR in enumerate(BASE_REAR):
-        hf, hb = base_heights(L, 0.0, dR)
-        print(f"[fit] base rear strip {'ABC'[j]}")
-        s, *_ = build_shell("bottom", dict(L, base_h_front=hf, base_h_back=hb), P, args.seed_bottom,
-                            crop=(-3, 40, 84, D))
-        report["files"].append(save(s, f"fit_base_rear-strip_{'ABC'[j]}", fit_mf, fit_st))
-
-    # 2) shells: LEFT/RIGHT halves (256 mm bed) for every size, one-piece for nominal
-    jobs = []
-    for d in LID_SIZES:
-        if args.nominal_only and d != 0.0:
-            continue
-        jobs.append(("top", dict(L, lid_t=L["lid_t"] + d), args.seed_top, "2_lid_shell",
-                     f"lid_shell_{lid_tag(L, d)}", d == 0.0))
-    for i, dF in enumerate(BASE_FRONT):
-        for j, dR in enumerate(BASE_REAR):
-            nominal = dF == 0.0 and dR == 0.0
-            if args.nominal_only and not nominal:
-                continue
-            hf, hb = base_heights(L, dF, dR)
-            jobs.append(("bottom", dict(L, base_h_front=hf, base_h_back=hb), args.seed_bottom,
-                         "3_base_shell", f"base_shell_{base_tag(i, j)}", nominal))
-    for kind, L2, seed, folder, name, nominal in jobs:
+    for kind, seed, name in (("top", args.seed_top, "lid_shell"), ("bottom", args.seed_bottom, "base_shell")):
         t0 = time.time()
         print(f"[{name}] building ...")
-        shell, croc, outer, hf = build_shell(kind, L2, P, seed)
+        shell, croc, outer, hf = build_shell(kind, L, P, seed)
         left, right = split_halves(shell, croc, outer, P)
-        sdir = os.path.join(st, folder) if nominal else None
         for half, man in (("LEFT", left), ("RIGHT", right)):
-            report["files"].append(save(man, f"{name}_{half}", os.path.join(mf, folder), sdir))
-        if nominal:
-            report["files"].append(save(shell, f"{name}_ONE-PIECE_big-bed",
-                                        os.path.join(mf, "4_one_piece_for_big_beds"),
-                                        os.path.join(st, "4_one_piece_for_big_beds")))
+            report["files"].append(save(man, f"{name}_{half}", mf, st))
+        report["files"].append(save(shell, f"{name}_ONE-PIECE_big-bed",
+                                    os.path.join(mf, "one_piece_for_big_beds"),
+                                    os.path.join(st, "one_piece_for_big_beds")))
         print(f"[{name}] done in {time.time() - t0:.1f}s")
-
-    with open(os.path.join(out, "build_report.json"), "w") as f:
+    with open(os.path.join(args.out, "build_report.json"), "w") as f:
         json.dump(report, f, indent=2)
 
 

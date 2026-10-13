@@ -1,165 +1,229 @@
 {
- "geometry": {
+ "design": {
+  "lid_lip": 5.04,
+  "b44": 3.9100333333333337,
+  "b104": 6.050033333333333,
+  "ramp_v": 1.65,
+  "ramp_deg": 57.0,
+  "reach": 1.6,
+  "clear": 0.45,
+  "lip_t": 0.36,
+  "wall_drop": 0.6,
+  "slots": true,
+  "corner_dR": 0.0,
+  "layer": 0.12,
+  "front_cap": 0.8,
+  "corner_arc_lip": false,
+  "lid_side": [
+   [
+    62,
+    82
+   ],
+   [
+    110,
+    124
+   ]
+  ],
+  "base_side": [
+   [
+    38,
+    56
+   ],
+   [
+    88,
+    104
+   ]
+  ],
+  "kerf": 0.2,
+  "foot_hole_d": 25.0
+ },
+ "geometry_nominal": {
   "lid_vs_lidshell": [
    {
-    "vol": 10.4925,
+    "vol": 4.1674,
     "bbox": [
-     0.0,
+     11.0,
      0.0,
      0.0,
      26.0,
-     26.0,
-     0.71
+     0.62,
+     0.97
     ],
-    "depth": 0.707
+    "depth": 0.622
    },
    {
-    "vol": 4.8788,
+    "vol": 4.1674,
     "bbox": [
      0.0,
-     68.0,
+     11.0,
      0.0,
-     1.7,
-     90.0,
-     0.71
+     0.62,
+     26.0,
+     0.97
     ],
-    "depth": 0.707
+    "depth": 0.622
    },
    {
-    "vol": 6.2094,
+    "vol": 7.7792,
     "bbox": [
      80.0,
      0.0,
      0.0,
      108.0,
-     1.7,
-     0.61
+     0.62,
+     0.97
     ],
-    "depth": 0.607
+    "depth": 0.622
    },
    {
-    "vol": 5.5441,
+    "vol": 5.5566,
     "bbox": [
      0.0,
-     140.0,
+     62.0,
      0.0,
-     1.7,
-     165.0,
-     0.61
+     0.62,
+     82.0,
+     0.97
     ],
-    "depth": 0.607
+    "depth": 0.622
    },
    {
-    "vol": 6.2094,
+    "vol": 3.8896,
+    "bbox": [
+     0.0,
+     110.0,
+     0.0,
+     0.62,
+     124.0,
+     0.97
+    ],
+    "depth": 0.622
+   },
+   {
+    "vol": 7.7792,
     "bbox": [
      191.5,
      0.0,
      0.0,
      219.5,
-     1.7,
-     0.61
+     0.62,
+     0.97
     ],
-    "depth": 0.607
+    "depth": 0.622
    },
    {
-    "vol": 10.4925,
+    "vol": 4.1674,
     "bbox": [
      273.5,
      0.0,
      0.0,
+     288.5,
+     0.62,
+     0.97
+    ],
+    "depth": 0.622
+   },
+   {
+    "vol": 4.1674,
+    "bbox": [
+     298.88,
+     11.0,
+     0.0,
      299.5,
      26.0,
-     0.71
+     0.97
     ],
-    "depth": 0.707
+    "depth": 0.622
    },
    {
-    "vol": 4.8788,
+    "vol": 5.5566,
     "bbox": [
-     297.8,
-     68.0,
+     298.88,
+     62.0,
      0.0,
      299.5,
-     90.0,
-     0.61
+     82.0,
+     0.97
     ],
-    "depth": 0.607
+    "depth": 0.622
    },
    {
-    "vol": 5.5441,
+    "vol": 3.8896,
     "bbox": [
-     297.8,
-     140.0,
+     298.88,
+     110.0,
      0.0,
      299.5,
-     165.0,
-     0.61
+     124.0,
+     0.97
     ],
-    "depth": 0.607
+    "depth": 0.622
    }
   ],
-  "lid_lip_vertical_play": -0.007,
-  "lid_lip_overlap_side": 1.7,
+  "lid_lip_vertical_play": 0.032,
+  "lip_overhang_side": 1.15,
   "base_vs_baseshell": [
    {
-    "vol": 6.4227,
+    "vol": 3.4228,
     "bbox": [
      0.0,
-     30.0,
-     3.83,
-     1.7,
-     58.0,
-     5.68
+     38.0,
+     4.69,
+     0.47,
+     56.0,
+     6.16
     ],
-    "depth": 1.7
+    "depth": 0.468
    },
    {
-    "vol": 4.4105,
+    "vol": 3.436,
     "bbox": [
      0.0,
-     94.0,
-     6.66,
-     1.7,
-     113.0,
-     8.12
+     88.0,
+     6.48,
+     0.54,
+     104.0,
+     7.91
     ],
-    "depth": 1.454
+    "depth": 0.545
    },
    {
-    "vol": 6.4227,
+    "vol": 3.4232,
     "bbox": [
-     297.8,
-     30.0,
-     3.83,
+     299.03,
+     38.0,
+     4.69,
      299.5,
-     58.0,
-     5.68
+     56.0,
+     6.16
     ],
-    "depth": 1.7
+    "depth": 0.468
    },
    {
-    "vol": 7.9035,
+    "vol": 3.436,
     "bbox": [
-     297.8,
-     94.0,
-     6.56,
+     298.96,
+     88.0,
+     6.48,
      299.5,
-     128.0,
-     8.78
+     104.0,
+     7.91
     ],
-    "depth": 1.7
+    "depth": 0.545
    }
   ],
   "feet_vs_baseshell": [],
   "base_lip_vertical_play": {
-   "side clip y=44": -0.012,
-   "side clip y=104": -0.013,
-   "side clip y=111 (right)": -0.013
+   "y=38": 0.214,
+   "y=56": 0.182,
+   "y=88": 0.152,
+   "y=104": 0.137
   },
   "plugs_vs_baseshell": [],
   "closed_lidshell_vs_base": [],
   "closed_lidshell_vs_baseshell": [],
   "closed_lid_vs_baseshell": [],
+  "plugs_vs_closed_lidshell": [],
   "hinge_sweep_lidshell": [
    {
     "axis_offset_mm": [
@@ -197,233 +261,357 @@
     "worst_overlap_mm3": 0.0
    }
   ],
-  "seconds": 0.6
+  "seconds": 1.4
  },
  "stress": [
   {
    "case": "nominal laptop",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
    "case": "tightly rolled edges (base r 0.8 mm, lid roll 3 mm)",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
    "case": "thin lid edge (1.0 mm)",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
    "case": "thick lid edge (2.2 mm)",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
-   "case": "laptop 0.5 mm wider",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "case": "laptop 0.4 mm wider",
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
+  },
+  {
+   "case": "laptop 0.4 mm narrower",
+   "contacts": {},
+   "hinge_mm3": 0.0,
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
+  },
+  {
+   "case": "front corner radius 8.8 mm",
+   "contacts": {},
+   "hinge_mm3": 0.0,
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
+  },
+  {
+   "case": "front corner radius 11.2 mm",
+   "contacts": {},
+   "hinge_mm3": 0.0,
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
    "case": "rubber feet 3 mm off",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
    "case": "ports 5 mm further forward",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
    "case": "ports 5 mm further back",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   },
   {
-   "case": "lid/deck gap only 0.6 mm",
-   "feet": 0,
-   "plugs": 0,
-   "closed": 0,
+   "case": "lid 0.3 mm thinner",
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "passed": true
+   "passed": true,
+   "lid_play": 0.332,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
+  },
+  {
+   "case": "deck 0.4 mm lower",
+   "contacts": {},
+   "hinge_mm3": 0.0,
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.618,
+    "y=56": 0.574,
+    "y=88": 0.522,
+    "y=104": 0.497
+   }
+  },
+  {
+   "case": "lid/deck gap 0.2 mm smaller",
+   "contacts": {},
+   "hinge_mm3": 0.0,
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.214,
+    "y=56": 0.182,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
+  },
+  {
+   "case": "front taper starts 75 mm back",
+   "contacts": {},
+   "hinge_mm3": 0.0,
+   "passed": true,
+   "lid_play": 0.032,
+   "base_play": {
+    "y=38": 0.49,
+    "y=56": 0.259,
+    "y=88": 0.152,
+    "y=104": 0.137
+   }
   }
  ],
  "exported_files": [
   {
    "case": "exported LEFT+RIGHT halves (assembled, seam gap included)",
-   "unintended_contacts": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "lid_wedge_mm3": 54.2,
-   "base_wedge_mm3": 25.2,
-   "passed": true
+   "passed": true,
+   "lid_wedge_mm3": 51.1,
+   "base_wedge_mm3": 13.7
   },
   {
    "case": "exported one-piece files",
-   "unintended_contacts": 0,
+   "contacts": {},
    "hinge_mm3": 0.0,
-   "lid_wedge_mm3": 54.2,
-   "base_wedge_mm3": 25.2,
-   "passed": true
+   "passed": true,
+   "lid_wedge_mm3": 51.1,
+   "base_wedge_mm3": 13.7
   }
  ],
  "monte_carlo": {
   "n": 200000,
-  "lid_each_size": {
-   "lid-4.40mm": {
-    "good": 41.6,
-    "usable": 74.8
-   },
-   "lid-4.65mm": {
-    "good": 74.2,
-    "usable": 93.5
-   },
-   "lid-4.90mm": {
-    "good": 88.2,
-    "usable": 97.2
-   },
-   "lid-5.15mm": {
-    "good": 75.7,
-    "usable": 89.1
-   },
-   "lid-5.40mm": {
-    "good": 43.6,
-    "usable": 64.5
-   }
+  "snug_pct": 74.7,
+  "usable_pct": 93.4,
+  "components_snug_usable_pct": {
+   "lid clips": [
+    92.2,
+    98.7
+   ],
+   "base clips": [
+    88.2,
+    98.3
+   ],
+   "closing": [
+    90.5,
+    96.3
+   ],
+   "feet": [
+    99.8,
+    99.8
+   ]
+  }
+ },
+ "sensitivity_prior_mean_shift": {
+  "lid_t": {
+   "-1sd": [
+    69.5,
+    87.7
+   ],
+   "+1sd": [
+    59.3,
+    86.9
+   ]
   },
-  "lid_blind_nominal": {
-   "good": 88.2,
-   "usable": 97.2
+  "h44": {
+   "-1sd": [
+    49.2,
+    75.8
+   ],
+   "+1sd": [
+    53.9,
+    82.1
+   ]
   },
-  "lid_with_fit_tests": {
-   "good": 99.4,
-   "usable": 99.5
+  "h104": {
+   "-1sd": [
+    64.8,
+    88.3
+   ],
+   "+1sd": [
+    61.9,
+    87.5
+   ]
   },
-  "base_blind_nominal": {
-   "good": 87.2,
-   "usable": 97.4
+  "gap_back": {
+   "-1sd": [
+    69.9,
+    90.7
+   ],
+   "+1sd": [
+    78.2,
+    95.2
+   ]
   },
-  "base_with_fit_tests": {
-   "good": 99.2,
-   "usable": 99.3
+  "R_front": {
+   "-1sd": [
+    74.7,
+    93.4
+   ],
+   "+1sd": [
+    74.7,
+    93.4
+   ]
   },
-  "width": {
-   "good": 99.5,
-   "usable": 99.5
+  "edge_r": {
+   "-1sd": [
+    74.5,
+    93.4
+   ],
+   "+1sd": [
+    74.5,
+    93.4
+   ]
   },
-  "feet_in_holes": {
-   "good": 99.8,
-   "usable": 99.8
-  },
-  "closing_blind": {
-   "good": 91.0,
-   "usable": 98.4
-  },
-  "closing_with_fit_tests": {
-   "good": 99.2,
-   "usable": 100.0
-  },
-  "whole_case_blind_nominal": {
-   "good": 74.7,
-   "usable": 94.5
-  },
-  "whole_case_with_fit_tests": {
-   "good": 98.3,
-   "usable": 99.3
-  },
-  "lid_pick_histogram": {
-   "lid-4.40mm": 8.9,
-   "lid-4.65mm": 23.1,
-   "lid-4.90mm": 34.2,
-   "lid-5.15mm": 24.0,
-   "lid-5.40mm": 9.8
-  },
-  "base_pick_histogram": {
-   "front-A_rear-A": 11.4,
-   "front-A_rear-B": 9.3,
-   "front-A_rear-C": 0.0,
-   "front-B_rear-A": 3.6,
-   "front-B_rear-B": 48.6,
-   "front-B_rear-C": 4.0,
-   "front-C_rear-A": 0.0,
-   "front-C_rear-B": 9.7,
-   "front-C_rear-C": 13.3
-  },
-  "effective_samples": 71197
+  "taper_onset": {
+   "-1sd": [
+    75.4,
+    93.6
+   ],
+   "+1sd": [
+    72.5,
+    92.7
+   ]
+  }
  },
  "posterior": {
   "lid_t": {
    "prior": [
     4.9,
-    0.3
-   ],
-   "posterior": [
-    4.907,
-    0.277
-   ]
-  },
-  "lid_edge_t": {
-   "prior": [
-    1.6,
-    0.3
-   ],
-   "posterior": [
-    1.422,
-    0.271
-   ]
-  },
-  "base_h_front": {
-   "prior": [
-    1.35,
     0.35
    ],
    "posterior": [
-    1.11,
-    0.302
+    5.007,
+    0.321
    ]
   },
-  "base_h_back": {
+  "h44": {
    "prior": [
-    9.6,
-    0.45
+    3.65,
+    0.4
    ],
    "posterior": [
-    9.615,
-    0.367
+    3.717,
+    0.391
    ]
   },
-  "gap": {
+  "h104": {
    "prior": [
-    0.9,
-    0.15
+    5.81,
+    0.35
    ],
    "posterior": [
-    0.858,
-    0.144
+    5.913,
+    0.324
+   ]
+  },
+  "gap_back": {
+   "prior": [
+    0.86,
+    0.1
+   ],
+   "posterior": [
+    0.869,
+    0.099
    ]
   },
   "foot_p": {
@@ -432,45 +620,87 @@
     0.3
    ],
    "posterior": [
-    2.006,
-    0.278
+    2.078,
+    0.282
    ]
   },
-  "deck height at y=44": {
+  "taper_onset": {
    "prior": [
-    3.241
+    43.0,
+    16.0
    ],
    "posterior": [
-    3.059,
-    0.249
+    43.088,
+    15.791
    ]
   },
-  "deck height at y=104": {
-   "prior": [
-    5.819
-   ],
-   "posterior": [
-    5.717,
-    0.244
-   ]
-  },
-  "effective_samples": 71066
+  "effective_samples": 139443
  },
  "priors": {
   "W": [
    299.5,
    0.2,
-   "Apple: 29.95 cm"
+   "Apple 29.95 cm"
   ],
   "R_front": [
    10.0,
    0.6,
-   "rectified bottom photo"
+   "rectified bottom-case photo"
   ],
   "lid_t": [
    4.9,
+   0.35,
+   "not published; checked against the 17.3 mm back thickness"
+  ],
+  "h44": [
+   3.65,
+   0.4,
+   "camera-model fit of the side photo, deck at y=44"
+  ],
+  "h104": [
+   5.81,
+   0.35,
+   "camera-model fit of the side photo, deck at y=104"
+  ],
+  "gap_back": [
+   0.86,
+   0.1,
+   "side photo; opens ~0.11 mm per 83 mm towards the front"
+  ],
+  "foot_p": [
+   2.0,
    0.3,
-   "derived; not published"
+   "A1465 replacement-foot design"
+  ],
+  "taper_onset": [
+   43.0,
+   16.0,
+   "front taper starts this far from the front edge"
+  ],
+  "edge_r": [
+   0.3,
+   0.1,
+   "laptop edge radius where it meets the clip ramp"
+  ],
+  "shrink": [
+   0.003,
+   0.0015,
+   "TPU in-plane shrink"
+  ],
+  "z_err": [
+   0.0,
+   0.06,
+   "printer Z error"
+  ],
+  "foot_dx": [
+   0.0,
+   1.0,
+   "foot position error"
+  ],
+  "foot_dy": [
+   0.0,
+   1.0,
+   "foot position error"
   ],
   "lid_edge_t": [
    1.6,
@@ -482,55 +712,15 @@
    1.5,
    "side photo (curved lid back)"
   ],
-  "base_h_front": [
-   1.35,
-   0.35,
-   "side-photo extrapolation"
-  ],
-  "base_h_back": [
-   9.6,
-   0.45,
-   "side photo"
-  ],
   "base_roll_r": [
    2.0,
    0.6,
    "side photo (rolled bottom case)"
   ],
-  "gap": [
-   0.9,
-   0.15,
-   "side photo"
-  ],
-  "foot_dx": [
-   0.0,
-   1.0,
-   "photo rectification error"
-  ],
-  "foot_dy": [
-   0.0,
-   1.0,
-   "photo rectification error"
-  ],
-  "foot_p": [
-   2.0,
-   0.3,
-   "A1465 replacement-foot design: 18 mm dia, 2.0 mm proud"
-  ],
   "port_ds": [
    0.0,
    2.0,
    "port position error along the side"
-  ],
-  "shrink": [
-   0.003,
-   0.0015,
-   "TPU in-plane shrink after cooling (fraction)"
-  ],
-  "z_err": [
-   0.0,
-   0.06,
-   "Z dimension error (mm)"
   ]
  }
 }
